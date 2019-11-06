@@ -42,6 +42,10 @@ class PR extends JSONObject {
     valid() {
         return !this.invalid();
     }
+
+    changes() {
+        return this.additions + this.deletions
+    }
 }
 
 module.exports = PR;
