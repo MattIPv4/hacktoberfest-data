@@ -1,18 +1,5 @@
 require('./prototypes');
 
-function roundNumber(num, scale) {
-    if(!("" + num).includes("e")) {
-        return +(Math.round(num + "e+" + scale)  + "e-" + scale);
-    } else {
-        var arr = ("" + num).split("e");
-        var sig = ""
-        if(+arr[1] + scale > 0) {
-            sig = "+";
-        }
-        return +(Math.round(+arr[0] + "e" + sig + (+arr[1] + scale)) + "e-" + scale);
-    }
-}
-
 const PR = require('./classes/PR');
 const Repo = require('./classes/Repo');
 const User = require('./classes/User');
@@ -34,6 +21,7 @@ const getData = () => {
 };
 
 const main = () => {
+    /* eslint no-unused-vars: "off" */
     const { PRs, Repos, Users } = getData();
 
     /***************
@@ -49,8 +37,8 @@ const main = () => {
     const totalInvalidPRs = InvalidPRs.length;
     console.log('');
     console.log(`Total PRs: ${totalPRs}`);
-    console.log(`Total Valid PRs: ${totalValidPRs} (${roundNumber(totalValidPRs / totalPRs * 100, 2)}%)`);
-    console.log(`Total Invalid PRs: ${totalInvalidPRs} (${roundNumber(totalInvalidPRs / totalPRs * 100, 2)}%)`);
+    console.log(`Total Valid PRs: ${totalValidPRs} (${(totalValidPRs / totalPRs * 100).toFixed(2)}%)`);
+    console.log(`Total Invalid PRs: ${totalInvalidPRs} (${(totalInvalidPRs / totalPRs * 100).toFixed(2)}%)`);
 
     // Stats on invalid PRs, how many people were repeat spammers
     const singleInvalidUsers = Users.filter(user => {
@@ -62,15 +50,15 @@ const main = () => {
         return invalidPRs.length >= 1;
     });
     console.log('');
-    console.log(`Users with 1 invalid PR: ${singleInvalidUsers.length} (${roundNumber(singleInvalidUsers.length / Users.length * 100, 2)}%)`);
-    console.log(`Users with more than 1 invalid PRs: ${repeatedInvalidUsers.length} (${roundNumber(repeatedInvalidUsers.length / Users.length * 100, 2)}%)`);
+    console.log(`Users with 1 invalid PR: ${singleInvalidUsers.length} (${(singleInvalidUsers.length / Users.length * 100).toFixed(2)}%)`);
+    console.log(`Users with more than 1 invalid PRs: ${repeatedInvalidUsers.length} (${(repeatedInvalidUsers.length / Users.length * 100).toFixed(2)}%)`);
 
     // Breaking down PRs by language, other tags
     const PRsByLanguage = ValidPRs.groupBy(pr => pr.base.repo.language);
     console.log('');
     console.log(`Total languages: ${Object.keys(PRsByLanguage).filter(k => !!k).length}`);
     PRsByLanguage.forEach((key, val) => {
-        console.log(`  ${key} PRs: ${val.length} (${roundNumber(val.length / totalPRs * 100, 2)}%)`);
+        console.log(`  ${key} PRs: ${val.length} (${(val.length / totalPRs * 100).toFixed(2)}%)`);
     });
 
     // Lines of code per PR
@@ -96,17 +84,17 @@ const main = () => {
     // TODO: We only have relevant PR data, so will need Octokit (or scrape HTML for "their first ever")
 
     // Projects by popularity, contributors, stars (repo metadata)
-    const topReposByStars = Repos.sort(function(a, b) {
-        return b.stargazers_count - a.stargazers_count
+    const topReposByStars = Repos.sort((a, b) => {
+        return b.stargazers_count - a.stargazers_count;
     }).limit(25);
-    const topReposByPRs = Repos.sort(function(a, b) {
-        return b.prs.length - a.prs.length
+    const topReposByPRs = Repos.sort((a, b) => {
+        return b.prs.length - a.prs.length;
     }).limit(25);
-    const topReposByForks = Repos.sort(function(a, b) {
-        return b.forks_count - a.forks_count
+    const topReposByForks = Repos.sort((a, b) => {
+        return b.forks_count - a.forks_count;
     }).limit(25);
-    const topReposByWatchers = Repos.sort(function(a, b) {
-        return b.watchers_count - a.watchers_count
+    const topReposByWatchers = Repos.sort((a, b) => {
+        return b.watchers_count - a.watchers_count;
     }).limit(25);
     // TODO: What do we want to do with this data?
 
