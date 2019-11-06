@@ -32,6 +32,16 @@ class PR extends JSONObject {
             return reviewer
         });
     }
+
+    invalid() {
+        const invalidLabels = this.labels.filter(label => label.name.toLowerCase().trim() === "invalid");
+        return !!invalidLabels.length;
+
+    }
+
+    valid() {
+        return !this.invalid();
+    }
 }
 
 module.exports = PR;
