@@ -40,18 +40,6 @@ const main = () => {
     console.log(`  Valid PRs: ${totalValidPRs} (${(totalValidPRs / totalPRs * 100).toFixed(2)}%)`);
     console.log(`  Invalid PRs: ${totalInvalidPRs} (${(totalInvalidPRs / totalPRs * 100).toFixed(2)}%)`);
 
-    // Stats on invalid PRs, how many people were repeat spammers
-    const winnerUsers = Users.filter(user => user.won());
-    const singleInvalidUsers = Users.filter(user => user.prs.filter(pr => pr.invalid()).length === 1);
-    const repeatedInvalidUsers = Users.filter(user => user.prs.filter(pr => pr.invalid()).length >= 1);
-    const invalidAndWinnerUsers = Users.filter(user => user.won() && user.prs.filter(pr => pr.invalid()).length);
-    console.log('');
-    console.log(`Total Users: ${Users.length}`);
-    console.log(`  Users that won (4+ PRs): ${winnerUsers.length} (${(winnerUsers.length / Users.length * 100).toFixed(2)}%)`);
-    console.log(`  Users with 1 invalid PR: ${singleInvalidUsers.length} (${(singleInvalidUsers.length / Users.length * 100).toFixed(2)}%)`);
-    console.log(`  Users with more than 1 invalid PRs: ${repeatedInvalidUsers.length} (${(repeatedInvalidUsers.length / Users.length * 100).toFixed(2)}%)`);
-    console.log(`  Users with invalid PRs that also won: ${invalidAndWinnerUsers.length} (${(invalidAndWinnerUsers.length / Users.length * 100).toFixed(2)}%)`);
-
     // Breaking down PRs by language, other tags
     const PRsByLanguage = ValidPRs.groupBy(pr => pr.base.repo.language);
     console.log('');
@@ -75,6 +63,18 @@ const main = () => {
 
     // Number of users who made first PRs
     // We only have relevant PR data, this would need massive abuse of the GH API to determine
+
+    // Stats on invalid PRs, how many people were repeat spammers
+    const winnerUsers = Users.filter(user => user.won());
+    const singleInvalidUsers = Users.filter(user => user.prs.filter(pr => pr.invalid()).length === 1);
+    const repeatedInvalidUsers = Users.filter(user => user.prs.filter(pr => pr.invalid()).length >= 1);
+    const invalidAndWinnerUsers = Users.filter(user => user.won() && user.prs.filter(pr => pr.invalid()).length);
+    console.log('');
+    console.log(`Total Users: ${Users.length}`);
+    console.log(`  Users that won (4+ PRs): ${winnerUsers.length} (${(winnerUsers.length / Users.length * 100).toFixed(2)}%)`);
+    console.log(`  Users with 1 invalid PR: ${singleInvalidUsers.length} (${(singleInvalidUsers.length / Users.length * 100).toFixed(2)}%)`);
+    console.log(`  Users with more than 1 invalid PRs: ${repeatedInvalidUsers.length} (${(repeatedInvalidUsers.length / Users.length * 100).toFixed(2)}%)`);
+    console.log(`  Users with invalid PRs that also won: ${invalidAndWinnerUsers.length} (${(invalidAndWinnerUsers.length / Users.length * 100).toFixed(2)}%)`);
 
     /***************
      * Repo Stats
