@@ -9,6 +9,10 @@ class Repo extends JSONObject {
         // PRs
         this.prs = prs.filter(pr => pr.base.repo.id === this.id);
     }
+
+    contributors() {
+        return this.prs.map(pr => pr.user).unique();
+    }
 }
 
 module.exports = Repo;

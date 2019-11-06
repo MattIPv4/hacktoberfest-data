@@ -9,9 +9,9 @@ const rawRepos = require('../data/repositories');
 const rawUsers = require('../data/users');
 
 const getData = () => {
-    const PRs = rawPRs.map(pr => new PR(pr));
-    const Repos = rawRepos.map(repo => new Repo(repo));
-    const Users = rawUsers.map(user => new User(user));
+    const PRs = rawPRs.map(pr => new PR(pr)).uniqueBy(pr => pr.id);
+    const Repos = rawRepos.map(repo => new Repo(repo)).uniqueBy(repo => repo.id);
+    const Users = rawUsers.map(user => new User(user)).uniqueBy(user => user.id);
 
     PRs.forEach(pr => pr.findRelations(Users, Repos));
     Repos.forEach(repo => repo.findRelations(Users, PRs));
@@ -86,17 +86,28 @@ const main = () => {
     // Projects by popularity, contributors, stars (repo metadata)
     const topReposByStars = Repos.sort((a, b) => {
         return b.stargazers_count - a.stargazers_count;
-    }).limit(25);
-    const topReposByPRs = Repos.sort((a, b) => {
-        return b.prs.length - a.prs.length;
-    }).limit(25);
+    }).limit(5);
     const topReposByForks = Repos.sort((a, b) => {
         return b.forks_count - a.forks_count;
-    }).limit(25);
+    }).limit(5);
     const topReposByWatchers = Repos.sort((a, b) => {
         return b.watchers_count - a.watchers_count;
-    }).limit(25);
-    // TODO: What do we want to do with this data?
+    }).limit(5);
+    const topReposByPRs = Repos.sort((a, b) => {
+        return b.prs.length - a.prs.length;
+    }).limit(5);
+    const topReposByContributors = Repos.sort((a, b) => {
+        return b.contributors().length - a.contributors().length;
+    }).limit(5);
+    console.log('');
+    console.log('Top repos by PRs');
+    topReposByPRs.forEach(repo => {
+        console.log(`  ${repo.prs.length} | ${repo.html_url}`);
+    });
+    console.log('Top repos by contributors');
+    topReposByContributors.forEach(repo => {
+        console.log(`  ${repo.contributors().length} | ${repo.html_url}`);
+    });
 
     // Histogram breakdown by gitignores in repos
     // TODO: This will need API calls or Octokit to get gitignores
