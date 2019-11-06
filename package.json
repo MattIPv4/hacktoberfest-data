@@ -1,0 +1,19 @@
+{
+  "name": "hacktoberfest-data",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "run": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MattIPv4/Hacktoberfest-Data.git"
+  },
+  "author": "Matt (IPv4)",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/MattIPv4/Hacktoberfest-Data/issues"
+  },
+  "homepage": "https://github.com/MattIPv4/Hacktoberfest-Data#readme"
+}
