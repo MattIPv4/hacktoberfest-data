@@ -20,6 +20,7 @@ const getData = () => {
 };
 
 const main = () => {
+    // eslint-disable-next-line
     const { PRs, Users, Repos } = getData();
 };
 
