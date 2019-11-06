@@ -27,6 +27,7 @@ const main = () => {
     /***************
      * PR Stats
      ***************/
+    console.log('\n\n----\nPR Stats\n----');
 
     // Total PRs and invalid PRs
     // TODO: Needs airtable spam repo export
@@ -43,20 +44,24 @@ const main = () => {
     // Breaking down PRs by language, other tags
     const PRsByLanguage = ValidPRs.groupBy(pr => pr.base.repo.language);
     console.log('');
-    console.log(`PRs by language (${Object.keys(PRsByLanguage).length} languages)`);
+    console.log(`PRs by language: ${Object.keys(PRsByLanguage).length} languages`);
     PRsByLanguage.forEach((key, val) => {
         key = key === 'null' ? 'Undetermined' : key;
         console.log(`  ${key}: ${val.length} (${(val.length / totalPRs * 100).toFixed(2)}%)`);
     });
 
     // Lines of code per PR
-    const changesPerPR = ValidPRs.map(pr => pr.changes()).sort().reverse();
+    const PRsByChanges = ValidPRs.sort((a, b) => b.changes() - a.changes());
     console.log('');
-    console.log(`Largest change in PR: ${changesPerPR[0]} changes`);
+    console.log('Largest changes in a PR:');
+    PRsByChanges.limit(5).forEach(pr => {
+        console.log(`  ${pr.changes()} | ${pr.html_url}`);
+    });
 
     /***************
      * User Stats
      ***************/
+    console.log('\n\n----\nUser Stats\n----');
 
     // Repeat engagement, year over year, or any time in past
     // TODO: Not sure how I can do this with just data from this year?
@@ -76,9 +81,19 @@ const main = () => {
     console.log(`  Users with more than 1 invalid PRs: ${repeatedInvalidUsers.length} (${(repeatedInvalidUsers.length / Users.length * 100).toFixed(2)}%)`);
     console.log(`  Users with invalid PRs that also won: ${invalidAndWinnerUsers.length} (${(invalidAndWinnerUsers.length / Users.length * 100).toFixed(2)}%)`);
 
+    // Breaking down users by language
+    const UsersByLanguage = Users.groupBy(user => user.prs.map(pr => pr.base.repo.language).mode());
+    console.log('');
+    console.log(`Users by language: ${Object.keys(UsersByLanguage).length} languages`);
+    UsersByLanguage.forEach((key, val) => {
+        key = key === 'null' ? 'Undetermined' : key;
+        console.log(`  ${key}: ${val.length} (${(val.length / Users.length * 100).toFixed(2)}%)`);
+    });
+
     /***************
      * Repo Stats
      ***************/
+    console.log('\n\n----\nRepo Stats\n----');
 
     // "Connections made" First time PRs to a project, and not first time PRs
     // We only have relevant PR data, this would need massive abuse of the GH API to determine
@@ -86,7 +101,7 @@ const main = () => {
     // Breaking down repos by language
     const ReposByLanguage = Repos.groupBy(repo => repo.language);
     console.log('');
-    console.log(`Repos by language (${Object.keys(ReposByLanguage).length} languages)`);
+    console.log(`Repos by language: ${Object.keys(ReposByLanguage).length} languages`);
     ReposByLanguage.forEach((key, val) => {
         key = key === 'null' ? 'Undetermined' : key;
         console.log(`  ${key}: ${val.length} (${(val.length / Repos.length * 100).toFixed(2)}%)`);

@@ -27,3 +27,11 @@ Array.prototype.groupBy = function (keyGetter) {
     });
     return obj;
 };
+
+Array.prototype.mode = function () {
+    if (this.length === 0) return null;
+    return this.sort((a, b) =>
+        this.filter(v => v === a).length
+        - this.filter(v => v === b).length
+    ).pop();
+};
