@@ -1,27 +1,28 @@
 const PR = require('./classes/PR');
-const User = require('./classes/User');
 const Repo = require('./classes/Repo');
+const User = require('./classes/User');
+
+const rawPRs = require('../data/pull_requests');
+const rawRepos = require('../data/repositories');
+const rawUsers = require('../data/users');
 
 const getData = () => {
-    const rawPRs = [];
     const PRs = rawPRs.map(pr => new PR(pr));
-
-    const rawUsers = [];
+    const Repos = rawRepos.map(repo => new Repo(repo));
     const Users = rawUsers.map(user => new User(user));
 
-    const rawRepos = [];
-    const Repos = rawRepos.map(repo => new Repo(repo));
-
     PRs.forEach(pr => pr.findRelations(Users, Repos));
-    Users.forEach(user => user.findRelations(PRs));
     Repos.forEach(repo => repo.findRelations(Users, PRs));
+    Users.forEach(user => user.findRelations(PRs));
 
-    return { PRs, Users, Repos };
+    return { PRs, Repos, Users };
 };
 
 const main = () => {
-    // eslint-disable-next-line
-    const { PRs, Users, Repos } = getData();
+    // eslint-disable-next-line no-unused-vars
+    const { PRs, Repos, Users } = getData();
+
+    console.log(Repos[0].prs.length);
 };
 
 main();
