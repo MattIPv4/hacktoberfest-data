@@ -74,14 +74,14 @@ const main = () => {
     // TODO: Not sure how I can do this with just data from this year?
 
     // Number of users who made first PRs
-    // TODO: We only have relevant PR data, so will need Octokit (or scrape HTML for "their first ever")
+    // We only have relevant PR data, this would need massive abuse of the GH API to determine
 
     /***************
      * Repo Stats
      ***************/
 
     // "Connections made" First time PRs to a project, and not first time PRs
-    // TODO: We only have relevant PR data, so will need Octokit (or scrape HTML for "their first ever")
+    // We only have relevant PR data, this would need massive abuse of the GH API to determine
 
     // Projects by popularity, contributors, stars (repo metadata)
     const topReposByStars = Repos.sort((a, b) => {
