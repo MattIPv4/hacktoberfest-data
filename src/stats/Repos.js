@@ -24,11 +24,10 @@ module.exports = async data => {
     console.log(`  Invalid (excluded) repos: ${totalInvalidRepos} (${(totalInvalidRepos / totalRepos * 100).toFixed(2)}%)`);
 
     // Breaking down repos by language
-    const ReposByLanguage = Repos.groupBy(repo => repo.language);
+    const ReposByLanguage = Repos.groupBy(repo => repo.languageString());
     console.log('');
     console.log(`Repos by language: ${Object.keys(ReposByLanguage).length} languages`);
     ReposByLanguage.forEach((key, val) => {
-        key = key === 'null' ? 'Undetermined' : key;
         console.log(`  ${key}: ${val.length} (${(val.length / totalRepos * 100).toFixed(2)}%)`);
     });
 

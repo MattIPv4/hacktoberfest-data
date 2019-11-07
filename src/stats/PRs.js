@@ -27,11 +27,10 @@ module.exports = async data => {
     console.log(`    Invalid (labeled invalid) PRs: ${totalInvalidLabelPRs} (${(totalInvalidLabelPRs / totalPRs * 100).toFixed(2)}%)`);
 
     // Breaking down PRs by language, other tags
-    const PRsByLanguage = ValidPRs.groupBy(pr => pr.base.repo.language);
+    const PRsByLanguage = ValidPRs.groupBy(pr => pr.languageString());
     console.log('');
     console.log(`PRs by language: ${Object.keys(PRsByLanguage).length} languages`);
     PRsByLanguage.forEach((key, val) => {
-        key = key === 'null' ? 'Undetermined' : key;
         console.log(`  ${key}: ${val.length} (${(val.length / totalPRs * 100).toFixed(2)}%)`);
     });
     const config = chart.config(1000, 1000, [{

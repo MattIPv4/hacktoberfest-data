@@ -17,6 +17,11 @@ class Repo extends JSONObject {
     contributors() {
         return this.prs.map(pr => pr.user).unique();
     }
+
+    languageString() {
+        if (this.language === null) return "Undetermined";
+        return this.language
+    }
 }
 
 module.exports = Repo;

@@ -25,11 +25,10 @@ module.exports = async data => {
     console.log(`  Users with invalid PRs that also won: ${invalidAndWinnerUsers.length} (${(invalidAndWinnerUsers.length / Users.length * 100).toFixed(2)}%)`);
 
     // Breaking down users by language
-    const UsersByLanguage = Users.groupBy(user => user.prs.map(pr => pr.base.repo.language).mode());
+    const UsersByLanguage = Users.groupBy(user => user.prs.map(pr => pr.languageString()).mode());
     console.log('');
     console.log(`Users by language: ${Object.keys(UsersByLanguage).length} languages`);
     UsersByLanguage.forEach((key, val) => {
-        key = key === 'null' ? 'Undetermined' : key;
         console.log(`  ${key}: ${val.length} (${(val.length / Users.length * 100).toFixed(2)}%)`);
     });
 };

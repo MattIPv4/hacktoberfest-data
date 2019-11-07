@@ -53,6 +53,10 @@ class PR extends JSONObject {
     changes() {
         return this.additions + this.deletions
     }
+
+    languageString() {
+        return this.base.repo.languageString();
+    }
 }
 
 module.exports = PR;
