@@ -57,6 +57,14 @@ class PR extends JSONObject {
     languageString() {
         return this.base.repo.languageString();
     }
+
+    created() {
+        return new Date(this.created_at);
+    }
+
+    date() {
+        return new Date(this.created().toDateString());
+    }
 }
 
 module.exports = PR;

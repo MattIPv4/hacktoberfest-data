@@ -1,5 +1,6 @@
 const path = require('path');
 const chart = require('../helpers/chart');
+const { getDateArray } = require('../helpers/date');
 
 module.exports = async data => {
     const { PRs } = data;
@@ -33,20 +34,39 @@ module.exports = async data => {
     PRsByLanguage.forEach((key, val) => {
         console.log(`  ${key}: ${val.length} (${(val.length / totalPRs * 100).toFixed(2)}%)`);
     });
-    const config = chart.config(1000, 1000, [{
-        type: 'doughnut',
-        indexLabelPlacement: 'inside',
-        indexLabelFontSize: 22,
-        indexLabelFontColor: chart.colors.white,
-        indexLabelFontFamily: 'monospace',
-        dataPoints: Object.entries(PRsByLanguage).map(data => {
+    chart.save(path.join(__dirname, '../../imgs/prs_by_language_doughnut.png'),
+        await chart.render(chart.config(1000, 1000, [{
+            type: 'doughnut',
+            indexLabelPlacement: 'inside',
+            indexLabelFontSize: 22,
+            indexLabelFontColor: chart.colors.white,
+            indexLabelFontFamily: 'monospace',
+            dataPoints: Object.entries(PRsByLanguage).map(data => {
+                return {
+                    y: data[1].length,
+                    indexLabel: `${data[0]}\n${(data[1].length / totalPRs * 100).toFixed(1)}%`,
+                };
+            }),
+        }]))
+    );
+    chart.save(path.join(__dirname, '../../imgs/prs_by_language_spline.png'),
+        await chart.render(chart.config(2500, 1000, Object.entries(PRsByLanguage).map(data => {
+            const dates = getDateArray(new Date('2019-09-30'), new Date('2019-11-01'));
+            const PRsByDate = data[1].groupBy(pr => pr.date().toDateString());
+            const PRData = dates.map(date => {
+                const dateString = date.toDateString();
+                return { x: date, y:  dateString in PRsByDate ? PRsByDate[dateString].length : 0 }
+            }).sort((a, b) => {
+                return b.x - a.x
+            });
             return {
-                y: data[1].length,
-                indexLabel: `${data[0]}\n${(data[1].length / totalPRs * 100).toFixed(1)}%`,
-            };
-        }),
-    }]);
-    chart.save(path.join(__dirname, '../../imgs/prs_by_language.png'), await chart.render(config));
+                type: 'spline',
+                name: data[0],
+                showInLegend: true,
+                dataPoints: PRData,
+            }
+        })))
+    );
 
     // Lines of code per PR
     const PRsByChanges = ValidPRs.sort((a, b) => b.changes() - a.changes());
