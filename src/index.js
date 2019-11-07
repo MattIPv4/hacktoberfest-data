@@ -1,16 +1,12 @@
 require('./prototypes');
+
 const csv = require('./helpers/csv');
 const path = require('path');
 
-const PR = require('./classes/PR');
-const Repo = require('./classes/Repo');
-const User = require('./classes/User');
-
+const { PR, Repo, User } = require('./classes');
 const rawPRs = require('../data/pull_requests');
 const rawRepos = require('../data/repositories');
 const rawUsers = require('../data/users');
-
-const stats = require('./stats');
 
 const getData = async () => {
     const rawSpamRepos = await csv(path.join(__dirname, '../data/spam_repos.csv'));
@@ -32,6 +28,8 @@ const getData = async () => {
 
     return { PRs, Repos, Users, SpamRepos };
 };
+
+const stats = require('./stats');
 
 const main = async () => {
     const data = await getData();
