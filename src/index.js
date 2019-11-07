@@ -1,5 +1,6 @@
 require('./prototypes');
 const csv = require('./helpers/csv');
+const chart = require('./helpers/chart');
 const path = require('path');
 
 const PR = require('./classes/PR');
@@ -66,6 +67,13 @@ const main = async () => {
         key = key === 'null' ? 'Undetermined' : key;
         console.log(`  ${key}: ${val.length} (${(val.length / totalPRs * 100).toFixed(2)}%)`);
     });
+    const render = await chart.chartRender(chart.chartConfig(1000, 1000, 'doughnut',
+        Object.entries(PRsByLanguage).map(data => { return {
+            y: data[1].length,
+            indexLabel: `${data[0]}\n${(data[1].length / totalPRs * 100).toFixed(1)}%`,
+        }; }),
+    ));
+    chart.chartSave(path.join(__dirname, '../imgs/prs_by_language.png'), render);
 
     // Lines of code per PR
     const PRsByChanges = ValidPRs.sort((a, b) => b.changes() - a.changes());
