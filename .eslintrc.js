@@ -1,6 +1,7 @@
 module.exports = {
     env: {
-        'node': true
+        node: true,
+        es6: true,
     },
     extends: [
         'eslint:recommended'
@@ -14,5 +15,6 @@ module.exports = {
         semi: ['error', 'always'],
         quotes: ['error', 'single'],
         'comma-dangle': ['error', 'always-multiline'],
+        'no-prototype-builtins': 'off',
     },
 };

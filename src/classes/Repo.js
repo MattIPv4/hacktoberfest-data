@@ -19,8 +19,8 @@ class Repo extends JSONObject {
     }
 
     languageString() {
-        if (this.language === null) return "Undetermined";
-        return this.language
+        if (this.language === null) return 'Undetermined';
+        return this.language;
     }
 }
 

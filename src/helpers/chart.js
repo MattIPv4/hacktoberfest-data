@@ -12,7 +12,7 @@ const colors = {
     magenta: '#FF00AA',
     yellow: '#FFF922',
     blue: '#1595FF',
-    purple: '#A11EC6'
+    purple: '#A11EC6',
 };
 
 const config = (width, height, data) => {
@@ -22,7 +22,7 @@ const config = (width, height, data) => {
         tickColor: colors.lightBox,
         labelFontColor: colors.text,
         labelFontWeight: 'bold',
-        labelFontFamily: 'monospace'
+        labelFontFamily: 'monospace',
     };
     return {
         width,
@@ -42,10 +42,10 @@ const config = (width, height, data) => {
     };
 };
 
-const render = async (config) => {
-    return new Promise((resolve) => {
+const render = async config => {
+    return new Promise(resolve => {
         const makeCanvas = window => {
-            window.chart = new window.CanvasJS.Chart("chartContainer", config);
+            window.chart = new window.CanvasJS.Chart('chartContainer', config);
             window.chart.render();
             window.getCanvas(window);
         };

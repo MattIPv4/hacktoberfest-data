@@ -10,7 +10,7 @@ module.exports = (file) => {
                 .on('data', (data) => results.push(data))
                 .on('end', () => {
                     resolve(results);
-                })
+                });
         } catch (err) {
             reject(err);
         }

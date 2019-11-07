@@ -22,14 +22,14 @@ class PR extends JSONObject {
         this.assignees.map(assignee => {
             const assigneeUser = users.filter(user => user.id === assignee.id);
             if (assigneeUser.length) return assigneeUser[0];
-            return assignee
+            return assignee;
         });
 
         // Reviewers
         this.requested_reviewers.map(reviewer => {
             const reviewerUser = users.filter(user => user.id === reviewer.id);
             if (reviewerUser.length) return reviewerUser[0];
-            return reviewer
+            return reviewer;
         });
     }
 
@@ -38,7 +38,7 @@ class PR extends JSONObject {
     }
 
     invalid_label() {
-        const invalidLabels = this.labels.filter(label => label.name.toLowerCase().trim() === "invalid");
+        const invalidLabels = this.labels.filter(label => label.name.toLowerCase().trim() === 'invalid');
         return !!invalidLabels.length;
     }
 
@@ -51,7 +51,7 @@ class PR extends JSONObject {
     }
 
     changes() {
-        return this.additions + this.deletions
+        return this.additions + this.deletions;
     }
 
     languageString() {

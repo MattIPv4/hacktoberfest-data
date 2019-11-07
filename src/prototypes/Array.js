@@ -1,5 +1,5 @@
 Array.prototype.limit = function (limit) {
-    return this.slice(0, limit)
+    return this.slice(0, limit);
 };
 
 Array.prototype.unique = function () {
@@ -30,8 +30,5 @@ Array.prototype.groupBy = function (keyGetter) {
 
 Array.prototype.mode = function () {
     if (this.length === 0) return null;
-    return this.sort((a, b) =>
-        this.filter(v => v === a).length
-        - this.filter(v => v === b).length
-    ).pop();
+    return this.sort((a, b) => this.filter(v => v === a).length - this.filter(v => v === b).length).pop();
 };

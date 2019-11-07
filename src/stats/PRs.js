@@ -47,7 +47,7 @@ module.exports = async data => {
                     indexLabel: `${data[0]}\n${(data[1].length / totalPRs * 100).toFixed(1)}%`,
                 };
             }),
-        }]))
+        }])),
     );
     chart.save(path.join(__dirname, '../../imgs/prs_by_language_spline.png'),
         await chart.render(chart.config(2500, 1000, Object.entries(PRsByLanguage).map(data => {
@@ -55,17 +55,17 @@ module.exports = async data => {
             const PRsByDate = data[1].groupBy(pr => pr.date().toDateString());
             const PRData = dates.map(date => {
                 const dateString = date.toDateString();
-                return { x: date, y:  dateString in PRsByDate ? PRsByDate[dateString].length : 0 }
+                return { x: date, y:  dateString in PRsByDate ? PRsByDate[dateString].length : 0 };
             }).sort((a, b) => {
-                return b.x - a.x
+                return b.x - a.x;
             });
             return {
                 type: 'spline',
                 name: data[0],
                 showInLegend: true,
                 dataPoints: PRData,
-            }
-        })))
+            };
+        }))),
     );
 
     // Lines of code per PR
