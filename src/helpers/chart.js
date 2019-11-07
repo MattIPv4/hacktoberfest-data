@@ -13,24 +13,17 @@ const colors = {
     purple: '#A11EC6'
 };
 
-const chartConfig = (width, height, type, data) => {
+const config = (width, height, data) => {
     return {
         width,
         height,
         theme: 'dark2',
         backgroundColor: colors.background,
-        data: [{
-            type,
-            indexLabelPlacement: 'inside',
-            indexLabelFontSize: 22,
-            indexLabelFontColor: colors.white,
-            indexLabelFontFamily: 'monospace',
-            dataPoints: data,
-        }],
+        data,
     };
 };
 
-const chartRender = async (config) => {
+const render = async (config) => {
     return new Promise((resolve) => {
         const makeCanvas = window => {
             window.chart = new window.CanvasJS.Chart("chartContainer", config);
@@ -53,9 +46,9 @@ const chartRender = async (config) => {
     });
 };
 
-const chartSave = (file, data) => {
+const save = (file, data) => {
     const base64Data = data.replace(/^data:image\/png;base64,/, '');
     fs.writeFileSync(file, base64Data, 'base64');
 };
 
-module.exports = { chartConfig, chartRender, chartSave };
+module.exports = { colors, config, render, save };

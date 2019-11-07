@@ -34,13 +34,20 @@ module.exports = async data => {
         key = key === 'null' ? 'Undetermined' : key;
         console.log(`  ${key}: ${val.length} (${(val.length / totalPRs * 100).toFixed(2)}%)`);
     });
-    const render = await chart.chartRender(chart.chartConfig(1000, 1000, 'doughnut',
-        Object.entries(PRsByLanguage).map(data => { return {
-            y: data[1].length,
-            indexLabel: `${data[0]}\n${(data[1].length / totalPRs * 100).toFixed(1)}%`,
-        }; }),
-    ));
-    chart.chartSave(path.join(__dirname, '../../imgs/prs_by_language.png'), render);
+    const config = chart.config(1000, 1000, [{
+        type: 'doughnut',
+        indexLabelPlacement: 'inside',
+        indexLabelFontSize: 22,
+        indexLabelFontColor: chart.colors.white,
+        indexLabelFontFamily: 'monospace',
+        dataPoints: Object.entries(PRsByLanguage).map(data => {
+            return {
+                y: data[1].length,
+                indexLabel: `${data[0]}\n${(data[1].length / totalPRs * 100).toFixed(1)}%`,
+            };
+        }),
+    }]);
+    chart.save(path.join(__dirname, '../../imgs/prs_by_language.png'), await chart.render(config));
 
     // Lines of code per PR
     const PRsByChanges = ValidPRs.sort((a, b) => b.changes() - a.changes());
