@@ -19,5 +19,8 @@
   "homepage": "https://github.com/MattIPv4/Hacktoberfest-Data#readme",
   "devDependencies": {
     "eslint": "^6.6.0"
+  },
+  "dependencies": {
+    "csv-parser": "^2.3.1"
   }
 }

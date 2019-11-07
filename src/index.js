@@ -1,4 +1,6 @@
 require('./prototypes');
+const csv = require('./helpers/csv');
+const path = require('path');
 
 const PR = require('./classes/PR');
 const Repo = require('./classes/Repo');
@@ -8,21 +10,30 @@ const rawPRs = require('../data/pull_requests');
 const rawRepos = require('../data/repositories');
 const rawUsers = require('../data/users');
 
-const getData = () => {
+const getData = async () => {
+    const rawSpamRepos = await csv(path.join(__dirname, '../data/spam_repos.csv'));
+    const SpamRepos = rawSpamRepos.map(repo => {
+        return {
+            id: parseInt(repo['\uFEFFRepo ID']),
+            verified: repo['Verified?'] === 'checked',
+            permitted: repo['Permitted?'] === 'checked',
+        };
+    });
+
     const PRs = rawPRs.map(pr => new PR(pr)).uniqueBy(pr => pr.id);
     const Repos = rawRepos.map(repo => new Repo(repo)).uniqueBy(repo => repo.id);
     const Users = rawUsers.map(user => new User(user)).uniqueBy(user => user.id);
 
     PRs.forEach(pr => pr.findRelations(Users, Repos));
-    Repos.forEach(repo => repo.findRelations(Users, PRs));
+    Repos.forEach(repo => repo.findRelations(Users, PRs, SpamRepos));
     Users.forEach(user => user.findRelations(PRs));
 
-    return { PRs, Repos, Users };
+    return { PRs, Repos, Users, SpamRepos };
 };
 
-const main = () => {
+const main = async () => {
     /* eslint no-unused-vars: "off" */
-    const { PRs, Repos, Users } = getData();
+    const { PRs, Repos, Users, SpamRepos } = await getData();
 
     /***************
      * PR Stats
@@ -36,10 +47,16 @@ const main = () => {
     const totalValidPRs = ValidPRs.length;
     const InvalidPRs = PRs.filter(pr => pr.invalid());
     const totalInvalidPRs = InvalidPRs.length;
+    const InvalidRepoPRs = PRs.filter(pr => pr.invalid_repo());
+    const totalInvalidRepoPRs = InvalidRepoPRs.length;
+    const InvalidLabelPRs = PRs.filter(pr => pr.invalid_label());
+    const totalInvalidLabelPRs = InvalidLabelPRs.length;
     console.log('');
     console.log(`Total PRs: ${totalPRs}`);
     console.log(`  Valid PRs: ${totalValidPRs} (${(totalValidPRs / totalPRs * 100).toFixed(2)}%)`);
     console.log(`  Invalid PRs: ${totalInvalidPRs} (${(totalInvalidPRs / totalPRs * 100).toFixed(2)}%)`);
+    console.log(`    Invalid (excluded repo) PRs: ${totalInvalidRepoPRs} (${(totalInvalidRepoPRs / totalPRs * 100).toFixed(2)}%)`);
+    console.log(`    Invalid (labeled invalid) PRs: ${totalInvalidLabelPRs} (${(totalInvalidLabelPRs / totalPRs * 100).toFixed(2)}%)`);
 
     // Breaking down PRs by language, other tags
     const PRsByLanguage = ValidPRs.groupBy(pr => pr.base.repo.language);
@@ -98,13 +115,27 @@ const main = () => {
     // "Connections made" First time PRs to a project, and not first time PRs
     // We only have relevant PR data, this would need massive abuse of the GH API to determine
 
+    // Total: Repos and invalid repos
+    const totalRepos = Repos.length;
+    const ValidRepos = Repos.filter(repo => !repo.invalid);
+    const totalValidRepos = ValidRepos.length;
+    const InvalidRepos = Repos.filter(repo => repo.invalid);
+    const totalInvalidRepos = InvalidRepos.length;
+    const PermittedRepos = Repos.filter(repo => repo.permitted);
+    const totalPermittedRepos = PermittedRepos.length;
+    console.log('');
+    console.log(`Total repos: ${totalRepos}`);
+    console.log(`  Valid repos: ${totalValidRepos} (${(totalValidRepos / totalRepos * 100).toFixed(2)}%)`);
+    console.log(`    Reported but approved repos: ${totalPermittedRepos} (${(totalPermittedRepos / totalRepos * 100).toFixed(2)}%)`);
+    console.log(`  Invalid (excluded) repos: ${totalInvalidRepos} (${(totalInvalidRepos / totalRepos * 100).toFixed(2)}%)`);
+
     // Breaking down repos by language
     const ReposByLanguage = Repos.groupBy(repo => repo.language);
     console.log('');
     console.log(`Repos by language: ${Object.keys(ReposByLanguage).length} languages`);
     ReposByLanguage.forEach((key, val) => {
         key = key === 'null' ? 'Undetermined' : key;
-        console.log(`  ${key}: ${val.length} (${(val.length / Repos.length * 100).toFixed(2)}%)`);
+        console.log(`  ${key}: ${val.length} (${(val.length / totalRepos * 100).toFixed(2)}%)`);
     });
 
     // Projects by popularity, contributors, stars (repo metadata)

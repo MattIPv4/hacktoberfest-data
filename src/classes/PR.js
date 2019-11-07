@@ -33,10 +33,17 @@ class PR extends JSONObject {
         });
     }
 
-    invalid() {
+    invalid_repo() {
+        return this.base.repo.invalid;
+    }
+
+    invalid_label() {
         const invalidLabels = this.labels.filter(label => label.name.toLowerCase().trim() === "invalid");
         return !!invalidLabels.length;
+    }
 
+    invalid() {
+        return this.invalid_repo() || this.invalid_label();
     }
 
     valid() {
