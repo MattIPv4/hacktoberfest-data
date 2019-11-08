@@ -8,4 +8,9 @@ const getDateArray = (start, end) => {
     return arr;
 };
 
-module.exports = { getDateArray };
+function dateFromDay(year, day){
+    const date = new Date(year, 0); // initialize a date in `year-01-01`
+    return new Date(date.setDate(day)); // add the number of days
+}
+
+module.exports = { getDateArray, dateFromDay };

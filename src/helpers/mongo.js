@@ -5,7 +5,7 @@ const connect = () => {
     return new Promise((resolve, reject) => {
         MongoClient.connect(url, function (err, db) {
             if (err) return reject(err);
-            resolve(db.db('hacktoberfest-prod-sample'));
+            resolve(db);
         });
     });
 };
