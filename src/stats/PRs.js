@@ -3,16 +3,46 @@ const chart = require('../helpers/chart');
 const linguist = require('../helpers/linguist');
 const { getDateArray } = require('../helpers/date');
 
-module.exports = async data => {
-    const { PRs } = data;
-
+module.exports = async db => {
     /***************
      * PR Stats
      ***************/
     console.log('\n\n----\nPR Stats\n----');
 
     // Total PRs and invalid PRs
-    const totalPRs = PRs.length;
+    const totalPRs = await db.collection('pull_requests').find({}).count();
+    console.log(totalPRs);
+
+    const totalInvalidPRs = await db.collection('pull_requests').aggregate([
+        {
+            '$lookup':
+                {
+                    from: 'repositories',
+                    localField: 'base.repo.id',
+                    foreignField: 'id',
+                    as: 'repository'
+                }
+        },
+        {
+            '$lookup':
+                {
+                    from: 'spam_repositories',
+                    localField: 'repository.id',
+                    foreignField: 'Repo ID',
+                    as: 'spam'
+                }
+        },
+        { '$match': { '$or': [{ "labels.name": "invalid" }, { 'spam.Verified?': 'checked' }] } },
+        //{ '$group': { _id: null, count: { '$sum': 1 } } }, // Get the total count?
+        //{ '$facet': { totalCount: [{ $count: 'count' }] } } // Get the total count?
+    ]).limit(1).toArray();
+    console.log(totalInvalidPRs[0]);
+    console.log('after');
+
+    const totalValidPRs = await db.collection('pull_requests').find({ "labels.name": { "$not": { "$eq": "invalid" } } }).count();
+    console.log(totalValidPRs);
+
+    /*
     const ValidPRs = PRs.filter(pr => pr.valid());
     const totalValidPRs = ValidPRs.length;
     const InvalidPRs = PRs.filter(pr => pr.invalid());
@@ -58,7 +88,7 @@ module.exports = async data => {
             const PRsByDate = data[1].groupBy(pr => pr.date().toDateString());
             const PRData = dates.map(date => {
                 const dateString = date.toDateString();
-                return { x: date, y:  dateString in PRsByDate ? PRsByDate[dateString].length : 0 };
+                return { x: date, y: dateString in PRsByDate ? PRsByDate[dateString].length : 0 };
             }).sort((a, b) => {
                 return b.x - a.x;
             });
@@ -79,4 +109,5 @@ module.exports = async data => {
     PRsByChanges.limit(5).forEach(pr => {
         console.log(`  ${pr.changes()} | ${pr.html_url}`);
     });
+    */
 };
