@@ -1,5 +1,6 @@
 const path = require('path');
 const chart = require('../helpers/chart');
+const linguist = require('../helpers/linguist');
 const { getDateArray } = require('../helpers/date');
 
 module.exports = async data => {
@@ -34,6 +35,7 @@ module.exports = async data => {
     PRsByLanguage.forEach((key, val) => {
         console.log(`  ${key}: ${val.length} (${(val.length / totalPRs * 100).toFixed(2)}%)`);
     });
+    await linguist.load();
     chart.save(path.join(__dirname, '../../imgs/prs_by_language_doughnut.png'),
         await chart.render(chart.config(1000, 1000, [{
             type: 'doughnut',
@@ -45,6 +47,7 @@ module.exports = async data => {
                 return {
                     y: data[1].length,
                     indexLabel: `${data[0]}\n${(data[1].length / totalPRs * 100).toFixed(1)}%`,
+                    color: linguist.get(data[0]),
                 };
             }),
         }])),
@@ -64,6 +67,7 @@ module.exports = async data => {
                 name: data[0],
                 showInLegend: true,
                 dataPoints: PRData,
+                color: linguist.get(data[0]),
             };
         }))),
     );
