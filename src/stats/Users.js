@@ -1,3 +1,7 @@
+const path = require('path');
+const chart = require('../helpers/chart');
+const linguist = require('../helpers/linguist');
+
 module.exports = async data => {
     const { Users } = data;
 
@@ -25,10 +29,29 @@ module.exports = async data => {
     console.log(`  Users with invalid PRs that also won: ${invalidAndWinnerUsers.length} (${(invalidAndWinnerUsers.length / Users.length * 100).toFixed(2)}%)`);
 
     // Breaking down users by language
-    const UsersByLanguage = Users.groupBy(user => user.prs.map(pr => pr.languageString()).mode());
+    const UsersByLanguage = Users.groupBy(user => user.prs.map(pr => pr.languageString()).mode() || 'Undetermined');
     console.log('');
     console.log(`Users by language: ${Object.keys(UsersByLanguage).length} languages`);
     UsersByLanguage.forEach((key, val) => {
         console.log(`  ${key}: ${val.length} (${(val.length / Users.length * 100).toFixed(2)}%)`);
     });
+    await linguist.load();
+    chart.save(path.join(__dirname, '../../imgs/users_by_language_stacked.png'),
+        await chart.render(chart.config(1000, 500, Object.entries(UsersByLanguage).sort((a, b) => {
+            return b[1].length - a[1].length;
+        }).limit(5).map(data => {
+            return {
+                type: 'stackedBar100',
+                indexLabelPlacement: 'inside',
+                indexLabelFontSize: 22,
+                indexLabelFontColor: chart.colors.white,
+                indexLabelFontFamily: 'monospace',
+                indexLabel: `${(data[1].length / Users.length * 100).toFixed(1)}%`,
+                name: data[0],
+                showInLegend: true,
+                color: linguist.get(data[0]) || chart.colors.lightBox,
+                dataPoints: [{ y: data[1].length }],
+            };
+        }))),
+    );
 };
