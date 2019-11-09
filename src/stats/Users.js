@@ -109,14 +109,16 @@ module.exports = async db => {
             }
 
             return result;
-        }, { '10+ PRs': [0, chart.colors.purple, 11] })).map(data => {
-            return {
-                y: data[1][0],
-                x: data[1][2],
-                color: data[1][1],
-                label: data[0]
-            }
-        })
+        }, { '10+ PRs': [0, chart.colors.purple, 11] }))
+            .map(data => {
+                return {
+                    y: data[1][0],
+                    color: data[1][1],
+                    order: data[1][2], // Ordering
+                    label: data[0], // Display
+                }
+            })
+            .sort((a, b) => a.order - b.order),
     }]);
     totalUsersByPRsConfig.title = {
         text: 'Users: Valid Pull Requests',
