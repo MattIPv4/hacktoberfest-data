@@ -3,7 +3,6 @@ require('../prototypes');
 const path = require('path');
 const number = require('../helpers/number');
 const chart = require('../helpers/chart');
-const linguist = require('../helpers/linguist');
 
 module.exports = async db => {
 
@@ -18,62 +17,55 @@ module.exports = async db => {
             '$match': { 'labels.name': { '$nin': [ 'invalid' ] } },
         },
         {
-            '$group':
-                {
-                    _id: '$base.repo.id',
-                    users: { '$push': {user: '$user.id'} },
-                }
+            '$group': {
+                _id: '$base.repo.id',
+                users: { '$push': {user: '$user.id'} },
+            },
         },
         {
-            '$lookup':
-                {
-                    from: 'repositories',
-                    localField: '_id',
-                    foreignField: 'id',
-                    as: 'repository',
-                }
+            '$lookup': {
+                from: 'repositories',
+                localField: '_id',
+                foreignField: 'id',
+                as: 'repository',
+            },
         },
         {
-            '$project':
-                {
-                    users: '$users',
-                    repository: { '$arrayElemAt': [ '$repository', 0 ] },
-                }
+            '$project': {
+                users: '$users',
+                repository: { '$arrayElemAt': [ '$repository', 0 ] },
+            },
         },
         {
-            '$lookup':
-                {
-                    from: 'spam_repositories',
-                    localField: 'repository.id',
-                    foreignField: 'Repo ID',
-                    as: 'spam'
-                }
+            '$lookup': {
+                from: 'spam_repositories',
+                localField: 'repository.id',
+                foreignField: 'Repo ID',
+                as: 'spam',
+            },
         },
         {
             '$match': { 'spam.Verified?': { '$nin': [ 'checked' ] } },
         },
         {
-            '$project':
-                {
-                    users: '$users.user',
-                }
+            '$project': {
+                users: '$users.user',
+            },
         },
         {
             '$unwind': '$users',
         },
         {
-            '$group':
-                {
-                    _id: '$users',
-                    count: { '$sum': 1 },
-                }
+            '$group': {
+                _id: '$users',
+                count: { '$sum': 1 },
+            },
         },
         {
-            '$group':
-                {
-                    _id: '$count',
-                    count: { '$sum': 1 },
-                }
+            '$group': {
+                _id: '$count',
+                count: { '$sum': 1 },
+            },
         },
     ], { allowDiskUse: true }).toArray();
     const totalUsersWithPRs = totalUsersByPRs.map(score => score['_id'] > 0 ? score.count : 0).sum();
@@ -116,7 +108,7 @@ module.exports = async db => {
                     color: data[1][1],
                     order: data[1][2], // Ordering
                     label: data[0], // Display
-                }
+                };
             })
             .sort((a, b) => a.order - b.order),
     }]);

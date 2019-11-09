@@ -20,13 +20,12 @@ module.exports = async db => {
     // TODO: Check Hacktoberfest app to see how lax "invalid" checking was (trimmed?, lower-cased?)
     const totalInvalidRepoPRs = (await db.collection('pull_requests').aggregate([
         {
-            '$lookup':
-                {
-                    from: 'spam_repositories',
-                    localField: 'base.repo.id',
-                    foreignField: 'Repo ID',
-                    as: 'spam'
-                }
+            '$lookup': {
+                from: 'spam_repositories',
+                localField: 'base.repo.id',
+                foreignField: 'Repo ID',
+                as: 'spam',
+            },
         },
         { '$match': { 'spam.Verified?': 'checked' } },
         { '$group': { _id: null, count: { '$sum': 1 } } },
@@ -43,33 +42,25 @@ module.exports = async db => {
     // Breaking down PRs by language, other tags
     const totalPRsByLanguage = await db.collection('pull_requests').aggregate([
         {
-            '$lookup':
-                {
-                    from: 'repositories',
-                    localField: 'base.repo.id',
-                    foreignField: 'id',
-                    as: 'repository'
-                }
+            '$lookup': {
+                from: 'repositories',
+                localField: 'base.repo.id',
+                foreignField: 'id',
+                as: 'repository',
+            },
         },
         {
-            '$project':
-                {
-                    repository: { '$arrayElemAt': [ '$repository', 0 ] },
-                }
+            '$project': {
+                repository: { '$arrayElemAt': [ '$repository', 0 ] },
+            },
         },
         {
-            '$group':
-                {
-                    _id: '$repository.language',
-                    count: { '$sum': 1 }
-                }
+            '$group': {
+                _id: '$repository.language',
+                count: { '$sum': 1 },
+            },
         },
-        {
-            '$sort':
-                {
-                    count: -1,
-                }
-        },
+        { '$sort': { count: -1 } },
     ]).toArray();
     console.log('');
     console.log(`PRs by language: ${number.commas(totalPRsByLanguage.length)} languages`);
@@ -121,48 +112,37 @@ module.exports = async db => {
 
     const totalPRsByDayByLanguage = await db.collection('pull_requests').aggregate([
         {
-            '$lookup':
-                {
-                    from: 'repositories',
-                    localField: 'base.repo.id',
-                    foreignField: 'id',
-                    as: 'repository'
-                }
+            '$lookup': {
+                from: 'repositories',
+                localField: 'base.repo.id',
+                foreignField: 'id',
+                as: 'repository',
+            },
         },
         {
-            '$set':
-                {
-                    repository: { '$arrayElemAt': [ '$repository', 0 ] },
-                    day: { '$dayOfYear': { '$dateFromString': { dateString: '$created_at' } } },
-                }
+            '$set': {
+                repository: { '$arrayElemAt': [ '$repository', 0 ] },
+                day: { '$dayOfYear': { '$dateFromString': { dateString: '$created_at' } } },
+            },
         },
         {
-            '$group':
-                {
-                    _id: {
-                        language: '$repository.language',
-                        day: '$day',
-                    },
-                    count: { '$sum': 1 }
-                }
+            '$group': {
+                _id: {
+                    language: '$repository.language',
+                    day: '$day',
+                },
+                count: { '$sum': 1 },
+            },
         },
         {
-            '$group':
-                {
-                    _id: '$_id.language',
-                    data: { '$push': {count: '$count', day: '$_id.day'} },
-                    count: { '$sum': '$count' }
-                }
+            '$group': {
+                _id: '$_id.language',
+                data: { '$push': {count: '$count', day: '$_id.day'} },
+                count: { '$sum': '$count' },
+            },
         },
-        {
-            '$sort':
-                {
-                    count: -1,
-                }
-        },
-        {
-            '$limit': 10,
-        },
+        { '$sort': { count: -1 } },
+        { '$limit': 10 },
     ]).toArray();
     const totalPRsByDayByLanguageConfig = chart.config(2500, 1000, totalPRsByDayByLanguage.map(data => {
         const name = data['_id'] || 'Undetermined';
@@ -191,7 +171,7 @@ module.exports = async db => {
         tickThickness: 0,
         labelFormatter: () => {
             return '';
-        }
+        },
     };
     totalPRsByDayByLanguageConfig.title = {
         text: 'PRs: Top 10 Languages',
@@ -210,20 +190,12 @@ module.exports = async db => {
     // Lines of code per PR
     const PRsByChanges = await db.collection('pull_requests').aggregate([
         {
-            '$set':
-                {
-                    changes: { '$add': [ '$additions', '$deletions' ] },
-                }
+            '$set': {
+                changes: { '$add': [ '$additions', '$deletions' ] },
+            },
         },
-        {
-            '$sort':
-                {
-                    changes: -1,
-                }
-        },
-        {
-            '$limit': 10,
-        },
+        { '$sort': { changes: -1 } },
+        { '$limit': 10 },
     ]).toArray();
     console.log('');
     console.log('Largest changes in a PR:');
@@ -234,27 +206,18 @@ module.exports = async db => {
     // Breaking down PRs by day
     const totalPRsByDay = await db.collection('pull_requests').aggregate([
         {
-            '$set':
-                {
-                    day: { '$dayOfYear': { '$dateFromString': { dateString: '$created_at' } } },
-                }
+            '$set': {
+                day: { '$dayOfYear': { '$dateFromString': { dateString: '$created_at' } } },
+            },
         },
         {
-            '$group':
-                {
-                    _id: '$day',
-                    count: { '$sum': 1 }
-                }
+            '$group': {
+                _id: '$day',
+                count: { '$sum': 1 },
+            },
         },
-        {
-            '$sort':
-                {
-                    count: -1,
-                }
-        },
-        {
-            '$limit': 10,
-        },
+        { '$sort': { count: -1 } },
+        { '$limit': 10 },
     ]).toArray();
     console.log('');
     console.log('Top days by PRs:');

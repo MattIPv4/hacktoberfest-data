@@ -1,4 +1,5 @@
 const getDateArray = (start, end) => {
+    // Thanks https://stackoverflow.com/a/4413721
     const arr = [];
     const dt = new Date(start);
     while (dt <= end) {
@@ -8,23 +9,25 @@ const getDateArray = (start, end) => {
     return arr;
 };
 
-function dateFromDay(year, day){
-    const date = new Date(year, 0); // initialize a date in `year-01-01`
-    return new Date(date.setDate(day)); // add the number of days
-}
+const dateFromDay = (year, day) => {
+    // Thanks https://stackoverflow.com/a/4049020
+    const date = new Date(year, 0);
+    return new Date(date.setDate(day));
+};
 
-function formatDate(date) {
+const formatDate = date => {
+    // Thanks https://stackoverflow.com/a/3552493
     const monthNames = [
-        "January", "February", "March",
-        "April", "May", "June", "July",
-        "August", "September", "October",
-        "November", "December"
+        'January', 'February', 'March',
+        'April', 'May', 'June', 'July',
+        'August', 'September', 'October',
+        'November', 'December',
     ];
 
     const day = date.getDate();
     const monthIndex = date.getMonth();
 
     return `${monthNames[monthIndex]} ${day}`;
-}
+};
 
 module.exports = { getDateArray, dateFromDay, formatDate };

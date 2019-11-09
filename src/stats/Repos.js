@@ -17,13 +17,12 @@ module.exports = async db => {
     const totalRepos = await db.collection('repositories').find({}).count();
     const totalInvalidRepos = (await db.collection('repositories').aggregate([
         {
-            '$lookup':
-                {
-                    from: 'spam_repositories',
-                    localField: 'id',
-                    foreignField: 'Repo ID',
-                    as: 'spam'
-                }
+            '$lookup': {
+                from: 'spam_repositories',
+                localField: 'id',
+                foreignField: 'Repo ID',
+                as: 'spam',
+            },
         },
         { '$match': { 'spam.Verified?': 'checked' } },
         { '$group': { _id: null, count: { '$sum': 1 } } },
@@ -31,13 +30,12 @@ module.exports = async db => {
     const totalValidRepos = totalRepos - totalInvalidRepos;
     const totalPermittedRepos = (await db.collection('repositories').aggregate([
         {
-            '$lookup':
-                {
-                    from: 'spam_repositories',
-                    localField: 'id',
-                    foreignField: 'Repo ID',
-                    as: 'spam'
-                }
+            '$lookup': {
+                from: 'spam_repositories',
+                localField: 'id',
+                foreignField: 'Repo ID',
+                as: 'spam',
+            },
         },
         { '$match': { 'spam.Permitted?': 'checked' } },
         { '$group': { _id: null, count: { '$sum': 1 } } },
@@ -51,18 +49,12 @@ module.exports = async db => {
     // Breaking down repos by language
     const totalReposByLanguage = await db.collection('repositories').aggregate([
         {
-            '$group':
-                {
-                    _id: '$language',
-                    count: { '$sum': 1 }
-                }
+            '$group': {
+                _id: '$language',
+                count: { '$sum': 1 },
+            },
         },
-        {
-            '$sort':
-                {
-                    count: -1,
-                }
-        }
+        { '$sort': { count: -1 } },
     ]).toArray();
     console.log('');
     console.log(`Repos by language: ${totalReposByLanguage.length} languages`);
@@ -117,52 +109,41 @@ module.exports = async db => {
             '$match': { 'labels.name': { '$nin': [ 'invalid' ] } },
         },
         {
-            '$group':
-                {
-                    _id: '$base.repo.id',
-                    count: { '$sum': 1 },
-                }
+            '$group': {
+                _id: '$base.repo.id',
+                count: { '$sum': 1 },
+            },
         },
         {
             '$match': { '_id': { '$ne': null } },
         },
         {
-            '$lookup':
-                {
-                    from: 'repositories',
-                    localField: '_id',
-                    foreignField: 'id',
-                    as: 'repository',
-                }
+            '$lookup': {
+                from: 'repositories',
+                localField: '_id',
+                foreignField: 'id',
+                as: 'repository',
+            },
         },
         {
-            '$project':
-                {
-                    count: '$count',
-                    repository: { '$arrayElemAt': [ '$repository', 0 ] },
-                }
+            '$project': {
+                count: '$count',
+                repository: { '$arrayElemAt': [ '$repository', 0 ] },
+            },
         },
         {
-            '$lookup':
-                {
-                    from: 'spam_repositories',
-                    localField: 'repository.id',
-                    foreignField: 'Repo ID',
-                    as: 'spam'
-                }
+            '$lookup': {
+                from: 'spam_repositories',
+                localField: 'repository.id',
+                foreignField: 'Repo ID',
+                as: 'spam',
+            },
         },
         {
             '$match': { 'spam.Verified?': { '$nin': [ 'checked' ] } },
         },
-        {
-            '$sort':
-                {
-                    count: -1,
-                }
-        },
-        {
-            '$limit': 10,
-        },
+        { '$sort': { count: -1 } },
+        { '$limit': 10 },
     ]).toArray();
     console.log('');
     console.log('Top repos by PRs');

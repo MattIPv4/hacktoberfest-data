@@ -4,6 +4,6 @@ Array.prototype.limit = function (limit) {
 
 Array.prototype.sum = function () {
     return this.reduce((a, b) => {
-        return a + b
+        return a + b;
     }, 0);
 };
