@@ -103,69 +103,31 @@ module.exports = async db => {
             }
 
             if (item['_id'] > 10) {
-                result['10+'][0] += item.count;
+                result['10+ PRs'][0] += item.count;
             } else {
-                result[item['_id']] = [item.count, color];
+                result[`${item['_id']} PR${item['_id'] === 1 ? '' : 's'}`] = [item.count, color, item['_id']];
             }
 
             return result;
-        }, { '10+': [0, chart.colors.purple] })).map(data => {
+        }, { '10+ PRs': [0, chart.colors.purple, 11] })).map(data => {
             return {
                 y: data[1][0],
+                x: data[1][2],
                 color: data[1][1],
                 label: data[0]
             }
         })
     }]);
+    totalUsersByPRsConfig.title = {
+        text: 'Users: Valid Pull Requests',
+        fontColor: chart.colors.text,
+        fontFamily: 'monospace',
+        padding: 5,
+        verticalAlign: 'top',
+        horizontalAlign: 'center',
+    };
     chart.save(
         path.join(__dirname, '../../images/users_by_prs_column.png'),
         await chart.render(totalUsersByPRsConfig),
     );
-    // TODO: needs title & better labels
-
-
-    /*// Repeat engagement, year over year, or any time in past
-    // TODO: Not sure how I can do this with just data from this year?
-
-    // Number of users who made first PRs
-    // We only have relevant PR data, this would need massive abuse of the GH API to determine
-
-    // Stats on invalid PRs, how many people were repeat spammers
-    const winnerUsers = Users.filter(user => user.won());
-    const singleInvalidUsers = Users.filter(user => user.prs.filter(pr => pr.invalid()).length === 1);
-    const repeatedInvalidUsers = Users.filter(user => user.prs.filter(pr => pr.invalid()).length >= 1);
-    const invalidAndWinnerUsers = Users.filter(user => user.won() && user.prs.filter(pr => pr.invalid()).length);
-    console.log('');
-    console.log(`Total Users: ${Users.length}`);
-    console.log(`  Users that won (4+ PRs): ${winnerUsers.length} (${(winnerUsers.length / Users.length * 100).toFixed(2)}%)`);
-    console.log(`  Users with 1 invalid PR: ${singleInvalidUsers.length} (${(singleInvalidUsers.length / Users.length * 100).toFixed(2)}%)`);
-    console.log(`  Users with more than 1 invalid PRs: ${repeatedInvalidUsers.length} (${(repeatedInvalidUsers.length / Users.length * 100).toFixed(2)}%)`);
-    console.log(`  Users with invalid PRs that also won: ${invalidAndWinnerUsers.length} (${(invalidAndWinnerUsers.length / Users.length * 100).toFixed(2)}%)`);
-
-    // Breaking down users by language
-    const UsersByLanguage = Users.groupBy(user => user.prs.map(pr => pr.languageString()).mode() || 'Undetermined');
-    console.log('');
-    console.log(`Users by language: ${Object.keys(UsersByLanguage).length} languages`);
-    UsersByLanguage.forEach((key, val) => {
-        console.log(`  ${key}: ${val.length} (${(val.length / Users.length * 100).toFixed(2)}%)`);
-    });
-    await linguist.load();
-    chart.save(path.join(__dirname, '../../imgs/users_by_language_stacked.png'),
-        await chart.render(chart.config(1000, 500, Object.entries(UsersByLanguage).sort((a, b) => {
-            return b[1].length - a[1].length;
-        }).limit(5).map(data => {
-            return {
-                type: 'stackedBar100',
-                indexLabelPlacement: 'inside',
-                indexLabelFontSize: 22,
-                indexLabelFontColor: chart.colors.white,
-                indexLabelFontFamily: 'monospace',
-                indexLabel: `${(data[1].length / Users.length * 100).toFixed(1)}%`,
-                name: data[0],
-                showInLegend: true,
-                color: linguist.get(data[0]) || chart.colors.lightBox,
-                dataPoints: [{ y: data[1].length }],
-            };
-        }))),
-    );*/
 };

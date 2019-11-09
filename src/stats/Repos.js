@@ -13,9 +13,6 @@ module.exports = async db => {
     console.log('\n\n----\nRepo Stats\n----');
     await linguist.load();
 
-    // "Connections made" First time PRs to a project, and not first time PRs
-    // We only have relevant PR data, this would need massive abuse of the GH API to determine
-
     // Total: Repos and invalid repos
     const totalRepos = await db.collection('repositories').find({}).count();
     const totalInvalidRepos = (await db.collection('repositories').aggregate([
@@ -77,17 +74,19 @@ module.exports = async db => {
     const totalReposByLanguageConfig = chart.config(1000, 1000, [{
         type: 'doughnut',
         indexLabelPlacement: 'inside',
-        indexLabelFontSize: 22,
         indexLabelFontFamily: 'monospace',
         dataPoints: totalReposByLanguage.limit(10).map(data => {
             const name = data['_id'] || 'Undetermined';
             const dataColor = linguist.get(name) || chart.colors.lightBox;
+            const displayName = name === 'TypeScript' ? 'TS' : name; // TypeScript causes length/overlap issues
+            const percent = data.count / totalRepos * 100;
             doughnutTotal += data.count;
             return {
                 y: data.count,
-                indexLabel: `${name}\n${(data.count / totalRepos * 100).toFixed(1)}%`,
+                indexLabel: `${displayName}\n${percent.toFixed(1)}%`,
                 color: dataColor,
                 indexLabelFontColor: color.isBright(dataColor) ? chart.colors.background : chart.colors.white,
+                indexLabelFontSize: percent > 10 ? 28 : percent > 5 ? 24 : percent > 4 ? 22 : 20,
             };
         }),
     }]);
@@ -96,6 +95,7 @@ module.exports = async db => {
         indexLabel: `Others\n${((totalRepos - doughnutTotal) / totalRepos * 100).toFixed(1)}%`,
         color: chart.colors.darkBox,
         indexLabelFontColor: chart.colors.white,
+        indexLabelFontSize: 28,
     });
     totalReposByLanguageConfig.title = {
         text: 'Repos: Top 10 Languages',
@@ -193,7 +193,4 @@ module.exports = async db => {
     topReposByWatchers.forEach(repo => {
         console.log(`  ${number.commas(repo.watchers_count)} | ${repo.html_url}`);
     });
-
-    // Histogram breakdown by gitignores in repos
-    // TODO: This will need API calls or Octokit to get gitignores
 };

@@ -1,6 +1,6 @@
 const statsGenerators = [
-    //require('./PRs'),
-    //require('./Repos'),
+    require('./PRs'),
+    require('./Repos'),
     require('./Users'),
 ];
 

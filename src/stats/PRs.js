@@ -86,12 +86,15 @@ module.exports = async db => {
         dataPoints: totalPRsByLanguage.limit(10).map(data => {
             const name = data['_id'] || 'Undetermined';
             const dataColor = linguist.get(name) || chart.colors.lightBox;
+            const displayName = name === 'TypeScript' ? 'TS' : name; // TypeScript causes length/overlap issues
+            const percent = data.count / totalPRs * 100;
             doughnutTotal += data.count;
             return {
                 y: data.count,
-                indexLabel: `${name}\n${(data.count / totalPRs * 100).toFixed(1)}%`,
+                indexLabel: `${displayName}\n${percent.toFixed(1)}%`,
                 color: dataColor,
                 indexLabelFontColor: color.isBright(dataColor) ? chart.colors.background : chart.colors.white,
+                indexLabelFontSize: percent > 10 ? 28 : percent > 5 ? 24 : percent > 4 ? 22 : 20,
             };
         }),
     }]);
@@ -100,6 +103,7 @@ module.exports = async db => {
         indexLabel: `Others\n${((totalPRs - doughnutTotal) / totalPRs * 100).toFixed(1)}%`,
         color: chart.colors.darkBox,
         indexLabelFontColor: chart.colors.white,
+        indexLabelFontSize: 28,
     });
     totalPRsByLanguageConfig.title = {
         text: 'PRs: Top 10 Languages',
@@ -179,7 +183,7 @@ module.exports = async db => {
             showInLegend: true,
             dataPoints: PRData,
             lineThickness: 3,
-            color: linguist.get(name) || chart.colors.lightBox,
+            color: linguist.get(name) || chart.colors.light,
         };
     }));
     totalPRsByDayByLanguageConfig.axisX = {
@@ -190,7 +194,7 @@ module.exports = async db => {
         }
     };
     totalPRsByDayByLanguageConfig.title = {
-        text: 'PRs: Top 10 Languages Per Day',
+        text: 'PRs: Top 10 Languages',
         fontColor: chart.colors.text,
         fontFamily: 'monospace',
         padding: 5,

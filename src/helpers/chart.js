@@ -7,6 +7,7 @@ const colors = {
     background: '#152347',
     darkBox: '#1D2C4E',
     lightBox: '#37476F',
+    light: '#5A688C', // mix(lightBox, text, 25%);
     text: '#C3CCE2',
     white: '#FFFFFF',
     cyan: '#92EAFF',
