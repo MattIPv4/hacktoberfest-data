@@ -124,4 +124,76 @@ module.exports = async db => {
         path.join(__dirname, '../../images/users_by_prs_column.png'),
         await chart.render(totalUsersByPRsConfig),
     );
+
+    const topUsersByPRs = await db.collection('pull_requests').aggregate([
+        {
+            '$match': { 'labels.name': { '$nin': [ 'invalid' ] } },
+        },
+        {
+            '$group': {
+                _id: '$base.repo.id',
+                users: { '$push': {user: '$user.id'} },
+            },
+        },
+        {
+            '$lookup': {
+                from: 'repositories',
+                localField: '_id',
+                foreignField: 'id',
+                as: 'repository',
+            },
+        },
+        {
+            '$project': {
+                users: '$users',
+                repository: { '$arrayElemAt': [ '$repository', 0 ] },
+            },
+        },
+        {
+            '$lookup': {
+                from: 'spam_repositories',
+                localField: 'repository.id',
+                foreignField: 'Repo ID',
+                as: 'spam',
+            },
+        },
+        {
+            '$match': { 'spam.Verified?': { '$nin': [ 'checked' ] } },
+        },
+        {
+            '$project': {
+                users: '$users.user',
+            },
+        },
+        {
+            '$unwind': '$users',
+        },
+        {
+            '$group': {
+                _id: '$users',
+                count: { '$sum': 1 },
+            },
+        },
+        { '$sort': { count: -1 } },
+        { '$limit': 15 },
+        {
+            '$lookup': {
+                from: 'users',
+                localField: '_id',
+                foreignField: 'id',
+                as: 'user',
+            },
+        },
+        {
+            '$project': {
+                prs: '$count',
+                user: { '$arrayElemAt': [ '$user', 0 ] },
+            },
+        },
+    ], { allowDiskUse: true }).toArray();
+    console.log('');
+    console.log('Top users by valid PRs');
+    topUsersByPRs.forEach(data => {
+        console.log(`  ${number.commas(data.prs)} | ${data.user.html_url}`);
+    });
 };
