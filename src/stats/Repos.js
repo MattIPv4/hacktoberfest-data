@@ -1,12 +1,17 @@
 require('../prototypes');
 
+const path = require('path');
 const number = require('../helpers/number');
+const chart = require('../helpers/chart');
+const linguist = require('../helpers/linguist');
+const color = require('../helpers/color');
 
 module.exports = async db => {
     /***************
      * Repo Stats
      ***************/
     console.log('\n\n----\nRepo Stats\n----');
+    await linguist.load();
 
     // "Connections made" First time PRs to a project, and not first time PRs
     // We only have relevant PR data, this would need massive abuse of the GH API to determine
@@ -68,6 +73,43 @@ module.exports = async db => {
         const name = lang['_id'] || 'Undetermined';
         console.log(`  ${name}: ${number.commas(lang.count)} (${(lang.count / totalRepos * 100).toFixed(2)}%)`);
     });
+    let doughnutTotal = 0;
+    const totalReposByLanguageConfig = chart.config(1000, 1000, [{
+        type: 'doughnut',
+        indexLabelPlacement: 'inside',
+        indexLabelFontSize: 22,
+        indexLabelFontFamily: 'monospace',
+        dataPoints: totalReposByLanguage.limit(10).map(data => {
+            const name = data['_id'] || 'Undetermined';
+            const dataColor = linguist.get(name) || chart.colors.lightBox;
+            doughnutTotal += data.count;
+            return {
+                y: data.count,
+                indexLabel: `${name}\n${(data.count / totalRepos * 100).toFixed(1)}%`,
+                color: dataColor,
+                indexLabelFontColor: color.isBright(dataColor) ? chart.colors.background : chart.colors.white,
+            };
+        }),
+    }]);
+    totalReposByLanguageConfig.data[0].dataPoints.push({
+        y: totalRepos - doughnutTotal,
+        indexLabel: `Others\n${((totalRepos - doughnutTotal) / totalRepos * 100).toFixed(1)}%`,
+        color: chart.colors.darkBox,
+        indexLabelFontColor: chart.colors.white,
+    });
+    totalReposByLanguageConfig.title = {
+        text: 'Repos: Top 10 Languages',
+        fontColor: chart.colors.text,
+        fontFamily: 'monospace',
+        padding: 5,
+        verticalAlign: 'center',
+        horizontalAlign: 'center',
+        maxWidth: 500,
+    };
+    chart.save(
+        path.join(__dirname, '../../images/repos_by_language_doughnut.png'),
+        await chart.render(totalReposByLanguageConfig),
+    );
 
     // Projects by popularity, contributors, stars (repo metadata)
     const topReposByPRs = await db.collection('pull_requests').aggregate([

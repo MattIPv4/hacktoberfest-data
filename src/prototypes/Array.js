@@ -32,3 +32,9 @@ Array.prototype.mode = function () {
     if (this.length === 0) return null;
     return this.sort((a, b) => this.filter(v => v === a).length - this.filter(v => v === b).length).pop();
 };
+
+Array.prototype.sum = function () {
+    return this.reduce(function(a,b){
+        return a + b
+    }, 0);
+};

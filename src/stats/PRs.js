@@ -77,6 +77,7 @@ module.exports = async db => {
         const name = group['_id'] || 'Undetermined';
         console.log(`  ${name}: ${number.commas(group.count)} (${(group.count / totalPRs * 100).toFixed(2)}%)`);
     });
+    let doughnutTotal = 0;
     const totalPRsByLanguageConfig = chart.config(1000, 1000, [{
         type: 'doughnut',
         indexLabelPlacement: 'inside',
@@ -85,14 +86,21 @@ module.exports = async db => {
         dataPoints: totalPRsByLanguage.limit(10).map(data => {
             const name = data['_id'] || 'Undetermined';
             const dataColor = linguist.get(name) || chart.colors.lightBox;
+            doughnutTotal += data.count;
             return {
                 y: data.count,
                 indexLabel: `${name}\n${(data.count / totalPRs * 100).toFixed(1)}%`,
                 color: dataColor,
-                indexLabelFontColor: color.isBright(dataColor) ? chart.colors.darkBox : chart.colors.white,
+                indexLabelFontColor: color.isBright(dataColor) ? chart.colors.background : chart.colors.white,
             };
         }),
     }]);
+    totalPRsByLanguageConfig.data[0].dataPoints.push({
+        y: totalPRs - doughnutTotal,
+        indexLabel: `Others\n${((totalPRs - doughnutTotal) / totalPRs * 100).toFixed(1)}%`,
+        color: chart.colors.darkBox,
+        indexLabelFontColor: chart.colors.white,
+    });
     totalPRsByLanguageConfig.title = {
         text: 'PRs: Top 10 Languages',
         fontColor: chart.colors.text,
@@ -102,9 +110,8 @@ module.exports = async db => {
         horizontalAlign: 'center',
         maxWidth: 500,
     };
-    // TODO: Represent "Other" in this using colors.darkBox, so the percentages add up to 100%
     chart.save(
-        path.join(__dirname, '../../imgs/prs_by_language_doughnut.png'),
+        path.join(__dirname, '../../images/prs_by_language_doughnut.png'),
         await chart.render(totalPRsByLanguageConfig),
     );
 
@@ -172,9 +179,9 @@ module.exports = async db => {
             showInLegend: true,
             dataPoints: PRData,
             lineThickness: 3,
-            color: linguist.get(name) || chart.colors.darkBox,
+            color: linguist.get(name) || chart.colors.lightBox,
         };
-    }), true);
+    }));
     totalPRsByDayByLanguageConfig.axisX = {
         ...totalPRsByDayByLanguageConfig.axisX,
         tickThickness: 0,
@@ -184,14 +191,15 @@ module.exports = async db => {
     };
     totalPRsByDayByLanguageConfig.title = {
         text: 'PRs: Top 10 Languages Per Day',
-        fontColor: chart.colors.background,
+        fontColor: chart.colors.text,
         fontFamily: 'monospace',
         padding: 5,
         verticalAlign: 'top',
         horizontalAlign: 'center',
     };
+    totalPRsByDayByLanguageConfig.backgroundColor = chart.colors.dark;
     chart.save(
-        path.join(__dirname, '../../imgs/prs_by_language_spline.png'),
+        path.join(__dirname, '../../images/prs_by_language_spline.png'),
         await chart.render(totalPRsByDayByLanguageConfig),
     );
 

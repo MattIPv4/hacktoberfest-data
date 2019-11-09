@@ -3,6 +3,7 @@ const jsdom = require('jsdom');
 const { JSDOM } = jsdom;
 
 const colors = {
+    dark: '#050912', // mix(background, #000, 25%);
     background: '#152347',
     darkBox: '#1D2C4E',
     lightBox: '#37476F',
@@ -15,12 +16,12 @@ const colors = {
     purple: '#A11EC6',
 };
 
-const config = (width, height, data, light) => {
+const config = (width, height, data) => {
     const axis = {
-        gridColor: light ? colors.background : colors.lightBox,
-        lineColor: light ? colors.background : colors.lightBox,
-        tickColor: light ? colors.background : colors.lightBox,
-        labelFontColor: light ? colors.background : colors.text,
+        gridColor: colors.lightBox,
+        lineColor: colors.lightBox,
+        tickColor: colors.lightBox,
+        labelFontColor: colors.text,
         labelFontWeight: 'bold',
         labelFontFamily: 'monospace',
     };
@@ -28,11 +29,11 @@ const config = (width, height, data, light) => {
         width,
         height,
         theme: 'dark2',
-        backgroundColor: light ? colors.text : colors.background,
+        backgroundColor: colors.background,
         axisX: axis,
         axisY: axis,
         legend: {
-            fontColor: light ? colors.background : colors.text,
+            fontColor: colors.text,
             fontWeight: 'bold',
             fontFamily: 'monospace',
             horizontalAlign: 'center',

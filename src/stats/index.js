@@ -1,7 +1,7 @@
 const statsGenerators = [
-    require('./PRs'),
-    require('./Repos'),
-    //require('./Users'),
+    //require('./PRs'),
+    //require('./Repos'),
+    require('./Users'),
 ];
 
 module.exports = async db => {

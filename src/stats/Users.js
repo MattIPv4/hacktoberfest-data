@@ -1,16 +1,130 @@
+require('../prototypes');
+
 const path = require('path');
+const number = require('../helpers/number');
 const chart = require('../helpers/chart');
 const linguist = require('../helpers/linguist');
 
-module.exports = async data => {
-    const { Users } = data;
+module.exports = async db => {
 
     /***************
      * User Stats
      ***************/
     console.log('\n\n----\nUser Stats\n----');
 
-    // Repeat engagement, year over year, or any time in past
+    const totalUsers = await db.collection('users').find({}).count();
+    const totalUsersByPRs = await db.collection('pull_requests').aggregate([
+        {
+            '$match': { 'labels.name': { '$nin': [ 'invalid' ] } },
+        },
+        {
+            '$group':
+                {
+                    _id: '$base.repo.id',
+                    users: { '$push': {user: '$user.id'} },
+                }
+        },
+        {
+            '$lookup':
+                {
+                    from: 'repositories',
+                    localField: '_id',
+                    foreignField: 'id',
+                    as: 'repository',
+                }
+        },
+        {
+            '$project':
+                {
+                    users: '$users',
+                    repository: { '$arrayElemAt': [ '$repository', 0 ] },
+                }
+        },
+        {
+            '$lookup':
+                {
+                    from: 'spam_repositories',
+                    localField: 'repository.id',
+                    foreignField: 'Repo ID',
+                    as: 'spam'
+                }
+        },
+        {
+            '$match': { 'spam.Verified?': { '$nin': [ 'checked' ] } },
+        },
+        {
+            '$project':
+                {
+                    users: '$users.user',
+                }
+        },
+        {
+            '$unwind': '$users',
+        },
+        {
+            '$group':
+                {
+                    _id: '$users',
+                    count: { '$sum': 1 },
+                }
+        },
+        {
+            '$group':
+                {
+                    _id: '$count',
+                    count: { '$sum': 1 },
+                }
+        },
+    ], { allowDiskUse: true }).toArray();
+    const totalUsersWithPRs = totalUsersByPRs.map(score => score['_id'] > 0 ? score.count : 0).sum();
+    const totalWinnerUsers = totalUsersByPRs.map(score => score['_id'] >= 4 ? score.count : 0).sum();
+    console.log('');
+    console.log(`Total Users: ${number.commas(totalUsers)}`);
+    console.log(`  Users that submitted 1+ valid PR: ${number.commas(totalUsersWithPRs)} (${(totalUsersWithPRs / totalUsers * 100).toFixed(2)}%)`);
+    console.log(`  Users that won (4+ PRs): ${number.commas(totalWinnerUsers)} (${(totalWinnerUsers / totalUsers * 100).toFixed(2)}%)`);
+
+    const totalUsersByPRsConfig = chart.config(2500, 1000, [{
+        type: 'column',
+        dataPoints: Object.entries(totalUsersByPRs.reduce(function (result, item) {
+            let color;
+            switch (item['_id']) {
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                    color = chart.colors.lightBox;
+                    break;
+                case 4:
+                    color = chart.colors.magenta;
+                    break;
+                default:
+                    color = chart.colors.purple;
+                    break;
+            }
+
+            if (item['_id'] > 10) {
+                result['10+'][0] += item.count;
+            } else {
+                result[item['_id']] = [item.count, color];
+            }
+
+            return result;
+        }, { '10+': [0, chart.colors.purple] })).map(data => {
+            return {
+                y: data[1][0],
+                color: data[1][1],
+                label: data[0]
+            }
+        })
+    }]);
+    chart.save(
+        path.join(__dirname, '../../images/users_by_prs_column.png'),
+        await chart.render(totalUsersByPRsConfig),
+    );
+    // TODO: needs title & better labels
+
+
+    /*// Repeat engagement, year over year, or any time in past
     // TODO: Not sure how I can do this with just data from this year?
 
     // Number of users who made first PRs
@@ -53,5 +167,5 @@ module.exports = async data => {
                 dataPoints: [{ y: data[1].length }],
             };
         }))),
-    );
+    );*/
 };
