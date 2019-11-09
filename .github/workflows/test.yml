@@ -3,7 +3,7 @@ name: Install & Test
 on: push
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     steps:
