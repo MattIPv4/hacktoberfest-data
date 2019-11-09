@@ -13,4 +13,18 @@ function dateFromDay(year, day){
     return new Date(date.setDate(day)); // add the number of days
 }
 
-module.exports = { getDateArray, dateFromDay };
+function formatDate(date) {
+    const monthNames = [
+        "January", "February", "March",
+        "April", "May", "June", "July",
+        "August", "September", "October",
+        "November", "December"
+    ];
+
+    const day = date.getDate();
+    const monthIndex = date.getMonth();
+
+    return `${monthNames[monthIndex]} ${day}`;
+}
+
+module.exports = { getDateArray, dateFromDay, formatDate };

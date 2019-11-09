@@ -1,12 +1,12 @@
 const statsGenerators = [
     require('./PRs'),
     require('./Repos'),
-    require('./Users'),
+    //require('./Users'),
 ];
 
-module.exports = async data => {
+module.exports = async db => {
     for (const generator in statsGenerators) {
         if (!statsGenerators.hasOwnProperty(generator)) return;
-        await statsGenerators[generator](data);
+        await statsGenerators[generator](db);
     }
 };

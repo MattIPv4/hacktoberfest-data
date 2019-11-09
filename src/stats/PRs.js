@@ -5,7 +5,7 @@ const number = require('../helpers/number');
 const chart = require('../helpers/chart');
 const linguist = require('../helpers/linguist');
 const color = require('../helpers/color');
-const { getDateArray, dateFromDay } = require('../helpers/date');
+const { getDateArray, dateFromDay, formatDate } = require('../helpers/date');
 
 module.exports = async db => {
     /***************
@@ -37,8 +37,8 @@ module.exports = async db => {
     console.log(`Total PRs: ${number.commas(totalPRs)}`);
     console.log(`  Valid PRs: ${number.commas(totalValidPRs)} (${(totalValidPRs / totalPRs * 100).toFixed(2)}%)`);
     console.log(`  Invalid PRs: ${number.commas(totalInvalidPRs)} (${(totalInvalidPRs / totalPRs * 100).toFixed(2)}%)`);
-    console.log(`    Invalid (excluded repo) PRs: ${number.commas(totalInvalidRepoPRs)} (${(totalInvalidRepoPRs / totalInvalidPRs * 100).toFixed(2)}%) (${(totalInvalidRepoPRs / totalPRs * 100).toFixed(2)}%)`);
-    console.log(`    Invalid (labeled invalid) PRs: ${number.commas(totalInvalidLabelPRs)} (${(totalInvalidLabelPRs / totalInvalidPRs * 100).toFixed(2)}%) (${(totalInvalidLabelPRs / totalPRs * 100).toFixed(2)}%)`);
+    console.log(`    of which were in an excluded repo: ${number.commas(totalInvalidRepoPRs)} (${(totalInvalidRepoPRs / totalInvalidPRs * 100).toFixed(2)}%)`);
+    console.log(`    of which were labeled as invalid: ${number.commas(totalInvalidLabelPRs)} (${(totalInvalidLabelPRs / totalInvalidPRs * 100).toFixed(2)}%)`);
 
     // Breaking down PRs by language, other tags
     const totalPRsByLanguage = await db.collection('pull_requests').aggregate([
@@ -217,5 +217,36 @@ module.exports = async db => {
     console.log('Largest changes in a PR:');
     PRsByChanges.forEach(pr => {
         console.log(`  ${number.commas(pr.changes)} | ${pr.html_url}`);
+    });
+
+    // Breaking down PRs by day
+    const totalPRsByDay = await db.collection('pull_requests').aggregate([
+        {
+            '$set':
+                {
+                    day: { '$dayOfYear': { '$dateFromString': { dateString: '$created_at' } } },
+                }
+        },
+        {
+            '$group':
+                {
+                    _id: '$day',
+                    count: { '$sum': 1 }
+                }
+        },
+        {
+            '$sort':
+                {
+                    count: -1,
+                }
+        },
+        {
+            '$limit': 10,
+        },
+    ]).toArray();
+    console.log('');
+    console.log('Top days by PRs:');
+    totalPRsByDay.forEach(day => {
+        console.log(`  ${formatDate(dateFromDay(2019, day['_id']))} | ${number.commas(day.count)} (${(day.count / totalPRs * 100).toFixed(2)}%)`);
     });
 };
