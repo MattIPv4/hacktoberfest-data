@@ -4,6 +4,7 @@ const path = require('path');
 const number = require('../helpers/number');
 const chart = require('../helpers/chart');
 const linguist = require('../helpers/linguist');
+const color = require('../helpers/color');
 const { getDateArray, dateFromDay } = require('../helpers/date');
 
 module.exports = async db => {
@@ -16,6 +17,7 @@ module.exports = async db => {
     // Total PRs and invalid PRs
     const totalPRs = await db.collection('pull_requests').find({}).count();
     const totalInvalidLabelPRs = await db.collection('pull_requests').find({'labels.name': 'invalid'}).count();
+    // TODO: Check Hacktoberfest app to see how lax "invalid" checking was (trimmed?, lower-cased?)
     const totalInvalidRepoPRs = (await db.collection('pull_requests').aggregate([
         {
             '$lookup':
@@ -79,14 +81,15 @@ module.exports = async db => {
         type: 'doughnut',
         indexLabelPlacement: 'inside',
         indexLabelFontSize: 22,
-        indexLabelFontColor: chart.colors.white,
         indexLabelFontFamily: 'monospace',
         dataPoints: totalPRsByLanguage.limit(10).map(data => {
             const name = data['_id'] || 'Undetermined';
+            const dataColor = linguist.get(name) || chart.colors.lightBox;
             return {
                 y: data.count,
                 indexLabel: `${name}\n${(data.count / totalPRs * 100).toFixed(1)}%`,
-                color: linguist.get(name) || chart.colors.lightBox,
+                color: dataColor,
+                indexLabelFontColor: color.isBright(dataColor) ? chart.colors.darkBox : chart.colors.white,
             };
         }),
     }]);
@@ -168,16 +171,20 @@ module.exports = async db => {
             name: name,
             showInLegend: true,
             dataPoints: PRData,
-            color: linguist.get(name) || chart.colors.lightBox,
+            lineThickness: 3,
+            color: linguist.get(name) || chart.colors.darkBox,
         };
-    }));
+    }), true);
     totalPRsByDayByLanguageConfig.axisX = {
-        labelFontSize: 0,
-        tickLength: 0,
+        ...totalPRsByDayByLanguageConfig.axisX,
+        tickThickness: 0,
+        labelFormatter: () => {
+            return '';
+        }
     };
     totalPRsByDayByLanguageConfig.title = {
         text: 'PRs: Top 10 Languages Per Day',
-        fontColor: chart.colors.text,
+        fontColor: chart.colors.background,
         fontFamily: 'monospace',
         padding: 5,
         verticalAlign: 'top',

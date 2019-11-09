@@ -15,12 +15,12 @@ const colors = {
     purple: '#A11EC6',
 };
 
-const config = (width, height, data) => {
+const config = (width, height, data, light) => {
     const axis = {
-        gridColor: colors.lightBox,
-        lineColor: colors.lightBox,
-        tickColor: colors.lightBox,
-        labelFontColor: colors.text,
+        gridColor: light ? colors.background : colors.lightBox,
+        lineColor: light ? colors.background : colors.lightBox,
+        tickColor: light ? colors.background : colors.lightBox,
+        labelFontColor: light ? colors.background : colors.text,
         labelFontWeight: 'bold',
         labelFontFamily: 'monospace',
     };
@@ -28,15 +28,16 @@ const config = (width, height, data) => {
         width,
         height,
         theme: 'dark2',
-        backgroundColor: colors.background,
+        backgroundColor: light ? colors.text : colors.background,
         axisX: axis,
         axisY: axis,
         legend: {
-            fontColor: colors.text,
+            fontColor: light ? colors.background : colors.text,
             fontWeight: 'bold',
             fontFamily: 'monospace',
             horizontalAlign: 'center',
             verticalAlign: 'bottom',
+            maxWidth: width * .9,
         },
         data,
     };
