@@ -1,6 +1,7 @@
-const fs = require('fs');
+const path = require('path');
 const jsdom = require('jsdom');
 const { JSDOM } = jsdom;
+const Jimp = require('jimp');
 
 const colors = {
     dark: '#050912', // mix(background, #000, 25%);
@@ -68,9 +69,15 @@ const render = async config => {
     });
 };
 
-const save = (file, data) => {
+const save = async (file, data, watermark_opts) => {
     const base64Data = data.replace(/^data:image\/png;base64,/, '');
-    fs.writeFileSync(file, base64Data, 'base64');
+
+    const chart = await Jimp.read(Buffer.from(base64Data, 'base64'));
+    const hf = await Jimp.read(path.join(__dirname, 'hf-2019.png'));
+    hf.resize(watermark_opts.width || Jimp.AUTO, watermark_opts.height || Jimp.AUTO);
+    chart.blit(hf, watermark_opts.x - (hf.bitmap.width / 2), watermark_opts.y - (hf.bitmap.height / 2));
+
+    await chart.writeAsync(file);
 };
 
 module.exports = { colors, config, render, save };

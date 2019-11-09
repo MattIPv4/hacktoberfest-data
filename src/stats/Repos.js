@@ -98,9 +98,10 @@ module.exports = async db => {
         horizontalAlign: 'center',
         maxWidth: 500,
     };
-    chart.save(
+    await chart.save(
         path.join(__dirname, '../../images/repos_by_language_doughnut.png'),
         await chart.render(totalReposByLanguageConfig),
+        { width: 300, x: 500, y: 640 },
     );
 
     // Projects by popularity, contributors, stars (repo metadata)

@@ -120,9 +120,10 @@ module.exports = async db => {
         verticalAlign: 'top',
         horizontalAlign: 'center',
     };
-    chart.save(
+    await chart.save(
         path.join(__dirname, '../../images/users_by_prs_column.png'),
         await chart.render(totalUsersByPRsConfig),
+        { width: 400, x: 1250, y: 150 },
     );
 
     const topUsersByPRs = await db.collection('pull_requests').aggregate([

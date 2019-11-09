@@ -105,9 +105,10 @@ module.exports = async db => {
         horizontalAlign: 'center',
         maxWidth: 500,
     };
-    chart.save(
+    await chart.save(
         path.join(__dirname, '../../images/prs_by_language_doughnut.png'),
         await chart.render(totalPRsByLanguageConfig),
+        { width: 300, x: 500, y: 640 },
     );
 
     const totalPRsByDayByLanguage = await db.collection('pull_requests').aggregate([
@@ -182,9 +183,10 @@ module.exports = async db => {
         horizontalAlign: 'center',
     };
     totalPRsByDayByLanguageConfig.backgroundColor = chart.colors.dark;
-    chart.save(
+    await chart.save(
         path.join(__dirname, '../../images/prs_by_language_spline.png'),
         await chart.render(totalPRsByDayByLanguageConfig),
+        { width: 400, x: 1250, y: 150 },
     );
 
     // Lines of code per PR
