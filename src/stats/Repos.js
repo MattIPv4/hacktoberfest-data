@@ -143,13 +143,19 @@ module.exports = async db => {
         {
             '$match': { 'spam.Verified?': { '$nin': [ 'checked' ] } },
         },
+        {
+            '$project': {
+                count: '$count',
+                link: '$repository.html_url',
+            },
+        },
         { '$sort': { count: -1 } },
         { '$limit': 10 },
     ]).toArray();
     console.log('');
     console.log('Top repos by PRs');
     topReposByPRs.forEach(repo => {
-        console.log(`  ${number.commas(repo.count)} | ${repo.repository.html_url}`);
+        console.log(`  ${number.commas(repo.count)} | ${repo.link}`);
     });
 
     const topReposByStars = await db.collection('repositories').find({}).sort({ stargazers_count: -1 })

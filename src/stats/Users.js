@@ -75,7 +75,7 @@ module.exports = async db => {
     console.log(`  Users that submitted 1+ valid PR: ${number.commas(totalUsersWithPRs)} (${(totalUsersWithPRs / totalUsers * 100).toFixed(2)}%)`);
     console.log(`  Users that won (4+ PRs): ${number.commas(totalWinnerUsers)} (${(totalWinnerUsers / totalUsers * 100).toFixed(2)}%)`);
 
-    const totalUsersByPRsConfig = chart.config(2500, 1000, [{
+    const totalUsersByPRsExtConfig = chart.config(2500, 1000, [{
         type: 'column',
         dataPoints: Object.entries(totalUsersByPRs.reduce(function (result, item) {
             let color;
@@ -112,7 +112,7 @@ module.exports = async db => {
             })
             .sort((a, b) => a.order - b.order),
     }]);
-    totalUsersByPRsConfig.title = {
+    totalUsersByPRsExtConfig.title = {
         text: 'Users: Valid Pull Requests',
         fontColor: chart.colors.text,
         fontFamily: 'monospace',
@@ -121,9 +121,63 @@ module.exports = async db => {
         horizontalAlign: 'center',
     };
     await chart.save(
+        path.join(__dirname, '../../images/users_by_prs_extended_column.png'),
+        await chart.render(totalUsersByPRsExtConfig),
+        { width: 400, x: 1250, y: 150 },
+    );
+
+    const totalUsersByPRsConfig = chart.config(1000, 1000, [{
+        type: 'column',
+        dataPoints: Object.entries(totalUsersByPRs.reduce(function (result, item) {
+            let color;
+            switch (item['_id']) {
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                    color = chart.colors.lightBox;
+                    break;
+                case 4:
+                    color = chart.colors.magenta;
+                    break;
+                default:
+                    color = chart.colors.purple;
+                    break;
+            }
+
+            if (item['_id'] > 4) {
+                result['5+ PRs'][0] += item.count;
+            } else {
+                result[`${item['_id']} PR${item['_id'] === 1 ? '' : 's'}`] = [item.count, color, item['_id']];
+            }
+
+            return result;
+        }, { '5+ PRs': [0, chart.colors.purple, 5] }))
+            .map(data => {
+                return {
+                    y: data[1][0],
+                    color: data[1][1],
+                    order: data[1][2], // Ordering
+                    label: data[0], // Display
+                };
+            })
+            .sort((a, b) => a.order - b.order),
+    }]);
+    totalUsersByPRsConfig.title = {
+        text: 'Users: Valid Pull Requests',
+        fontColor: chart.colors.text,
+        fontFamily: 'monospace',
+        fontWeight: 'bold',
+        fontSize: 46,
+        padding: 5,
+        margin: 20,
+        verticalAlign: 'top',
+        horizontalAlign: 'center',
+    };
+    await chart.save(
         path.join(__dirname, '../../images/users_by_prs_column.png'),
         await chart.render(totalUsersByPRsConfig),
-        { width: 400, x: 1250, y: 150 },
+        { width: 350, x: 500, y: 125 },
     );
 
     const topUsersByPRs = await db.collection('pull_requests').aggregate([

@@ -15,14 +15,22 @@ const dateFromDay = (year, day) => {
     return new Date(date.setDate(day));
 };
 
-const formatDate = date => {
+const formatDate = (date, short) => {
     // Thanks https://stackoverflow.com/a/3552493
-    const monthNames = [
+    let monthNames = [
         'January', 'February', 'March',
         'April', 'May', 'June', 'July',
         'August', 'September', 'October',
         'November', 'December',
     ];
+    if (short) {
+        monthNames = [
+            'Jan', 'Feb', 'Mar',
+            'Apr', 'May', 'Jun', 'Jul',
+            'Aug', 'Sept', 'Oct',
+            'Nov', 'Dec',
+        ];
+    }
 
     const day = date.getDate();
     const monthIndex = date.getMonth();

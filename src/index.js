@@ -6,7 +6,7 @@ const main = async () => {
     console.log('');
 
     const db = await mongo.connect();
-    const dbo = db.db('hacktoberfest-prod-sample');
+    const dbo = db.db('hacktoberfest-2019');
     await stats(dbo);
     db.close();
 

@@ -169,10 +169,8 @@ module.exports = async db => {
     }));
     totalPRsByDayByLanguageConfig.axisX = {
         ...totalPRsByDayByLanguageConfig.axisX,
-        tickThickness: 0,
-        labelFormatter: () => {
-            return '';
-        },
+        interval: 1,
+        intervalType: 'week',
     };
     totalPRsByDayByLanguageConfig.title = {
         text: 'PRs: Top 10 Languages',
@@ -226,4 +224,48 @@ module.exports = async db => {
     totalPRsByDay.forEach(day => {
         console.log(`  ${formatDate(dateFromDay(2019, day['_id']))} | ${number.commas(day.count)} (${(day.count / totalPRs * 100).toFixed(2)}%)`);
     });
+    const totalPRsByDayConfig = chart.config(1000, 1000, [{
+        type: 'bar',
+        indexLabelPlacement: 'inside',
+        indexLabelFontSize: 22,
+        indexLabelFontFamily: 'monospace',
+        indexLabelFontColor: chart.colors.white,
+        dataPoints: totalPRsByDay.limit(10).map((data, i) => {
+            const colors = [
+                chart.colors.magenta, chart.colors.purple, chart.colors.cyan, chart.colors.yellow, chart.colors.blue
+            ];
+            const dataColor = colors[i % colors.length];
+            return {
+                y: data.count,
+                label: formatDate(dateFromDay(2019, data['_id']), true),
+                color: dataColor,
+                indexLabel: `${(data.count / totalPRs * 100).toFixed(2)}%`,
+                indexLabelFontColor: color.isBright(dataColor) ? chart.colors.background : chart.colors.white,
+            };
+        }).reverse(),
+    }]);
+    totalPRsByDayConfig.axisX = {
+        ...totalPRsByDayConfig.axisX,
+        labelFontSize: 20,
+    };
+    totalPRsByDayConfig.axisY = {
+        ...totalPRsByDayConfig.axisY,
+        labelFontSize: 20,
+    };
+    totalPRsByDayConfig.title = {
+        text: 'PRs: Most Popular Days',
+        fontColor: chart.colors.text,
+        fontFamily: 'monospace',
+        fontWeight: 'bold',
+        fontSize: 38,
+        padding: 5,
+        margin: 10,
+        verticalAlign: 'top',
+        horizontalAlign: 'center',
+    };
+    await chart.save(
+        path.join(__dirname, '../../images/prs_by_day_bar.png'),
+        await chart.render(totalPRsByDayConfig),
+        { width: 400, x: 780, y: 860 },
+    );
 };
