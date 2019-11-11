@@ -270,4 +270,90 @@ module.exports = async (db, log) => {
         await chart.render(ReposStarsVsForksConfig),
         { width: 350, x: 500, y: 120 },
     );
+
+    // Breakdown by license
+    const topRepoLicenses = await db.collection('repositories').aggregate([
+        {
+            '$group': {
+                _id: '$license.spdx_id',
+                count: { '$sum': 1 },
+            },
+        },
+        { '$sort': { count: -1 } },
+        { '$limit': 10 },
+    ]).toArray();
+    log('');
+    log('Most used licenses in repos:');
+    topRepoLicenses.forEach(license => {
+        const name = license['_id'];
+        const licenseName = name === null ? 'No License' : (name === 'NOASSERTION' ? 'Custom License' : name);
+        log(`  ${licenseName} | ${number.commas(license.count)}  (${(license.count / totalRepos * 100).toFixed(2)}%)`);
+    });
+    const noLicenseCount = topRepoLicenses.filter(x => x['_id'] === null)[0].count;
+    let topRepoLicensesTotal = noLicenseCount;
+    const topRepoLicensesConfig = chart.config(1000, 1000, [{
+        type: 'bar',
+        indexLabelFontFamily: 'monospace',
+        indexLabelFontWeight: 'bold',
+        indexLabelFontColor: chart.colors.white,
+        indexLabelFontSize: 24,
+        dataPoints: topRepoLicenses.filter(x => x['_id'] !== null).map((data, i) => {
+            const colors = [
+                chart.colors.magenta, chart.colors.purple, chart.colors.cyan, chart.colors.yellow, chart.colors.blue
+            ];
+            const licenseName = data['_id'] === 'NOASSERTION' ? 'Custom License' : data['_id'];
+            topRepoLicensesTotal += data.count;
+            return {
+                y: data.count,
+                indexLabel: `${licenseName}\n${number.commas(data.count)} (${(data.count / totalRepos * 100).toFixed(1)}%)`,
+                color: colors[i % colors.length],
+            };
+        }),
+    }]);
+    topRepoLicensesConfig.data[0].dataPoints.push({
+        y: totalRepos - topRepoLicensesTotal,
+        indexLabel: `Others\n${((totalRepos - topRepoLicensesTotal) / totalRepos * 100).toFixed(1)}%`,
+        color: chart.colors.darkBox,
+        indexLabelFontColor: chart.colors.white,
+        indexLabelFontSize: 28,
+    });
+    topRepoLicensesConfig.axisY = {
+        ...topRepoLicensesConfig.axisY,
+        labelFontSize: 20,
+    };
+    topRepoLicensesConfig.axisX = {
+        ...topRepoLicensesConfig.axisX,
+        tickThickness: 0,
+        labelFormatter: function () {
+            return '';
+        },
+    };
+    topRepoLicensesConfig.title = {
+        text: 'Repos: Top 10 Licenses',
+        fontColor: chart.colors.text,
+        fontFamily: 'monospace',
+        fontWeight: 'bold',
+        fontSize: 38,
+        padding: 5,
+        margin: 25,
+        verticalAlign: 'top',
+        horizontalAlign: 'center',
+    };
+    topRepoLicensesConfig.subtitles = [{
+        text: `${number.commas(noLicenseCount)} repositories (${(noLicenseCount / totalRepos * 100).toFixed(1)}%) use no license that GitHub can detect`,
+        fontColor: chart.colors.white,
+        fontFamily: 'monospace',
+        fontSize: 30,
+        padding: 15,
+        verticalAlign: 'top',
+        horizontalAlign: 'right',
+        dockInsidePlotArea: true,
+        maxWidth: 500,
+        backgroundColor: chart.colors.darkBackground,
+    }];
+    await chart.save(
+        path.join(__dirname, '../../images/repos_by_license_bar.png'),
+        await chart.render(topRepoLicensesConfig),
+        { width: 350, x: 780, y: 275 },
+    );
 };

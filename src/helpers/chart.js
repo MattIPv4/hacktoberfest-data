@@ -5,6 +5,7 @@ const Jimp = require('jimp');
 
 const colors = {
     dark: '#050912', // mix(background, #000, 25%);
+    darkBackground: '#101a35', // mix(background, #000, 75%);
     background: '#152347',
     darkBox: '#1D2C4E',
     lightBox: '#37476F',

@@ -41,8 +41,9 @@ module.exports = async (db, log) => {
 
     const totalUsers = await db.collection('users').find({}).count();
     log('');
-    log(`Average valid PRs per user: ${number.commas(Math.round(totalValidPRs / totalUsers))}`);
-    log(`Average invalid PRs per user: ${number.commas(Math.round(totalInvalidPRs / totalUsers))}`);
+    log(`Average PRs per user: ${number.commas(Math.round(totalPRs / totalUsers))}`);
+    log(`  Average valid PRs: ${number.commas(Math.round(totalValidPRs / totalUsers))}`);
+    log(`  Average invalid PRs: ${number.commas(Math.round(totalInvalidPRs / totalUsers))}`);
 
     // Breaking down PRs by language, other tags
     const totalPRsByLanguage = await db.collection('pull_requests').aggregate([
