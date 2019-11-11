@@ -230,7 +230,7 @@ module.exports = async (db, log) => {
             if (data.stars > 25000) return null;
             if (data.forks > 15000) return null;
             const colors = [
-                chart.colors.magenta, chart.colors.purple, chart.colors.cyan, chart.colors.yellow, chart.colors.blue
+                chart.colors.magenta, chart.colors.purple, chart.colors.cyan, chart.colors.yellow, chart.colors.blue,
             ];
             return {
                 x: data.stars,
@@ -299,7 +299,7 @@ module.exports = async (db, log) => {
         indexLabelFontSize: 24,
         dataPoints: topRepoLicenses.filter(x => x['_id'] !== null).map((data, i) => {
             const colors = [
-                chart.colors.magenta, chart.colors.purple, chart.colors.cyan, chart.colors.yellow, chart.colors.blue
+                chart.colors.magenta, chart.colors.purple, chart.colors.cyan, chart.colors.yellow, chart.colors.blue,
             ];
             const licenseName = data['_id'] === 'NOASSERTION' ? 'Custom License' : data['_id'];
             topRepoLicensesTotal += data.count;

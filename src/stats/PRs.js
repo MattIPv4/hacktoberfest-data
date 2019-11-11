@@ -238,7 +238,7 @@ module.exports = async (db, log) => {
         indexLabelFontColor: chart.colors.white,
         dataPoints: totalPRsByDay.limit(10).map((data, i) => {
             const colors = [
-                chart.colors.magenta, chart.colors.purple, chart.colors.cyan, chart.colors.yellow, chart.colors.blue
+                chart.colors.magenta, chart.colors.purple, chart.colors.cyan, chart.colors.yellow, chart.colors.blue,
             ];
             const dataColor = colors[i % colors.length];
             return {
