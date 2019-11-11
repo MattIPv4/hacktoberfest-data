@@ -39,6 +39,11 @@ module.exports = async (db, log) => {
     log(`    of which were in an excluded repo: ${number.commas(totalInvalidRepoPRs)} (${(totalInvalidRepoPRs / totalInvalidPRs * 100).toFixed(2)}%)`);
     log(`    of which were labeled as invalid: ${number.commas(totalInvalidLabelPRs)} (${(totalInvalidLabelPRs / totalInvalidPRs * 100).toFixed(2)}%)`);
 
+    const totalUsers = await db.collection('users').find({}).count();
+    log('');
+    log(`Average valid PRs per user: ${number.commas(Math.round(totalValidPRs / totalUsers))}`);
+    log(`Average invalid PRs per user: ${number.commas(Math.round(totalInvalidPRs / totalUsers))}`);
+
     // Breaking down PRs by language, other tags
     const totalPRsByLanguage = await db.collection('pull_requests').aggregate([
         {

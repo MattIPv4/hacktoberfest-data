@@ -26,6 +26,9 @@ const config = (width, height, data) => {
         labelFontColor: colors.text,
         labelFontWeight: 'bold',
         labelFontFamily: 'monospace',
+        titleFontColor: colors.text,
+        titleFontWeight: 'bold',
+        titleFontFamily: 'monospace',
     };
     return {
         width,

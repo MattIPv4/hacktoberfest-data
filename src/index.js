@@ -5,8 +5,7 @@ const stats = require('./stats');
 
 const main = async () => {
     log.reset();
-    log.log('Started', new Date().toLocaleString());
-    log.log('');
+    log.log(`Started ${new Date().toLocaleString()}`);
 
     const db = await mongo.connect();
     const dbo = db.db('hacktoberfest-2019');
@@ -14,7 +13,7 @@ const main = async () => {
     db.close();
 
     log.log('');
-    log.log('Finished', new Date().toLocaleString());
+    log.log(`Finished ${new Date().toLocaleString()}`);
     log.save(path.join(__dirname, '../stats.txt'));
 };
 

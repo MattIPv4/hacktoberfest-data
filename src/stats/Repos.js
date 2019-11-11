@@ -158,6 +158,17 @@ module.exports = async (db, log) => {
         log(`  ${number.commas(repo.count)} | ${repo.link}`);
     });
 
+    const allRepoStars = (await db.collection('repositories').aggregate([
+        {
+            '$group': {
+                _id: null,
+                stars: { '$sum': '$stargazers_count' },
+            },
+        },
+    ]).toArray())[0];
+    log('');
+    log(`Average stars per repo: ${number.commas(Math.round(allRepoStars.stars / totalRepos))}`);
+
     const topReposByStars = await db.collection('repositories').find({}).sort({ stargazers_count: -1 })
         .limit(5).toArray();
     log('');
@@ -165,6 +176,17 @@ module.exports = async (db, log) => {
     topReposByStars.forEach(repo => {
         log(`  ${number.commas(repo.stargazers_count)} | ${repo.html_url}`);
     });
+
+    const allRepoForks = (await db.collection('repositories').aggregate([
+        {
+            '$group': {
+                _id: null,
+                forks: { '$sum': '$forks_count' },
+            },
+        },
+    ]).toArray())[0];
+    log('');
+    log(`Average forks per repo: ${number.commas(Math.round(allRepoForks.forks / totalRepos))}`);
 
     const topReposByForks = await db.collection('repositories').find({}).sort({ forks_count: -1 })
         .limit(5).toArray();
@@ -174,11 +196,78 @@ module.exports = async (db, log) => {
         log(`  ${number.commas(repo.forks_count)} | ${repo.html_url}`);
     });
 
-    const topReposByWatchers = await db.collection('repositories').find({}).sort({ watchers_count: -1 })
+    const allRepoWatchers = (await db.collection('repositories').aggregate([
+        {
+            '$group': {
+                _id: null,
+                watchers: { '$sum': '$subscribers_count' },
+            },
+        },
+    ]).toArray())[0];
+    log('');
+    log(`Average watchers per repo: ${number.commas(Math.round(allRepoWatchers.watchers / totalRepos))}`);
+
+    const topReposByWatchers = await db.collection('repositories').find({}).sort({ subscribers_count: -1 })
         .limit(5).toArray();
     log('');
     log('Top repos by watchers');
     topReposByWatchers.forEach(repo => {
-        log(`  ${number.commas(repo.watchers_count)} | ${repo.html_url}`);
+        log(`  ${number.commas(repo.subscribers_count)} | ${repo.html_url}`);
     });
+
+    const ReposStarsVsForks = await db.collection('repositories').aggregate([
+        {
+            '$project': {
+                stars: '$stargazers_count',
+                forks: '$forks_count',
+            },
+        },
+    ]).toArray();
+    const ReposStarsVsForksConfig = chart.config(1000, 1000, [{
+        type: 'scatter',
+        dataPoints: ReposStarsVsForks.map((data, i) => {
+            // Cap the chart for more useful insights
+            if (data.stars > 25000) return null;
+            if (data.forks > 15000) return null;
+            const colors = [
+                chart.colors.magenta, chart.colors.purple, chart.colors.cyan, chart.colors.yellow, chart.colors.blue
+            ];
+            return {
+                x: data.stars,
+                y: data.forks,
+                color: colors[i % colors.length],
+            };
+        }).filter(x => x !== null),
+    }]);
+    ReposStarsVsForksConfig.axisX = {
+        ...ReposStarsVsForksConfig.axisX,
+        title: 'Stars',
+        titleFontSize: 28,
+        labelFontSize: 20,
+        interval: 5000,
+    };
+    ReposStarsVsForksConfig.axisY = {
+        ...ReposStarsVsForksConfig.axisY,
+        title: 'Forks',
+        titleFontSize: 28,
+        labelFontSize: 20,
+        interval: 5000,
+        labelAngle: -89,
+    };
+    ReposStarsVsForksConfig.title = {
+        text: 'Repos: Stars vs Forks',
+        fontColor: chart.colors.text,
+        fontFamily: 'monospace',
+        fontWeight: 'bold',
+        fontSize: 38,
+        padding: 5,
+        margin: 10,
+        verticalAlign: 'top',
+        horizontalAlign: 'center',
+    };
+    await chart.save(
+        path.join(__dirname, '../../images/repos_stars_vs_forks_scatter.png'),
+        await chart.render(ReposStarsVsForksConfig),
+        { width: 350, x: 500, y: 120 },
+    );
 };
