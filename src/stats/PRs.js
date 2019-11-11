@@ -7,11 +7,11 @@ const linguist = require('../helpers/linguist');
 const color = require('../helpers/color');
 const { getDateArray, dateFromDay, formatDate } = require('../helpers/date');
 
-module.exports = async db => {
+module.exports = async (db, log) => {
     /***************
      * PR Stats
      ***************/
-    console.log('\n\n----\nPR Stats\n----');
+    log('\n\n----\nPR Stats\n----');
     await linguist.load();
 
     // Total PRs and invalid PRs
@@ -32,12 +32,12 @@ module.exports = async db => {
     ]).limit(1).toArray())[0].count;
     const totalInvalidPRs = totalInvalidLabelPRs + totalInvalidRepoPRs;
     const totalValidPRs = totalPRs - totalInvalidPRs;
-    console.log('');
-    console.log(`Total PRs: ${number.commas(totalPRs)}`);
-    console.log(`  Valid PRs: ${number.commas(totalValidPRs)} (${(totalValidPRs / totalPRs * 100).toFixed(2)}%)`);
-    console.log(`  Invalid PRs: ${number.commas(totalInvalidPRs)} (${(totalInvalidPRs / totalPRs * 100).toFixed(2)}%)`);
-    console.log(`    of which were in an excluded repo: ${number.commas(totalInvalidRepoPRs)} (${(totalInvalidRepoPRs / totalInvalidPRs * 100).toFixed(2)}%)`);
-    console.log(`    of which were labeled as invalid: ${number.commas(totalInvalidLabelPRs)} (${(totalInvalidLabelPRs / totalInvalidPRs * 100).toFixed(2)}%)`);
+    log('');
+    log(`Total PRs: ${number.commas(totalPRs)}`);
+    log(`  Valid PRs: ${number.commas(totalValidPRs)} (${(totalValidPRs / totalPRs * 100).toFixed(2)}%)`);
+    log(`  Invalid PRs: ${number.commas(totalInvalidPRs)} (${(totalInvalidPRs / totalPRs * 100).toFixed(2)}%)`);
+    log(`    of which were in an excluded repo: ${number.commas(totalInvalidRepoPRs)} (${(totalInvalidRepoPRs / totalInvalidPRs * 100).toFixed(2)}%)`);
+    log(`    of which were labeled as invalid: ${number.commas(totalInvalidLabelPRs)} (${(totalInvalidLabelPRs / totalInvalidPRs * 100).toFixed(2)}%)`);
 
     // Breaking down PRs by language, other tags
     const totalPRsByLanguage = await db.collection('pull_requests').aggregate([
@@ -62,11 +62,11 @@ module.exports = async db => {
         },
         { '$sort': { count: -1 } },
     ]).toArray();
-    console.log('');
-    console.log(`PRs by language: ${number.commas(totalPRsByLanguage.length)} languages`);
+    log('');
+    log(`PRs by language: ${number.commas(totalPRsByLanguage.length)} languages`);
     totalPRsByLanguage.limit(15).forEach(group => {
         const name = group['_id'] || 'Undetermined';
-        console.log(`  ${name}: ${number.commas(group.count)} (${(group.count / totalPRs * 100).toFixed(2)}%)`);
+        log(`  ${name}: ${number.commas(group.count)} (${(group.count / totalPRs * 100).toFixed(2)}%)`);
     });
     let doughnutTotal = 0;
     const totalPRsByLanguageConfig = chart.config(1000, 1000, [{
@@ -197,10 +197,10 @@ module.exports = async db => {
         { '$sort': { changes: -1 } },
         { '$limit': 10 },
     ]).toArray();
-    console.log('');
-    console.log('Largest changes in a PR:');
+    log('');
+    log('Largest changes in a PR:');
     PRsByChanges.forEach(pr => {
-        console.log(`  ${number.commas(pr.changes)} | ${pr.html_url}`);
+        log(`  ${number.commas(pr.changes)} | ${pr.html_url}`);
     });
 
     // Breaking down PRs by day
@@ -219,10 +219,10 @@ module.exports = async db => {
         { '$sort': { count: -1 } },
         { '$limit': 10 },
     ]).toArray();
-    console.log('');
-    console.log('Top days by PRs:');
+    log('');
+    log('Top days by PRs:');
     totalPRsByDay.forEach(day => {
-        console.log(`  ${formatDate(dateFromDay(2019, day['_id']))} | ${number.commas(day.count)} (${(day.count / totalPRs * 100).toFixed(2)}%)`);
+        log(`  ${formatDate(dateFromDay(2019, day['_id']))} | ${number.commas(day.count)} (${(day.count / totalPRs * 100).toFixed(2)}%)`);
     });
     const totalPRsByDayConfig = chart.config(1000, 1000, [{
         type: 'bar',

@@ -4,12 +4,12 @@ const path = require('path');
 const number = require('../helpers/number');
 const chart = require('../helpers/chart');
 
-module.exports = async db => {
+module.exports = async (db, log) => {
 
     /***************
      * User Stats
      ***************/
-    console.log('\n\n----\nUser Stats\n----');
+    log('\n\n----\nUser Stats\n----');
 
     const totalUsers = await db.collection('users').find({}).count();
     const totalUsersByPRs = await db.collection('pull_requests').aggregate([
@@ -70,10 +70,10 @@ module.exports = async db => {
     ], { allowDiskUse: true }).toArray();
     const totalUsersWithPRs = totalUsersByPRs.map(score => score['_id'] > 0 ? score.count : 0).sum();
     const totalWinnerUsers = totalUsersByPRs.map(score => score['_id'] >= 4 ? score.count : 0).sum();
-    console.log('');
-    console.log(`Total Users: ${number.commas(totalUsers)}`);
-    console.log(`  Users that submitted 1+ valid PR: ${number.commas(totalUsersWithPRs)} (${(totalUsersWithPRs / totalUsers * 100).toFixed(2)}%)`);
-    console.log(`  Users that won (4+ PRs): ${number.commas(totalWinnerUsers)} (${(totalWinnerUsers / totalUsers * 100).toFixed(2)}%)`);
+    log('');
+    log(`Total Users: ${number.commas(totalUsers)}`);
+    log(`  Users that submitted 1+ valid PR: ${number.commas(totalUsersWithPRs)} (${(totalUsersWithPRs / totalUsers * 100).toFixed(2)}%)`);
+    log(`  Users that won (4+ PRs): ${number.commas(totalWinnerUsers)} (${(totalWinnerUsers / totalUsers * 100).toFixed(2)}%)`);
 
     const totalUsersByPRsExtConfig = chart.config(2500, 1000, [{
         type: 'column',
@@ -246,9 +246,9 @@ module.exports = async db => {
             },
         },
     ], { allowDiskUse: true }).toArray();
-    console.log('');
-    console.log('Top users by valid PRs');
+    log('');
+    log('Top users by valid PRs');
     topUsersByPRs.forEach(data => {
-        console.log(`  ${number.commas(data.prs)} | ${data.user.html_url}`);
+        log(`  ${number.commas(data.prs)} | ${data.user.html_url}`);
     });
 };

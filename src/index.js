@@ -1,17 +1,21 @@
+const path = require('path');
 const mongo = require('./helpers/mongo');
+const log = require('./helpers/log');
 const stats = require('./stats');
 
 const main = async () => {
-    console.log('Started', new Date().toLocaleString());
-    console.log('');
+    log.reset();
+    log.log('Started', new Date().toLocaleString());
+    log.log('');
 
     const db = await mongo.connect();
     const dbo = db.db('hacktoberfest-2019');
-    await stats(dbo);
+    await stats(dbo, log.log);
     db.close();
 
-    console.log('');
-    console.log('Finished', new Date().toLocaleString());
+    log.log('');
+    log.log('Finished', new Date().toLocaleString());
+    log.save(path.join(__dirname, '../stats.txt'));
 };
 
 main();

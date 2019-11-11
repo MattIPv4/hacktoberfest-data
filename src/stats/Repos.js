@@ -6,11 +6,11 @@ const chart = require('../helpers/chart');
 const linguist = require('../helpers/linguist');
 const color = require('../helpers/color');
 
-module.exports = async db => {
+module.exports = async (db, log) => {
     /***************
      * Repo Stats
      ***************/
-    console.log('\n\n----\nRepo Stats\n----');
+    log('\n\n----\nRepo Stats\n----');
     await linguist.load();
 
     // Total: Repos and invalid repos
@@ -40,11 +40,11 @@ module.exports = async db => {
         { '$match': { 'spam.Permitted?': 'checked' } },
         { '$group': { _id: null, count: { '$sum': 1 } } },
     ]).limit(1).toArray())[0].count;
-    console.log('');
-    console.log(`Total repos: ${number.commas(totalRepos)}`);
-    console.log(`  Valid repos: ${number.commas(totalValidRepos)} (${(totalValidRepos / totalRepos * 100).toFixed(2)}%)`);
-    console.log(`    of which were reported but approved: ${number.commas(totalPermittedRepos)} (${(totalPermittedRepos / totalValidRepos * 100).toFixed(2)}%)`);
-    console.log(`  Excluded repos: ${number.commas(totalInvalidRepos)} (${(totalInvalidRepos / totalRepos * 100).toFixed(2)}%)`);
+    log('');
+    log(`Total repos: ${number.commas(totalRepos)}`);
+    log(`  Valid repos: ${number.commas(totalValidRepos)} (${(totalValidRepos / totalRepos * 100).toFixed(2)}%)`);
+    log(`    of which were reported but approved: ${number.commas(totalPermittedRepos)} (${(totalPermittedRepos / totalValidRepos * 100).toFixed(2)}%)`);
+    log(`  Excluded repos: ${number.commas(totalInvalidRepos)} (${(totalInvalidRepos / totalRepos * 100).toFixed(2)}%)`);
 
     // Breaking down repos by language
     const totalReposByLanguage = await db.collection('repositories').aggregate([
@@ -56,11 +56,11 @@ module.exports = async db => {
         },
         { '$sort': { count: -1 } },
     ]).toArray();
-    console.log('');
-    console.log(`Repos by language: ${totalReposByLanguage.length} languages`);
+    log('');
+    log(`Repos by language: ${totalReposByLanguage.length} languages`);
     totalReposByLanguage.limit(15).forEach(lang => {
         const name = lang['_id'] || 'Undetermined';
-        console.log(`  ${name}: ${number.commas(lang.count)} (${(lang.count / totalRepos * 100).toFixed(2)}%)`);
+        log(`  ${name}: ${number.commas(lang.count)} (${(lang.count / totalRepos * 100).toFixed(2)}%)`);
     });
     let doughnutTotal = 0;
     const totalReposByLanguageConfig = chart.config(1000, 1000, [{
@@ -152,33 +152,33 @@ module.exports = async db => {
         { '$sort': { count: -1 } },
         { '$limit': 10 },
     ]).toArray();
-    console.log('');
-    console.log('Top repos by PRs');
+    log('');
+    log('Top repos by PRs');
     topReposByPRs.forEach(repo => {
-        console.log(`  ${number.commas(repo.count)} | ${repo.link}`);
+        log(`  ${number.commas(repo.count)} | ${repo.link}`);
     });
 
     const topReposByStars = await db.collection('repositories').find({}).sort({ stargazers_count: -1 })
         .limit(5).toArray();
-    console.log('');
-    console.log('Top repos by stars');
+    log('');
+    log('Top repos by stars');
     topReposByStars.forEach(repo => {
-        console.log(`  ${number.commas(repo.stargazers_count)} | ${repo.html_url}`);
+        log(`  ${number.commas(repo.stargazers_count)} | ${repo.html_url}`);
     });
 
     const topReposByForks = await db.collection('repositories').find({}).sort({ forks_count: -1 })
         .limit(5).toArray();
-    console.log('');
-    console.log('Top repos by forks');
+    log('');
+    log('Top repos by forks');
     topReposByForks.forEach(repo => {
-        console.log(`  ${number.commas(repo.forks_count)} | ${repo.html_url}`);
+        log(`  ${number.commas(repo.forks_count)} | ${repo.html_url}`);
     });
 
     const topReposByWatchers = await db.collection('repositories').find({}).sort({ watchers_count: -1 })
         .limit(5).toArray();
-    console.log('');
-    console.log('Top repos by watchers');
+    log('');
+    log('Top repos by watchers');
     topReposByWatchers.forEach(repo => {
-        console.log(`  ${number.commas(repo.watchers_count)} | ${repo.html_url}`);
+        log(`  ${number.commas(repo.watchers_count)} | ${repo.html_url}`);
     });
 };
