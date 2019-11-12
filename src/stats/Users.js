@@ -75,6 +75,19 @@ module.exports = async (db, log) => {
     log(`  Users that submitted 1+ valid PR: ${number.commas(totalUsersWithPRs)} (${(totalUsersWithPRs / totalUsers * 100).toFixed(2)}%)`);
     log(`  Users that won (4+ PRs): ${number.commas(totalWinnerUsers)} (${(totalWinnerUsers / totalUsers * 100).toFixed(2)}%)`);
 
+    log('');
+    log(`Users by number of PRs submitted:`);
+    Object.entries(totalUsersByPRs.reduce(function (result, item) {
+        if (item['_id'] > 10) {
+            result['10+ PRs'][0] += item.count;
+        } else {
+            result[`${item['_id']} PR${item['_id'] === 1 ? '' : 's'}`] = [item.count, item['_id']];
+        }
+        return result;
+    }, { '10+ PRs': [0, 11] })).sort((a, b) => a[1][1] - b[1][1]).forEach(item => {
+        log(`  ${item[0]}: ${number.commas(item[1][0])} (${(item[1][0] / totalUsers * 100).toFixed(2)}%)`);
+    });
+
     const totalUsersByPRsExtConfig = chart.config(2500, 1000, [{
         type: 'column',
         dataPoints: Object.entries(totalUsersByPRs.reduce(function (result, item) {

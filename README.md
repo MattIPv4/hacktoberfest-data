@@ -2,8 +2,8 @@
 
 Hi there, 👋
 
-I'm Matt Cowley, a community manager at DigitalOcean.\
-Welcome to my stats breakdown from the Hacktoberfest 2019 raw data.
+I'm [Matt Cowley](https://mattcowley.co.uk/), a community manager at [DigitalOcean](https://digitalocean.com/).\
+Welcome to my stats breakdown from the [Hacktoberfest 2019](https://hacktoberfest.digitalocean.com/) raw data.
 
 ## At a glance
 
@@ -42,7 +42,7 @@ Thank you to all those in the community who helped us by reporting repositories 
 From the data, based on the reported language for each repository from GitHub, we can also make a guess at the main
  language in every PR.
 
-Here's a breakdown of the top 15 languages (there were **213 programming languages** in total):
+Here's a breakdown of the top 15 languages in Hacktoberfest PRs (there were **213 programming languages** in total):
 
  - JavaScript: 89,603 (18.55%)
  - Undetermined: 59,556 (12.33%)
@@ -80,3 +80,129 @@ Here's a breakdown of the busiest 10 days during the competition based on PRs op
  - October 8 | 15,312 (3.17%)
 
 ## Diving in: Repositories
+
+Like the pull requests, we can use the data that GitHub provides for each repository involved with Hacktoberfest to
+ generate a breakdown of the most popular languages that Hacktoberfest saw.
+
+<img src="generated/repos_by_language_doughnut.png" align="right" width="50%" />
+
+Here's a breakdown of the top 15 languages across all the repositories:
+
+ - JavaScript: 27,859 (18.00%)
+ - Undetermined: 21,565 (13.93%)
+ - Python: 18,837 (12.17%)
+ - HTML: 12,858 (8.31%)
+ - Java: 10,696 (6.91%)
+ - C++: 7,345 (4.75%)
+ - PHP: 6,539 (4.23%)
+ - CSS: 5,495 (3.55%)
+ - TypeScript: 5,386 (3.48%)
+ - Ruby: 5,209 (3.37%)
+ - Go: 4,416 (2.85%)
+ - C: 4,262 (2.75%)
+ - C#: 3,207 (2.07%)
+ - Shell: 3,088 (2.00%)
+ - Jupyter Notebook: 2,523 (1.63%)
+
+Unfortunately, in many cases GitHub cannot identify a main language for a repository and so this is shown as
+ "Undetermined" in the data we're presenting here.
+
+Much like with the Hacktoberfest PRs, we can directly take a look at how we dealt with spam in the form of repos.
+This year, Hacktoberfest had a new system in place where the community could report repositories to us, which we could
+ then review and exclude if we determined they didn't follow the shared values for the competition.
+
+This system seemed to work well, as it allowed us to identify and exclude **138 repos (0.09%)** that we decided didn't
+ follow our shared values, of the **154,767 total repos** that were involved with Hacktoberfest.
+
+We can also pull out some interesting data on the number of stars, forks & watchers that each repository has.
+In the repositories involved with Hacktoberfest, the **average number stars per repo was 264** whilst the **average fork
+ count was only 67** and the **average number of watchers of a repo was 16**.
+
+<img src="generated/repos_stars_vs_forks_scatter.png" align="right" width="50%" />
+
+Using these same attributes, we can also find the top repositories based on them:
+
+Top repos by number of stars:
+
+ - 306,075 | https://github.com/freeCodeCamp/freeCodeCamp
+ - 247,691 | https://github.com/996icu/996.ICU
+ - 151,823 | https://github.com/vuejs/vue
+ - 139,136 | https://github.com/facebook/react
+ - 137,038 | https://github.com/tensorflow/tensorflow
+
+Top repos by number of forks:
+
+ - 198,065 | https://github.com/jtleek/datasharing
+ - 106,800 | https://github.com/octocat/Spoon-Knife
+ - 78,385 | https://github.com/tensorflow/tensorflow
+ - 67,315 | https://github.com/twbs/bootstrap
+ - 61,473 | https://github.com/SmartThingsCommunity/SmartThingsPublic
+
+Top repos by number of watchers:
+
+ - 8,551 | https://github.com/tensorflow/tensorflow
+ - 8,344 | https://github.com/freeCodeCamp/freeCodeCamp
+ - 8,308 | https://github.com/EbookFoundation/free-programming-books
+ - 7,216 | https://github.com/twbs/bootstrap
+ - 6,841 | https://github.com/torvalds/linux
+
+<img src="generated/repos_by_license_bar.png" align="right" width="50%" />
+
+Another interesting bit of analysis that we can do is to take a look at the different licenses that GitHub detects for
+ each repository. Whilst doing this, it became very apparent that many repositories don't use a license, with GitHub
+ reporting that **over 50% of repositories had no detectable license**.
+
+We can also do a breakdown of these to see what licenses are the most popular in the open-source space:
+
+ - No License | 83,010  (53.64%)
+ - MIT | 36,314  (23.46%)
+ - Custom License | 11,089  (7.16%)
+ - Apache-2.0 | 9,373  (6.06%)
+ - GPL-3.0 | 6,502  (4.20%)
+ - BSD-3-Clause | 1,960  (1.27%)
+ - AGPL-3.0 | 1,347  (0.87%)
+ - GPL-2.0 | 1,253  (0.81%)
+ - MPL-2.0 | 711  (0.46%)
+ - Unlicense | 476  (0.31%)
+
+## Diving in: Users
+
+With the user data we have, the key thing that we can take a look at is how many pull requests each participant in
+ Hacktoberfest 2019 submitted.
+
+<img src="generated/users_by_prs_column.png" align="right" width="50%" />
+
+Of the users who submitted one or more PR (80,334), **on average they each submitted just under 6 PRs**.
+Going beyond the requirement for winning Hacktoberfest, contributing to open-source even more! 🎉
+
+Taking a look at the breakdown for the number of PRs each user in Hacktoberfest submitted, it's awesome to see so many
+ submitting more than 4, which was what was needed to win swag this year:
+
+ - 1 PR: 10,942 (7.91%)
+ - 2 PRs: 5,345 (3.86%)
+ - 3 PRs: 3,735 (2.70%)
+ - **4 PRs: 26,787 (19.36%)**
+ - 5 PRs: 11,731 (8.48%)
+ - 6 PRs: 6,093 (4.40%)
+ - 7 PRs: 3,458 (2.50%)
+ - 8 PRs: 2,467 (1.78%)
+ - 9 PRs: 1,656 (1.20%)
+ - 10 PRs: 1,230 (0.89%)
+ - 10+ PRs: 6,890 (4.98%)
+
+Well, that's all the stats I've generated from the Hacktoberfest 2019 raw data.
+If there is anything more you'd like to see/know, please feel free to reach out and ask, I'll be more than happy to
+ generate it if possible.
+
+All the scripts used to generate these stats & graphics are contained within this repository.
+I have some more information about this in the [CONTRIBUTING.md](CONTRIBUTING.md) file, however, the Hacktoberfest 2019
+ raw data isn't public currently.
+
+<p align="center">
+    <img src="generated/users_by_prs_extended_column.png" width="100%" />
+    <br/>
+    <i>Number of pull requests submitted by each participant during Hacktoberfest 2019</i>
+</p>
+
+Author: [Matt Cowley](https://mattcowley.co.uk/) - If you notice any errors within this document, please let me know and
+ I will endeavour to correct them. 💙

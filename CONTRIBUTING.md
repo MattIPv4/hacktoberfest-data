@@ -54,8 +54,8 @@ npm start
 
 ### Output
 
-All the text-based stats will be logged to console.
-All the generated charts/graphs will be saved to the `images` directory.
+All the text-based stats will be logged to console and saved to `generated/stats.txt`.
+All the generated charts/graphs will be saved to the `generated` directory.
 
 ## Linting
 
