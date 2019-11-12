@@ -17,6 +17,8 @@ mongod --config /usr/local/etc/mongod.conf
 
 ### Import the data
 
+_Unfortunately, the Hacktoberfest 2019 raw data isn't public currently._
+
 ```
 mongoimport --db hacktoberfest-2019 --collection pull_requests --file data/pull_requests.json --jsonArray
 mongoimport --db hacktoberfest-2019 --collection repositories --file data/repositories.json --jsonArray

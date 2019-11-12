@@ -76,7 +76,7 @@ module.exports = async (db, log) => {
     log(`  Users that won (4+ PRs): ${number.commas(totalWinnerUsers)} (${(totalWinnerUsers / totalUsers * 100).toFixed(2)}%)`);
 
     log('');
-    log(`Users by number of PRs submitted:`);
+    log('Users by number of PRs submitted:');
     Object.entries(totalUsersByPRs.reduce(function (result, item) {
         if (item['_id'] > 10) {
             result['10+ PRs'][0] += item.count;
