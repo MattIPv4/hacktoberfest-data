@@ -27,7 +27,7 @@ What did we accomplish together in October? These are the highlights from Hackto
 ## Diving in: Pull Requests
 
 Taking a closer look at the pull requests of Hacktoberfest 2019, we can pull out some more interesting insights.
-The first thing that can be done is to take a look at how the Hacktobefest-related spam was this year, and more
+The first thing that can be done is to take a look at how the Hacktoberfest-related spam was this year, and more
  importantly how much of it was identified by us, the community and maintainers.
 
 Of the **483,127** PRs submitted during Hacktoberfest, only **23,299 (4.82%)** were identified as spam, with
@@ -39,8 +39,8 @@ Thank you to all those in the community who helped us by reporting repositories 
 
 <img src="generated/prs_by_language_doughnut.png" align="right" width="50%" />
 
-From the data, based on the reported language for each repository from GitHub, we can also make a guess at the main
- language in every PR.
+From the data, based on the reported language for each repository from GitHub, we can also guess the main language in
+ every PR.
 
 Here's a breakdown of the top 15 languages in Hacktoberfest PRs (there were **213 programming languages** in total):
 
@@ -104,7 +104,7 @@ Here's a breakdown of the top 15 languages across all the repositories:
  - Shell: 3,088 (2.00%)
  - Jupyter Notebook: 2,523 (1.63%)
 
-Unfortunately, in many cases GitHub cannot identify a main language for a repository and so this is shown as
+Unfortunately, in many cases, GitHub cannot identify the main language for a repository and so this is shown as
  "Undetermined" in the data we're presenting here.
 
 Much like with the Hacktoberfest PRs, we can directly take a look at how we dealt with spam in the form of repos.
@@ -154,16 +154,16 @@ Another interesting bit of analysis that we can do is to take a look at the diff
 
 We can also do a breakdown of these to see what licenses are the most popular in the open-source space:
 
- - No License | 83,010  (53.64%)
- - MIT | 36,314  (23.46%)
- - Custom License | 11,089  (7.16%)
- - Apache-2.0 | 9,373  (6.06%)
- - GPL-3.0 | 6,502  (4.20%)
- - BSD-3-Clause | 1,960  (1.27%)
- - AGPL-3.0 | 1,347  (0.87%)
- - GPL-2.0 | 1,253  (0.81%)
- - MPL-2.0 | 711  (0.46%)
- - Unlicense | 476  (0.31%)
+ - No License | 83,010 (53.64%)
+ - MIT | 36,314 (23.46%)
+ - Custom License | 11,089 (7.16%)
+ - Apache-2.0 | 9,373 (6.06%)
+ - GPL-3.0 | 6,502 (4.20%)
+ - BSD-3-Clause | 1,960 (1.27%)
+ - AGPL-3.0 | 1,347 (0.87%)
+ - GPL-2.0 | 1,253 (0.81%)
+ - MPL-2.0 | 711 (0.46%)
+ - Unlicense | 476 (0.31%)
 
 ## Diving in: Users
 
