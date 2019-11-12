@@ -112,7 +112,7 @@ module.exports = async (db, log) => {
         maxWidth: 500,
     };
     await chart.save(
-        path.join(__dirname, '../../images/prs_by_language_doughnut.png'),
+        path.join(__dirname, '../../generated/prs_by_language_doughnut.png'),
         await chart.render(totalPRsByLanguageConfig),
         { width: 300, x: 500, y: 640 },
     );
@@ -188,7 +188,7 @@ module.exports = async (db, log) => {
     };
     totalPRsByDayByLanguageConfig.backgroundColor = chart.colors.dark;
     await chart.save(
-        path.join(__dirname, '../../images/prs_by_language_spline.png'),
+        path.join(__dirname, '../../generated/prs_by_language_spline.png'),
         await chart.render(totalPRsByDayByLanguageConfig),
         { width: 400, x: 1250, y: 150 },
     );
@@ -270,7 +270,7 @@ module.exports = async (db, log) => {
         horizontalAlign: 'center',
     };
     await chart.save(
-        path.join(__dirname, '../../images/prs_by_day_bar.png'),
+        path.join(__dirname, '../../generated/prs_by_day_bar.png'),
         await chart.render(totalPRsByDayConfig),
         { width: 400, x: 780, y: 860 },
     );

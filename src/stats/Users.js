@@ -121,7 +121,7 @@ module.exports = async (db, log) => {
         horizontalAlign: 'center',
     };
     await chart.save(
-        path.join(__dirname, '../../images/users_by_prs_extended_column.png'),
+        path.join(__dirname, '../../generated/users_by_prs_extended_column.png'),
         await chart.render(totalUsersByPRsExtConfig),
         { width: 400, x: 1250, y: 150 },
     );
@@ -175,7 +175,7 @@ module.exports = async (db, log) => {
         horizontalAlign: 'center',
     };
     await chart.save(
-        path.join(__dirname, '../../images/users_by_prs_column.png'),
+        path.join(__dirname, '../../generated/users_by_prs_column.png'),
         await chart.render(totalUsersByPRsConfig),
         { width: 350, x: 500, y: 125 },
     );

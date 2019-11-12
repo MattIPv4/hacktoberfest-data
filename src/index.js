@@ -14,7 +14,7 @@ const main = async () => {
 
     log.log('');
     log.log(`Finished ${new Date().toLocaleString()}`);
-    log.save(path.join(__dirname, '../stats.txt'));
+    log.save(path.join(__dirname, '../generated/stats.txt'));
 };
 
 main();

@@ -99,7 +99,7 @@ module.exports = async (db, log) => {
         maxWidth: 500,
     };
     await chart.save(
-        path.join(__dirname, '../../images/repos_by_language_doughnut.png'),
+        path.join(__dirname, '../../generated/repos_by_language_doughnut.png'),
         await chart.render(totalReposByLanguageConfig),
         { width: 300, x: 500, y: 640 },
     );
@@ -266,7 +266,7 @@ module.exports = async (db, log) => {
         horizontalAlign: 'center',
     };
     await chart.save(
-        path.join(__dirname, '../../images/repos_stars_vs_forks_scatter.png'),
+        path.join(__dirname, '../../generated/repos_stars_vs_forks_scatter.png'),
         await chart.render(ReposStarsVsForksConfig),
         { width: 350, x: 500, y: 120 },
     );
@@ -352,7 +352,7 @@ module.exports = async (db, log) => {
         backgroundColor: chart.colors.darkBackground,
     }];
     await chart.save(
-        path.join(__dirname, '../../images/repos_by_license_bar.png'),
+        path.join(__dirname, '../../generated/repos_by_license_bar.png'),
         await chart.render(topRepoLicensesConfig),
         { width: 350, x: 780, y: 275 },
     );

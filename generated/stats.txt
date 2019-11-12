@@ -1,0 +1,163 @@
+Started 11/12/2019, 10:37:25 AM
+
+
+----
+PR Stats
+----
+
+Total PRs: 483,127
+  Valid PRs: 459,828 (95.18%)
+  Invalid PRs: 23,299 (4.82%)
+    of which were in an excluded repo: 19,587 (84.07%)
+    of which were labeled as invalid: 3,712 (15.93%)
+
+Average PRs per user: 3
+  Average valid PRs: 3
+  Average invalid PRs: 0
+
+PRs by language: 213 languages
+  JavaScript: 89,603 (18.55%)
+  Undetermined: 59,556 (12.33%)
+  Python: 58,146 (12.04%)
+  HTML: 43,206 (8.94%)
+  Java: 33,289 (6.89%)
+  C++: 29,427 (6.09%)
+  TypeScript: 20,664 (4.28%)
+  PHP: 18,647 (3.86%)
+  CSS: 16,580 (3.43%)
+  Ruby: 15,626 (3.23%)
+  Go: 15,288 (3.16%)
+  C: 14,601 (3.02%)
+  C#: 9,667 (2.00%)
+  Shell: 8,059 (1.67%)
+  Jupyter Notebook: 7,841 (1.62%)
+
+Largest changes in a PR:
+  9,437,788 | https://github.com/yoshuuuua/delinter/pull/4
+  8,405,550 | https://github.com/WaerjakSC/VSIMOblig/pull/3
+  8,246,842 | https://github.com/JBatista1/NaiveBayesHotel/pull/3
+  7,573,282 | https://github.com/icirellik/minoan-athenaeum/pull/3
+  7,515,093 | https://github.com/openshift/openshift-apiserver/pull/32
+  6,485,299 | https://github.com/jcafiero/Courses/pull/4
+  6,476,957 | https://github.com/KrauseKurt/xTermUI/pull/1
+  6,258,451 | https://github.com/andyseah13/react-hooks-todo/pull/1
+  5,870,080 | https://github.com/kubernetes-sigs/descheduler/pull/188
+  5,841,320 | https://github.com/fabric8io/kubernetes-client/pull/1802
+
+Top days by PRs:
+  October 1 | 29,742 (6.16%)
+  October 2 | 24,427 (5.06%)
+  October 3 | 20,155 (4.17%)
+  October 31 | 17,539 (3.63%)
+  October 4 | 16,801 (3.48%)
+  October 24 | 16,571 (3.43%)
+  October 9 | 15,822 (3.27%)
+  October 10 | 15,681 (3.25%)
+  October 23 | 15,341 (3.18%)
+  October 8 | 15,312 (3.17%)
+
+
+----
+Repo Stats
+----
+
+Total repos: 154,767
+  Valid repos: 154,629 (99.91%)
+    of which were reported but approved: 24 (0.02%)
+  Excluded repos: 138 (0.09%)
+
+Repos by language: 213 languages
+  JavaScript: 27,859 (18.00%)
+  Undetermined: 21,565 (13.93%)
+  Python: 18,837 (12.17%)
+  HTML: 12,858 (8.31%)
+  Java: 10,696 (6.91%)
+  C++: 7,345 (4.75%)
+  PHP: 6,539 (4.23%)
+  CSS: 5,495 (3.55%)
+  TypeScript: 5,386 (3.48%)
+  Ruby: 5,209 (3.37%)
+  Go: 4,416 (2.85%)
+  C: 4,262 (2.75%)
+  C#: 3,207 (2.07%)
+  Shell: 3,088 (2.00%)
+  Jupyter Notebook: 2,523 (1.63%)
+
+Top repos by PRs
+  3,192 | https://github.com/firstcontributions/first-contributions
+  1,352 | https://github.com/twilio-labs/open-pixel-art
+  894 | https://github.com/dunmanhigh/y1math
+  772 | https://github.com/vinitshahdeo/inspirational-quotes
+  682 | https://github.com/home-assistant/home-assistant
+  632 | https://github.com/IOSD/IOSD-UIETKUK-HacktoberFest-Meetup-2019
+  600 | https://github.com/NixOS/nixpkgs
+  585 | https://github.com/shoaibrayeen/Programmers-Community
+  565 | https://github.com/void-linux/void-packages
+  562 | https://github.com/iam-abbas/cs-algorithms
+
+Average stars per repo: 264
+
+Top repos by stars
+  306,075 | https://github.com/freeCodeCamp/freeCodeCamp
+  247,691 | https://github.com/996icu/996.ICU
+  151,823 | https://github.com/vuejs/vue
+  139,136 | https://github.com/facebook/react
+  137,038 | https://github.com/tensorflow/tensorflow
+
+Average forks per repo: 67
+
+Top repos by forks
+  198,065 | https://github.com/jtleek/datasharing
+  106,800 | https://github.com/octocat/Spoon-Knife
+  78,385 | https://github.com/tensorflow/tensorflow
+  67,315 | https://github.com/twbs/bootstrap
+  61,473 | https://github.com/SmartThingsCommunity/SmartThingsPublic
+
+Average watchers per repo: 16
+
+Top repos by watchers
+  8,551 | https://github.com/tensorflow/tensorflow
+  8,344 | https://github.com/freeCodeCamp/freeCodeCamp
+  8,308 | https://github.com/EbookFoundation/free-programming-books
+  7,216 | https://github.com/twbs/bootstrap
+  6,841 | https://github.com/torvalds/linux
+
+Most used licenses in repos:
+  No License | 83,010  (53.64%)
+  MIT | 36,314  (23.46%)
+  Custom License | 11,089  (7.16%)
+  Apache-2.0 | 9,373  (6.06%)
+  GPL-3.0 | 6,502  (4.20%)
+  BSD-3-Clause | 1,960  (1.27%)
+  AGPL-3.0 | 1,347  (0.87%)
+  GPL-2.0 | 1,253  (0.81%)
+  MPL-2.0 | 711  (0.46%)
+  Unlicense | 476  (0.31%)
+
+
+----
+User Stats
+----
+
+Total Users: 138,343
+  Users that submitted 1+ valid PR: 80,334 (58.07%)
+  Users that won (4+ PRs): 60,312 (43.60%)
+
+Top users by valid PRs
+  100 | https://github.com/MajhiRockzZ
+  100 | https://github.com/dherrada
+  100 | https://github.com/nschonni
+  100 | https://github.com/Betree
+  100 | https://github.com/StrikerRUS
+  97 | https://github.com/mdccbranco
+  97 | https://github.com/lmjcbs
+  97 | https://github.com/eric-wieser
+  96 | https://github.com/daltonlim
+  96 | https://github.com/vibraniumforge
+  95 | https://github.com/changeworld
+  95 | https://github.com/ekohl
+  95 | https://github.com/lolgab
+  94 | https://github.com/nicklunn325
+  94 | https://github.com/ybiquitous
+
+Finished 11/12/2019, 10:44:11 AM
