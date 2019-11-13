@@ -18,6 +18,8 @@ What did we accomplish together in October? These are the highlights from Hackto
 
 \*_Over 50% of repositories (83,010) in Hacktoberfest had no license that GitHub could detect._
 
+> Take a read of our overall recap blog post for Hacktoberfest 2019 here: https://blog.digitalocean.com/recapping-hacktoberfest-6/
+
 <p align="center">
     <img src="generated/prs_by_language_spline.png" width="100%" />
     <br/>

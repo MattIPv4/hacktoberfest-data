@@ -1,28 +1,28 @@
 {
   "name": "hacktoberfest-data",
   "version": "1.0.0",
-  "description": "",
+  "description": "Generating stats from the Hacktoberfest 2019 raw data.",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
+    "start:user-lang-relations": "node src/extras/user_languages.js",
     "test": "eslint src/{**/*,*}.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MattIPv4/Hacktoberfest-Data.git"
+    "url": "git+https://github.com/MattIPv4/hacktoberfest-data.git"
   },
-  "author": "Matt (IPv4)",
+  "author": "Matt (IPv4) Cowley",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/MattIPv4/Hacktoberfest-Data/issues"
+    "url": "https://github.com/MattIPv4/hacktoberfest-data/issues"
   },
-  "homepage": "https://github.com/MattIPv4/Hacktoberfest-Data#readme",
+  "homepage": "https://github.com/MattIPv4/hacktoberfest-data#readme",
   "devDependencies": {
     "eslint": "^6.6.0"
   },
   "dependencies": {
     "canvas": "^2.6.0",
-    "csv-parser": "^2.3.1",
     "jimp": "^0.8.5",
     "js-yaml": "^3.13.1",
     "jsdom": "^15.2.1",
