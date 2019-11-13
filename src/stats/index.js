@@ -4,9 +4,9 @@ const statsGenerators = [
     require('./Users'),
 ];
 
-module.exports = async data => {
+module.exports = async (db, log) => {
     for (const generator in statsGenerators) {
         if (!statsGenerators.hasOwnProperty(generator)) return;
-        await statsGenerators[generator](data);
+        await statsGenerators[generator](db, log);
     }
 };

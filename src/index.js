@@ -1,39 +1,20 @@
-require('./prototypes');
-
-const csv = require('./helpers/csv');
 const path = require('path');
-
-const { PR, Repo, User } = require('./classes');
-const rawPRs = require('../data/pull_requests');
-const rawRepos = require('../data/repositories');
-const rawUsers = require('../data/users');
-
-const getData = async () => {
-    const rawSpamRepos = await csv(path.join(__dirname, '../data/spam_repos.csv'));
-    const SpamRepos = rawSpamRepos.map(repo => {
-        return {
-            id: parseInt(repo['\uFEFFRepo ID']),
-            verified: repo['Verified?'] === 'checked',
-            permitted: repo['Permitted?'] === 'checked',
-        };
-    });
-
-    const PRs = rawPRs.map(pr => new PR(pr)).uniqueBy(pr => pr.id);
-    const Repos = rawRepos.map(repo => new Repo(repo)).uniqueBy(repo => repo.id);
-    const Users = rawUsers.map(user => new User(user)).uniqueBy(user => user.id);
-
-    PRs.forEach(pr => pr.findRelations(Users, Repos));
-    Repos.forEach(repo => repo.findRelations(Users, PRs, SpamRepos));
-    Users.forEach(user => user.findRelations(PRs));
-
-    return { PRs, Repos, Users, SpamRepos };
-};
-
+const mongo = require('./helpers/mongo');
+const log = require('./helpers/log');
 const stats = require('./stats');
 
 const main = async () => {
-    const data = await getData();
-    await stats(data);
+    log.reset();
+    log.log(`Started ${new Date().toLocaleString()}`);
+
+    const db = await mongo.connect();
+    const dbo = db.db('hacktoberfest-2019');
+    await stats(dbo, log.log);
+    db.close();
+
+    log.log('');
+    log.log(`Finished ${new Date().toLocaleString()}`);
+    log.save(path.join(__dirname, '../generated/stats.txt'));
 };
 
 main();
