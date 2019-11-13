@@ -54,8 +54,8 @@ const main = async () => {
             '$match': {
                 '$and': [
                     { 'user': { '$ne': [null, undefined] } },
-                    { 'user.email': { '$ne': [null, undefined] } }
-                ]
+                    { 'user.email': { '$ne': [null, undefined] } },
+                ],
             },
         },
     ]);
