@@ -15,7 +15,7 @@ module.exports = async (db, log) => {
         },
         {
             '$match': {
-                'org': { '$exists': true }
+                'org': { '$exists': true },
             },
         },
         {
