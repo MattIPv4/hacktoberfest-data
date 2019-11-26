@@ -1,4 +1,4 @@
-Started 11/26/2019, 12:46:47 PM
+Started 11/26/2019, 1:12:34 PM
 
 
 ----
@@ -25,6 +25,16 @@ Top orgs by PRs
   761 | https://github.com/hngi
   743 | https://github.com/openshift
   710 | https://github.com/gatsbyjs
+  668 | https://github.com/fnplus
+  640 | https://github.com/NixOS
+  636 | https://github.com/mozilla
+  592 | https://github.com/nextcloud
+  583 | https://github.com/elastic
+  574 | https://github.com/void-linux
+  554 | https://github.com/ManageIQ
+  553 | https://github.com/ReciHub
+  496 | https://github.com/jenkinsci
+  484 | https://github.com/umbraco
 
 
 ----
@@ -57,6 +67,16 @@ PRs by language: 213 languages
   C#: 9,667 (2.00%)
   Shell: 8,059 (1.67%)
   Jupyter Notebook: 7,841 (1.62%)
+  Rust: 4,473 (0.93%)
+  Kotlin: 4,360 (0.90%)
+  Vue: 4,170 (0.86%)
+  Swift: 3,275 (0.68%)
+  Dart: 2,421 (0.50%)
+  PowerShell: 1,662 (0.34%)
+  Dockerfile: 1,448 (0.30%)
+  Scala: 1,367 (0.28%)
+  Elixir: 1,335 (0.28%)
+  Haskell: 1,119 (0.23%)
 
 Largest changes in a PR:
   9,437,788 | https://github.com/yoshuuuua/delinter/pull/4
@@ -69,6 +89,11 @@ Largest changes in a PR:
   6,258,451 | https://github.com/andyseah13/react-hooks-todo/pull/1
   5,870,080 | https://github.com/kubernetes-sigs/descheduler/pull/188
   5,841,320 | https://github.com/fabric8io/kubernetes-client/pull/1802
+  5,734,402 | https://github.com/siman-man/samuraiCoding/pull/2
+  5,679,645 | https://github.com/sarahrgrosse/oldmariettalandscaping/pull/1
+  5,667,155 | https://github.com/tadgh/hapi-fhir/pull/1
+  5,523,071 | https://github.com/arangodb/arangodb/pull/10297
+  5,436,304 | https://github.com/AndrewGorman/upstream-gardens/pull/15
 
 Top days by PRs:
   October 1 | 29,742 (6.16%)
@@ -81,6 +106,11 @@ Top days by PRs:
   October 10 | 15,681 (3.25%)
   October 23 | 15,341 (3.18%)
   October 8 | 15,312 (3.17%)
+  October 11 | 15,113 (3.13%)
+  October 7 | 15,096 (3.12%)
+  October 14 | 15,036 (3.11%)
+  October 15 | 15,022 (3.11%)
+  October 17 | 14,934 (3.09%)
 
 
 ----
@@ -108,6 +138,16 @@ Repos by language: 213 languages
   C#: 3,207 (2.07%)
   Shell: 3,088 (2.00%)
   Jupyter Notebook: 2,523 (1.63%)
+  Rust: 1,498 (0.97%)
+  Kotlin: 1,444 (0.93%)
+  Swift: 1,307 (0.84%)
+  Vue: 1,115 (0.72%)
+  Dart: 1,014 (0.66%)
+  Dockerfile: 788 (0.51%)
+  Scala: 527 (0.34%)
+  Elixir: 511 (0.33%)
+  PowerShell: 484 (0.31%)
+  R: 396 (0.26%)
 
 Top repos by PRs
   3,192 | https://github.com/firstcontributions/first-contributions
@@ -120,6 +160,21 @@ Top repos by PRs
   585 | https://github.com/shoaibrayeen/Programmers-Community
   565 | https://github.com/void-linux/void-packages
   562 | https://github.com/iam-abbas/cs-algorithms
+  551 | https://github.com/ReciHub/FunnyAlgorithms
+  549 | https://github.com/alfg/opendrinks
+  511 | https://github.com/NikhilNamal17/popular-movie-quotes
+  489 | https://github.com/zero-to-mastery/Santafied
+  481 | https://github.com/Homebrew/homebrew-core
+  474 | https://github.com/gatsbyjs/gatsby
+  459 | https://github.com/zneroravi/codetest
+  446 | https://github.com/dunmanhigh/playground
+  408 | https://github.com/home-assistant/home-assistant.io
+  401 | https://github.com/fnplus/interview-techdev-guide
+  399 | https://github.com/swapagarwal/JARVIS-on-Messenger
+  372 | https://github.com/wso2/carbon-apimgt
+  354 | https://github.com/InnovativeCoder/Innovative-Hacktober
+  345 | https://github.com/DefinitelyTyped/DefinitelyTyped
+  337 | https://github.com/shrutikapoor08/devjoke
 
 Average stars per repo: 264
 
@@ -159,6 +214,21 @@ Most used licenses in repos:
   GPL-2.0 | 1,253  (0.81%)
   MPL-2.0 | 711  (0.46%)
   Unlicense | 476  (0.31%)
+  BSD-2-Clause | 470  (0.30%)
+  LGPL-3.0 | 449  (0.29%)
+  CC0-1.0 | 370  (0.24%)
+  LGPL-2.1 | 255  (0.16%)
+  ISC | 248  (0.16%)
+  CC-BY-SA-4.0 | 215  (0.14%)
+  CC-BY-4.0 | 214  (0.14%)
+  WTFPL | 161  (0.10%)
+  EPL-2.0 | 99  (0.06%)
+  EPL-1.0 | 69  (0.04%)
+  Artistic-2.0 | 33  (0.02%)
+  Zlib | 28  (0.02%)
+  BSL-1.0 | 26  (0.02%)
+  EUPL-1.2 | 23  (0.01%)
+  OSL-3.0 | 20  (0.01%)
 
 
 ----
@@ -183,20 +253,20 @@ Users by number of PRs submitted:
   10+ PRs: 6,890 (4.98%)
 
 Top users by valid PRs
-  100 | https://github.com/Betree
   100 | https://github.com/dherrada
-  100 | https://github.com/StrikerRUS
   100 | https://github.com/MajhiRockzZ
   100 | https://github.com/nschonni
-  97 | https://github.com/lmjcbs
+  100 | https://github.com/Betree
+  100 | https://github.com/StrikerRUS
   97 | https://github.com/mdccbranco
   97 | https://github.com/eric-wieser
+  97 | https://github.com/lmjcbs
   96 | https://github.com/daltonlim
   96 | https://github.com/vibraniumforge
-  95 | https://github.com/changeworld
   95 | https://github.com/lolgab
+  95 | https://github.com/changeworld
   95 | https://github.com/ekohl
-  94 | https://github.com/ybiquitous
   94 | https://github.com/nicklunn325
+  94 | https://github.com/ybiquitous
 
-Finished 11/26/2019, 12:55:03 PM
+Finished 11/26/2019, 1:21:00 PM

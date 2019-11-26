@@ -58,7 +58,7 @@ module.exports = async (db, log) => {
     ]).toArray();
     log('');
     log(`Repos by language: ${totalReposByLanguage.length} languages`);
-    totalReposByLanguage.limit(15).forEach(lang => {
+    totalReposByLanguage.limit(25).forEach(lang => {
         const name = lang['_id'] || 'Undetermined';
         log(`  ${name}: ${number.commas(lang.count)} (${(lang.count / totalRepos * 100).toFixed(2)}%)`);
     });
@@ -150,7 +150,7 @@ module.exports = async (db, log) => {
             },
         },
         { '$sort': { count: -1 } },
-        { '$limit': 10 },
+        { '$limit': 25 },
     ]).toArray();
     log('');
     log('Top repos by PRs');
@@ -280,7 +280,7 @@ module.exports = async (db, log) => {
             },
         },
         { '$sort': { count: -1 } },
-        { '$limit': 10 },
+        { '$limit': 25 },
     ]).toArray();
     log('');
     log('Most used licenses in repos:');
@@ -297,7 +297,7 @@ module.exports = async (db, log) => {
         indexLabelFontWeight: 'bold',
         indexLabelFontColor: chart.colors.white,
         indexLabelFontSize: 24,
-        dataPoints: topRepoLicenses.filter(x => x['_id'] !== null).map((data, i) => {
+        dataPoints: topRepoLicenses.limit(10).filter(x => x['_id'] !== null).map((data, i) => {
             const colors = [
                 chart.colors.magenta, chart.colors.purple, chart.colors.cyan, chart.colors.yellow, chart.colors.blue,
             ];

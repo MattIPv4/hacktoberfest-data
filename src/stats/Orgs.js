@@ -97,7 +97,7 @@ module.exports = async (db, log) => {
             },
         },
         { '$sort': { count: -1 } },
-        { '$limit': 15 },
+        { '$limit': 25 },
     ]).toArray();
     log('');
     log('Top orgs by PRs');

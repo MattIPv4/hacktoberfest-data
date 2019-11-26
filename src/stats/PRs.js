@@ -70,7 +70,7 @@ module.exports = async (db, log) => {
     ]).toArray();
     log('');
     log(`PRs by language: ${number.commas(totalPRsByLanguage.length)} languages`);
-    totalPRsByLanguage.limit(15).forEach(group => {
+    totalPRsByLanguage.limit(25).forEach(group => {
         const name = group['_id'] || 'Undetermined';
         log(`  ${name}: ${number.commas(group.count)} (${(group.count / totalPRs * 100).toFixed(2)}%)`);
     });
@@ -201,7 +201,7 @@ module.exports = async (db, log) => {
             },
         },
         { '$sort': { changes: -1 } },
-        { '$limit': 10 },
+        { '$limit': 15 },
     ]).toArray();
     log('');
     log('Largest changes in a PR:');
@@ -223,7 +223,7 @@ module.exports = async (db, log) => {
             },
         },
         { '$sort': { count: -1 } },
-        { '$limit': 10 },
+        { '$limit': 15 },
     ]).toArray();
     log('');
     log('Top days by PRs:');
