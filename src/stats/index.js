@@ -1,4 +1,5 @@
 const statsGenerators = [
+    require('./Orgs'),
     require('./PRs'),
     require('./Repos'),
     require('./Users'),
