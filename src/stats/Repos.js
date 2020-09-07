@@ -58,7 +58,7 @@ module.exports = async (db, log) => {
     ]).toArray();
     log('');
     log(`Repos by language: ${totalReposByLanguage.length} languages`);
-    totalReposByLanguage.limit(25).forEach(lang => {
+    totalReposByLanguage.limit(50).forEach(lang => {
         const name = lang['_id'] || 'Undetermined';
         log(`  ${name}: ${number.commas(lang.count)} (${(lang.count / totalRepos * 100).toFixed(2)}%)`);
     });

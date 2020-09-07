@@ -70,7 +70,7 @@ module.exports = async (db, log) => {
     ]).toArray();
     log('');
     log(`PRs by language: ${number.commas(totalPRsByLanguage.length)} languages`);
-    totalPRsByLanguage.limit(25).forEach(group => {
+    totalPRsByLanguage.limit(50).forEach(group => {
         const name = group['_id'] || 'Undetermined';
         log(`  ${name}: ${number.commas(group.count)} (${(group.count / totalPRs * 100).toFixed(2)}%)`);
     });

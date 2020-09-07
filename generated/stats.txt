@@ -1,4 +1,4 @@
-Started 11/26/2019, 1:12:34 PM
+Started 9/7/2020, 9:30:35 PM
 
 
 ----
@@ -77,6 +77,31 @@ PRs by language: 213 languages
   Scala: 1,367 (0.28%)
   Elixir: 1,335 (0.28%)
   Haskell: 1,119 (0.23%)
+  Perl: 1,020 (0.21%)
+  Julia: 860 (0.18%)
+  R: 838 (0.17%)
+  Nix: 715 (0.15%)
+  DM: 707 (0.15%)
+  Objective-C: 705 (0.15%)
+  HCL: 683 (0.14%)
+  Makefile: 633 (0.13%)
+  TeX: 617 (0.13%)
+  TSQL: 605 (0.13%)
+  Assembly: 592 (0.12%)
+  Lua: 527 (0.11%)
+  Groovy: 501 (0.10%)
+  Vim script: 488 (0.10%)
+  Clojure: 368 (0.08%)
+  Vala: 330 (0.07%)
+  MATLAB: 297 (0.06%)
+  OCaml: 292 (0.06%)
+  Smarty: 268 (0.06%)
+  Smalltalk: 263 (0.05%)
+  Emacs Lisp: 249 (0.05%)
+  CoffeeScript: 208 (0.04%)
+  F#: 205 (0.04%)
+  Nim: 201 (0.04%)
+  Erlang: 197 (0.04%)
 
 Largest changes in a PR:
   9,437,788 | https://github.com/yoshuuuua/delinter/pull/4
@@ -148,6 +173,31 @@ Repos by language: 213 languages
   Elixir: 511 (0.33%)
   PowerShell: 484 (0.31%)
   R: 396 (0.26%)
+  Haskell: 367 (0.24%)
+  Perl: 347 (0.22%)
+  Objective-C: 337 (0.22%)
+  TeX: 326 (0.21%)
+  Julia: 317 (0.20%)
+  HCL: 293 (0.19%)
+  Vim script: 287 (0.19%)
+  Makefile: 274 (0.18%)
+  Lua: 241 (0.16%)
+  TSQL: 191 (0.12%)
+  Clojure: 184 (0.12%)
+  Assembly: 179 (0.12%)
+  Groovy: 161 (0.10%)
+  MATLAB: 160 (0.10%)
+  OCaml: 130 (0.08%)
+  Emacs Lisp: 126 (0.08%)
+  Vala: 95 (0.06%)
+  Elm: 90 (0.06%)
+  Smarty: 86 (0.06%)
+  Crystal: 85 (0.05%)
+  F#: 81 (0.05%)
+  CoffeeScript: 77 (0.05%)
+  Nim: 68 (0.04%)
+  Batchfile: 63 (0.04%)
+  Hack: 60 (0.04%)
 
 Top repos by PRs
   3,192 | https://github.com/firstcontributions/first-contributions
@@ -269,4 +319,4 @@ Top users by valid PRs
   94 | https://github.com/nicklunn325
   94 | https://github.com/ybiquitous
 
-Finished 11/26/2019, 1:21:00 PM
+Finished 9/7/2020, 9:39:44 PM
