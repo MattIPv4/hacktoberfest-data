@@ -28,6 +28,6 @@
     "js-yaml": "^3.13.1",
     "jsdom": "^15.2.1",
     "mongodb": "^3.3.3",
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^2.6.1"
   }
 }
