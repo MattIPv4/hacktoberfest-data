@@ -17,7 +17,6 @@ module.exports = async (db, log) => {
     // Total PRs and invalid PRs
     const totalPRs = await db.collection('pull_requests').find({}).count();
     const totalInvalidLabelPRs = await db.collection('pull_requests').find({'labels.name': 'invalid'}).count();
-    // TODO: Check Hacktoberfest app to see how lax "invalid" checking was (trimmed?, lower-cased?)
     const totalInvalidRepoPRs = (await db.collection('pull_requests').aggregate([
         {
             '$lookup': {
@@ -238,7 +237,7 @@ module.exports = async (db, log) => {
         indexLabelFontColor: chart.colors.white,
         dataPoints: totalPRsByDay.limit(10).map((data, i) => {
             const colors = [
-                chart.colors.magenta, chart.colors.purple, chart.colors.cyan, chart.colors.yellow, chart.colors.blue,
+                chart.colors.blue, chart.colors.pink, chart.colors.crimson,
             ];
             const dataColor = colors[i % colors.length];
             return {

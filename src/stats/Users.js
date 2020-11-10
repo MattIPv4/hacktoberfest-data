@@ -100,10 +100,10 @@ module.exports = async (db, log) => {
                     color = chart.colors.lightBox;
                     break;
                 case 4:
-                    color = chart.colors.magenta;
+                    color = chart.colors.blue;
                     break;
                 default:
-                    color = chart.colors.purple;
+                    color = chart.colors.pink;
                     break;
             }
 
@@ -114,7 +114,7 @@ module.exports = async (db, log) => {
             }
 
             return result;
-        }, { '10+ PRs': [0, chart.colors.purple, 11] }))
+        }, { '10+ PRs': [0, chart.colors.crimson, 11] }))
             .map(data => {
                 return {
                     y: data[1][0],
@@ -151,10 +151,10 @@ module.exports = async (db, log) => {
                     color = chart.colors.lightBox;
                     break;
                 case 4:
-                    color = chart.colors.magenta;
+                    color = chart.colors.blue;
                     break;
                 default:
-                    color = chart.colors.purple;
+                    color = chart.colors.pink;
                     break;
             }
 
@@ -165,7 +165,7 @@ module.exports = async (db, log) => {
             }
 
             return result;
-        }, { '5+ PRs': [0, chart.colors.purple, 5] }))
+        }, { '5+ PRs': [0, chart.colors.crimson, 5] }))
             .map(data => {
                 return {
                     y: data[1][0],

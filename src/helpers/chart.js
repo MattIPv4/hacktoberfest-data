@@ -4,19 +4,17 @@ const { JSDOM } = jsdom;
 const Jimp = require('jimp');
 
 const colors = {
-    dark: '#050912', // mix(background, #000, 25%);
-    darkBackground: '#101a35', // mix(background, #000, 75%);
-    background: '#152347',
-    darkBox: '#1D2C4E',
-    lightBox: '#37476F',
-    light: '#5A688C', // mix(lightBox, text, 25%);
-    text: '#C3CCE2',
+    dark: '#072540', // mix(background, #000, 25%);
+    darkBackground: '#072540', // mix(background, #000, 75%);
+    background: '#072540',
+    darkBox: '#183D5D',
+    lightBox: '#183D5D',
+    light: '#183D5D', // mix(lightBox, text, 25%);
+    text: '#FFFFFF',
     white: '#FFFFFF',
-    cyan: '#92EAFF',
-    magenta: '#FF00AA',
-    yellow: '#FFF922',
-    blue: '#1595FF',
-    purple: '#A11EC6',
+    blue: '#93C2DB',
+    pink: '#FF8AE2',
+    crimson: '#9C4668',
 };
 
 const config = (width, height, data) => {
@@ -77,7 +75,7 @@ const save = async (file, data, watermark_opts) => {
     const base64Data = data.replace(/^data:image\/png;base64,/, '');
 
     const chart = await Jimp.read(Buffer.from(base64Data, 'base64'));
-    const hf = await Jimp.read(path.join(__dirname, 'hf-2019.png'));
+    const hf = await Jimp.read(path.join(__dirname, 'hf.png'));
     hf.resize(watermark_opts.width || Jimp.AUTO, watermark_opts.height || Jimp.AUTO);
     chart.blit(hf, watermark_opts.x - (hf.bitmap.width / 2), watermark_opts.y - (hf.bitmap.height / 2));
 

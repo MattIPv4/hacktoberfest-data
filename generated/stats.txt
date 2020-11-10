@@ -1,4 +1,4 @@
-Started 9/7/2020, 9:30:35 PM
+Started 11/10/2020, 3:42:56 PM
 
 
 ----
@@ -303,20 +303,20 @@ Users by number of PRs submitted:
   10+ PRs: 6,890 (4.98%)
 
 Top users by valid PRs
-  100 | https://github.com/dherrada
   100 | https://github.com/MajhiRockzZ
   100 | https://github.com/nschonni
-  100 | https://github.com/Betree
   100 | https://github.com/StrikerRUS
+  100 | https://github.com/dherrada
+  100 | https://github.com/Betree
   97 | https://github.com/mdccbranco
-  97 | https://github.com/eric-wieser
   97 | https://github.com/lmjcbs
-  96 | https://github.com/daltonlim
+  97 | https://github.com/eric-wieser
   96 | https://github.com/vibraniumforge
+  96 | https://github.com/daltonlim
   95 | https://github.com/lolgab
   95 | https://github.com/changeworld
   95 | https://github.com/ekohl
   94 | https://github.com/nicklunn325
   94 | https://github.com/ybiquitous
 
-Finished 9/7/2020, 9:39:44 PM
+Finished 11/10/2020, 3:54:25 PM

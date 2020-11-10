@@ -20,14 +20,14 @@
   },
   "homepage": "https://github.com/MattIPv4/hacktoberfest-data#readme",
   "devDependencies": {
-    "eslint": "^6.6.0"
+    "eslint": "^6.8.0"
   },
   "dependencies": {
-    "canvas": "^2.6.0",
-    "jimp": "^0.8.5",
-    "js-yaml": "^3.13.1",
+    "canvas": "^2.6.1",
+    "jimp": "^0.16.1",
+    "js-yaml": "^3.14.0",
     "jsdom": "^15.2.1",
-    "mongodb": "^3.3.3",
+    "mongodb": "^3.6.3",
     "node-fetch": "^2.6.1"
   }
 }
