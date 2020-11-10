@@ -78,7 +78,7 @@ module.exports = async (db, log) => {
         type: 'doughnut',
         indexLabelPlacement: 'inside',
         indexLabelFontSize: 22,
-        indexLabelFontFamily: 'monospace',
+        indexLabelFontFamily: '\'Inter\', sans-serif',
         dataPoints: totalPRsByLanguage.limit(10).map(data => {
             const name = data['_id'] || 'Undetermined';
             const dataColor = linguist.get(name) || chart.colors.lightBox;
@@ -104,7 +104,7 @@ module.exports = async (db, log) => {
     totalPRsByLanguageConfig.title = {
         text: 'PRs: Top 10 Languages',
         fontColor: chart.colors.text,
-        fontFamily: 'monospace',
+        fontFamily: '\'VT323\', monospace',
         padding: 5,
         verticalAlign: 'center',
         horizontalAlign: 'center',
@@ -113,7 +113,7 @@ module.exports = async (db, log) => {
     await chart.save(
         path.join(__dirname, '../../generated/prs_by_language_doughnut.png'),
         await chart.render(totalPRsByLanguageConfig),
-        { width: 300, x: 500, y: 640 },
+        { width: 150, x: 500, y: 640 },
     );
 
     const totalPRsByDayByLanguage = await db.collection('pull_requests').aggregate([
@@ -180,7 +180,7 @@ module.exports = async (db, log) => {
     totalPRsByDayByLanguageConfig.title = {
         text: 'PRs: Top 10 Languages',
         fontColor: chart.colors.text,
-        fontFamily: 'monospace',
+        fontFamily: '\'VT323\', monospace',
         padding: 5,
         verticalAlign: 'top',
         horizontalAlign: 'center',
@@ -189,7 +189,7 @@ module.exports = async (db, log) => {
     await chart.save(
         path.join(__dirname, '../../generated/prs_by_language_spline.png'),
         await chart.render(totalPRsByDayByLanguageConfig),
-        { width: 400, x: 1250, y: 150 },
+        { width: 200, x: 1250, y: 150 },
     );
 
     // Lines of code per PR

@@ -1,4 +1,9 @@
 const path = require('path');
+
+const { registerFont } = require('canvas');
+registerFont(path.join(__dirname, 'Inter-Regular.woff'), { family: 'Inter' });
+registerFont(path.join(__dirname, 'VT323-Regular.ttf'), { family: 'VT323' });
+
 const jsdom = require('jsdom');
 const { JSDOM } = jsdom;
 const Jimp = require('jimp');
@@ -24,10 +29,10 @@ const config = (width, height, data) => {
         tickColor: colors.lightBox,
         labelFontColor: colors.text,
         labelFontWeight: 'bold',
-        labelFontFamily: 'monospace',
+        labelFontFamily: '\'VT323\', monospace',
         titleFontColor: colors.text,
         titleFontWeight: 'bold',
-        titleFontFamily: 'monospace',
+        titleFontFamily: '\'VT323\', monospace',
     };
     return {
         width,
@@ -39,7 +44,7 @@ const config = (width, height, data) => {
         legend: {
             fontColor: colors.text,
             fontWeight: 'bold',
-            fontFamily: 'monospace',
+            fontFamily: '\'Inter\', sans-serif',
             horizontalAlign: 'center',
             verticalAlign: 'bottom',
             maxWidth: width * .9,
@@ -59,13 +64,15 @@ const render = async config => {
             const canvas = window.document.body.querySelector('#chartContainer canvas');
             resolve(canvas.toDataURL('image/png'));
         };
+        const virtualConsole = new jsdom.VirtualConsole();
+        virtualConsole.sendTo(console, { omitJSDOMErrors: true });
         new JSDOM(`<html><body style="height: ${config.height*1.5}px; width: ${config.width*1.5}px;"><div id="chartContainer" style="height: ${config.height*1.1}px; width: ${config.width*1.1}px;"></div><script src="https://cdnjs.cloudflare.com/ajax/libs/canvasjs/1.7.0/canvasjs.min.js" onload="makeCanvas(window)"></script></body></html>`, {
             resources: 'usable',
             runScripts: 'dangerously',
+            virtualConsole,
             beforeParse(window) {
                 window.makeCanvas = makeCanvas;
                 window.getCanvas = getCanvas;
-                window.console = console;
             },
         });
     });
@@ -75,7 +82,7 @@ const save = async (file, data, watermark_opts) => {
     const base64Data = data.replace(/^data:image\/png;base64,/, '');
 
     const chart = await Jimp.read(Buffer.from(base64Data, 'base64'));
-    const hf = await Jimp.read(path.join(__dirname, 'hf.png'));
+    const hf = await Jimp.read(path.join(__dirname, watermark_opts.full ? 'hf-full.png' : 'hf.png'));
     hf.resize(watermark_opts.width || Jimp.AUTO, watermark_opts.height || Jimp.AUTO);
     chart.blit(hf, watermark_opts.x - (hf.bitmap.width / 2), watermark_opts.y - (hf.bitmap.height / 2));
 
