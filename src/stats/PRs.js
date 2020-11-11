@@ -484,23 +484,6 @@ module.exports = async (db, log) => {
         { width: 200, x: 1250, y: 180 },
     );
 
-    // Lines of code per PR
-    // PII!
-    // const PRsByChanges = await db.collection('pull_requests').aggregate([
-    //     {
-    //         '$set': {
-    //             changes: { '$add': [ '$additions', '$deletions' ] },
-    //         },
-    //     },
-    //     { '$sort': { changes: -1 } },
-    //     { '$limit': 15 },
-    // ]).toArray();
-    // log('');
-    // log('Largest changes in a PR:');
-    // PRsByChanges.forEach(pr => {
-    //     log(`  ${number.commas(pr.changes)} | ${pr.html_url}`);
-    // });
-
     // Breaking down PRs by day
     const totalPRsByDay = await db.collection('pull_requests').aggregate([
         {

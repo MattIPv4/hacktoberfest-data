@@ -1,9 +1,21 @@
-# Hacktoberfest 2019 Stats
+# Hacktoberfest 2020 Stats
 
 Hi there, 👋
 
-I'm [Matt Cowley](https://mattcowley.co.uk/), a community manager at [DigitalOcean](https://digitalocean.com/).\
-Welcome to my stats breakdown from the [Hacktoberfest 2019](https://hacktoberfest.digitalocean.com/) raw data.
+I'm [Matt Cowley](https://mattcowley.co.uk/), Community Platform Manager at [DigitalOcean](https://digitalocean.com/).\
+I work on some awesome things at DigitalOcean, such as our [Community website](https://digitalocean.com/community) and
+ Hacktoberfest, where I help out with social and support engagement as well as the engineering behind the app itself.
+
+Welcome to my stats breakdown from the [Hacktoberfest 2020](https://hacktoberfest.digitalocean.com/) raw GitHub and
+ application data.
+
+## Coming soon
+
+Hacktoberfest hasn't quite finished completely yet, so I can't generate and write the final stats report.
+Keep an eye out soon for when I publish the document!
+
+<!--
+2019 Copy:
 
 ## At a glance
 
@@ -208,3 +220,4 @@ I have some more information about this in the [CONTRIBUTING.md](CONTRIBUTING.md
 
 Author: [Matt Cowley](https://mattcowley.co.uk/) - If you notice any errors within this document, please let me know and
  I will endeavour to correct them. 💙
+-->
