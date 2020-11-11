@@ -1,6 +1,7 @@
 require('../prototypes');
 
 const path = require('path');
+const LinearLeastSquares = require('linear-least-squares');
 const number = require('../helpers/number');
 const chart = require('../helpers/chart');
 const linguist = require('../helpers/linguist');
@@ -15,7 +16,7 @@ module.exports = async (db, log) => {
 
     // Total: Repos and invalid repos
     const totalRepos = await db.collection('repositories').find({}).count();
-    const totalInvalidRepos = (await db.collection('repositories').aggregate([
+    const totalInvalidRepos = ((await db.collection('repositories').aggregate([
         {
             '$lookup': {
                 from: 'spam_repositories',
@@ -26,24 +27,122 @@ module.exports = async (db, log) => {
         },
         { '$match': { 'spam.Verified?': 'checked' } },
         { '$group': { _id: null, count: { '$sum': 1 } } },
-    ]).limit(1).toArray())[0].count;
-    const totalValidRepos = totalRepos - totalInvalidRepos;
-    const totalPermittedRepos = (await db.collection('repositories').aggregate([
+    ]).limit(1).toArray())[0] || { count: 0 }).count;
+    const totalParticipatingRepos = ((await db.collection('repositories').aggregate([
         {
             '$lookup': {
-                from: 'spam_repositories',
+                from: 'pull_requests',
                 localField: 'id',
-                foreignField: 'Repo ID',
-                as: 'spam',
+                foreignField: 'base.repo.id',
+                as: 'prs',
             },
         },
-        { '$match': { 'spam.Permitted?': 'checked' } },
+        {
+            '$project': {
+                eligible_prs: {
+                    '$filter': {
+                        input: '$prs',
+                        as: 'pr',
+                        cond: {
+                            '$eq': ['$$pr.app.state', 'eligible'],
+                        },
+                    },
+                },
+            },
+        },
+        {
+            '$match': {
+                '$expr': {
+                    '$gt': [
+                        {
+                            '$size': '$eligible_prs',
+                        },
+                        0,
+                    ],
+                },
+            },
+        },
         { '$group': { _id: null, count: { '$sum': 1 } } },
-    ]).limit(1).toArray())[0].count;
+    ]).limit(1).toArray())[0] || { count: 0 }).count;
+    const totalTopicRepos = ((await db.collection('repositories').aggregate([
+        {
+            '$lookup': {
+                from: 'users',
+                localField: 'id',
+                foreignField: 'app.receipt.repository.databaseId',
+                as: 'frozen_users',
+            },
+        },
+        {
+            '$project': {
+                frozen_topics: {
+                    '$concatArrays': [
+                        '$topics.names',
+                        {
+                            '$reduce': {
+                                input: {
+                                    '$map': {
+                                        input: '$frozen_users',
+                                        as: 'frozen_user',
+                                        in: {
+                                            '$reduce': {
+                                                input: {
+                                                    '$map': {
+                                                        input: {
+                                                            '$filter': {
+                                                                input: '$$frozen_user.app.receipt',
+                                                                as: 'frozen_pr',
+                                                                cond: {
+                                                                    '$eq': ['$$frozen_pr.repository.databaseId', '$id'],
+                                                                },
+                                                            },
+                                                        },
+                                                        as: 'frozen_pr',
+                                                        in: {
+                                                            '$map': {
+                                                                input: '$$frozen_pr.repository.repositoryTopics.edges',
+                                                                as: 'edge',
+                                                                in: '$$edge.node.topic.name',
+                                                            },
+                                                        },
+                                                    },
+                                                },
+                                                initialValue: [],
+                                                in: { '$concatArrays': ['$$value', '$$this'] },
+                                            },
+                                        },
+                                    },
+                                },
+                                initialValue: [],
+                                in: { '$concatArrays': ['$$value', '$$this'] },
+                            },
+                        },
+                    ],
+                },
+            },
+        },
+        {
+            '$match': {
+                '$expr': {
+                    '$in': [
+                        'hacktoberfest',
+                        {
+                            '$map': {
+                                input: '$frozen_topics',
+                                as: 'topic',
+                                in: { '$trim': { input: { '$toLower': '$$topic' } } },
+                            },
+                        },
+                    ],
+                }
+            }
+        },
+        { '$group': { _id: null, count: { '$sum': 1 } } },
+    ]).limit(1).toArray())[0] || { count: 0 }).count;
     log('');
     log(`Total repos: ${number.commas(totalRepos)}`);
-    log(`  Valid repos: ${number.commas(totalValidRepos)} (${(totalValidRepos / totalRepos * 100).toFixed(2)}%)`);
-    log(`    of which were reported but approved: ${number.commas(totalPermittedRepos)} (${(totalPermittedRepos / totalValidRepos * 100).toFixed(2)}%)`);
+    log(`  Participating repos: ${number.commas(totalParticipatingRepos)} (${(totalParticipatingRepos / totalRepos * 100).toFixed(2)}%)`);
+    log(`    of which used the hacktoberfest-topic: ${number.commas(totalTopicRepos)} (${(totalTopicRepos / totalParticipatingRepos * 100).toFixed(2)}%)`);
     log(`  Excluded repos: ${number.commas(totalInvalidRepos)} (${(totalInvalidRepos / totalRepos * 100).toFixed(2)}%)`);
 
     // Breaking down repos by language
@@ -66,7 +165,8 @@ module.exports = async (db, log) => {
     const totalReposByLanguageConfig = chart.config(1000, 1000, [{
         type: 'doughnut',
         indexLabelPlacement: 'inside',
-        indexLabelFontFamily: 'monospace',
+        indexLabelFontSize: 22,
+        indexLabelFontFamily: '\'Inter\', sans-serif',
         dataPoints: totalReposByLanguage.limit(10).map(data => {
             const name = data['_id'] || 'Undetermined';
             const dataColor = linguist.get(name) || chart.colors.lightBox;
@@ -92,7 +192,8 @@ module.exports = async (db, log) => {
     totalReposByLanguageConfig.title = {
         text: 'Repos: Top 10 Languages',
         fontColor: chart.colors.text,
-        fontFamily: 'monospace',
+        fontFamily: '\'VT323\', monospace',
+        fontSize: 72,
         padding: 5,
         verticalAlign: 'center',
         horizontalAlign: 'center',
@@ -101,63 +202,10 @@ module.exports = async (db, log) => {
     await chart.save(
         path.join(__dirname, '../../generated/repos_by_language_doughnut.png'),
         await chart.render(totalReposByLanguageConfig),
-        { width: 300, x: 500, y: 640 },
+        { width: 150, x: 500, y: 660 },
     );
 
     // Projects by popularity, contributors, stars (repo metadata)
-    const topReposByPRs = await db.collection('pull_requests').aggregate([
-        {
-            '$match': { 'labels.name': { '$nin': [ 'invalid' ] } },
-        },
-        {
-            '$group': {
-                _id: '$base.repo.id',
-                count: { '$sum': 1 },
-            },
-        },
-        {
-            '$match': { '_id': { '$ne': null } },
-        },
-        {
-            '$lookup': {
-                from: 'repositories',
-                localField: '_id',
-                foreignField: 'id',
-                as: 'repository',
-            },
-        },
-        {
-            '$project': {
-                count: '$count',
-                repository: { '$arrayElemAt': [ '$repository', 0 ] },
-            },
-        },
-        {
-            '$lookup': {
-                from: 'spam_repositories',
-                localField: 'repository.id',
-                foreignField: 'Repo ID',
-                as: 'spam',
-            },
-        },
-        {
-            '$match': { 'spam.Verified?': { '$nin': [ 'checked' ] } },
-        },
-        {
-            '$project': {
-                count: '$count',
-                link: '$repository.html_url',
-            },
-        },
-        { '$sort': { count: -1 } },
-        { '$limit': 25 },
-    ]).toArray();
-    log('');
-    log('Top repos by PRs');
-    topReposByPRs.forEach(repo => {
-        log(`  ${number.commas(repo.count)} | ${repo.link}`);
-    });
-
     const allRepoStars = (await db.collection('repositories').aggregate([
         {
             '$group': {
@@ -168,15 +216,6 @@ module.exports = async (db, log) => {
     ]).toArray())[0];
     log('');
     log(`Average stars per repo: ${number.commas(Math.round(allRepoStars.stars / totalRepos))}`);
-
-    const topReposByStars = await db.collection('repositories').find({}).sort({ stargazers_count: -1 })
-        .limit(5).toArray();
-    log('');
-    log('Top repos by stars');
-    topReposByStars.forEach(repo => {
-        log(`  ${number.commas(repo.stargazers_count)} | ${repo.html_url}`);
-    });
-
     const allRepoForks = (await db.collection('repositories').aggregate([
         {
             '$group': {
@@ -187,15 +226,6 @@ module.exports = async (db, log) => {
     ]).toArray())[0];
     log('');
     log(`Average forks per repo: ${number.commas(Math.round(allRepoForks.forks / totalRepos))}`);
-
-    const topReposByForks = await db.collection('repositories').find({}).sort({ forks_count: -1 })
-        .limit(5).toArray();
-    log('');
-    log('Top repos by forks');
-    topReposByForks.forEach(repo => {
-        log(`  ${number.commas(repo.forks_count)} | ${repo.html_url}`);
-    });
-
     const allRepoWatchers = (await db.collection('repositories').aggregate([
         {
             '$group': {
@@ -207,14 +237,7 @@ module.exports = async (db, log) => {
     log('');
     log(`Average watchers per repo: ${number.commas(Math.round(allRepoWatchers.watchers / totalRepos))}`);
 
-    const topReposByWatchers = await db.collection('repositories').find({}).sort({ subscribers_count: -1 })
-        .limit(5).toArray();
-    log('');
-    log('Top repos by watchers');
-    topReposByWatchers.forEach(repo => {
-        log(`  ${number.commas(repo.subscribers_count)} | ${repo.html_url}`);
-    });
-
+    // Plot stars vs forks.
     const ReposStarsVsForks = await db.collection('repositories').aggregate([
         {
             '$project': {
@@ -223,43 +246,62 @@ module.exports = async (db, log) => {
             },
         },
     ]).toArray();
-    const ReposStarsVsForksConfig = chart.config(1000, 1000, [{
-        type: 'scatter',
-        dataPoints: ReposStarsVsForks.map((data, i) => {
-            // Cap the chart for more useful insights
-            if (data.stars > 25000) return null;
-            if (data.forks > 15000) return null;
-            const colors = [
-                chart.colors.blue, chart.colors.pink, chart.colors.crimson,
-            ];
-            return {
-                x: data.stars,
-                y: data.forks,
-                color: colors[i % colors.length],
-            };
-        }).filter(x => x !== null),
-    }]);
+    const ReposStarsVsForksFit = new LinearLeastSquares(ReposStarsVsForks.map(data => [data.stars, data.forks]))
+        .compute_fit();
+    const ReposStarsVsForksConfig = chart.config(1000, 1000, [
+        {
+            type: 'scatter',
+            dataPoints: ReposStarsVsForks.map((data, i) => {
+                // Cap the chart for more useful insights
+                if (data.stars > 25000) return null;
+                if (data.forks > 15000) return null;
+                const colors = [
+                    chart.colors.pink, chart.colors.crimson,
+                ];
+                return {
+                    x: data.stars,
+                    y: data.forks,
+                    color: colors[i % colors.length],
+                };
+            }).filter(x => x !== null),
+        },
+        {
+            type: 'line',
+            markerSize: 0,
+            color: chart.colors.blue,
+            dataPoints: [
+                {
+                    x: 0,
+                    y: ReposStarsVsForksFit.b,
+                },
+                {
+                    x: 25000,
+                    y: (25000 * ReposStarsVsForksFit.m) + ReposStarsVsForksFit.b,
+                },
+            ],
+        },
+    ]);
     ReposStarsVsForksConfig.axisX = {
         ...ReposStarsVsForksConfig.axisX,
         title: 'Stars',
-        titleFontSize: 28,
-        labelFontSize: 20,
+        titleFontSize: 34,
+        labelFontSize: 28,
         interval: 5000,
     };
     ReposStarsVsForksConfig.axisY = {
         ...ReposStarsVsForksConfig.axisY,
         title: 'Forks',
-        titleFontSize: 28,
-        labelFontSize: 20,
+        titleFontSize: 34,
+        labelFontSize: 28,
         interval: 5000,
-        labelAngle: -89,
+        labelAngle: -89.9,
     };
     ReposStarsVsForksConfig.title = {
         text: 'Repos: Stars vs Forks',
         fontColor: chart.colors.text,
-        fontFamily: 'monospace',
+        fontFamily: '\'VT323\', monospace',
         fontWeight: 'bold',
-        fontSize: 38,
+        fontSize: 72,
         padding: 5,
         margin: 10,
         verticalAlign: 'top',
@@ -268,7 +310,7 @@ module.exports = async (db, log) => {
     await chart.save(
         path.join(__dirname, '../../generated/repos_stars_vs_forks_scatter.png'),
         await chart.render(ReposStarsVsForksConfig),
-        { width: 350, x: 500, y: 120 },
+        { width: 200, x: 500, y: 180 },
     );
 
     // Breakdown by license
@@ -293,10 +335,8 @@ module.exports = async (db, log) => {
     let topRepoLicensesTotal = noLicenseCount;
     const topRepoLicensesConfig = chart.config(1000, 1000, [{
         type: 'bar',
-        indexLabelFontFamily: 'monospace',
-        indexLabelFontWeight: 'bold',
-        indexLabelFontColor: chart.colors.white,
         indexLabelFontSize: 24,
+        indexLabelFontFamily: '\'Inter\', sans-serif',
         dataPoints: topRepoLicenses.limit(10).filter(x => x['_id'] !== null).map((data, i) => {
             const colors = [
                 chart.colors.blue, chart.colors.pink, chart.colors.crimson,
@@ -307,6 +347,7 @@ module.exports = async (db, log) => {
                 y: data.count,
                 indexLabel: `${licenseName}\n${number.commas(data.count)} (${(data.count / totalRepos * 100).toFixed(1)}%)`,
                 color: colors[i % colors.length],
+                indexLabelFontColor: color.isBright(colors[i % colors.length]) ? chart.colors.background : chart.colors.white,
             };
         }),
     }]);
@@ -319,7 +360,7 @@ module.exports = async (db, log) => {
     });
     topRepoLicensesConfig.axisY = {
         ...topRepoLicensesConfig.axisY,
-        labelFontSize: 20,
+        labelFontSize: 34,
     };
     topRepoLicensesConfig.axisX = {
         ...topRepoLicensesConfig.axisX,
@@ -331,19 +372,19 @@ module.exports = async (db, log) => {
     topRepoLicensesConfig.title = {
         text: 'Repos: Top 10 Licenses',
         fontColor: chart.colors.text,
-        fontFamily: 'monospace',
+        fontFamily: '\'VT323\', monospace',
         fontWeight: 'bold',
-        fontSize: 38,
+        fontSize: 72,
         padding: 5,
-        margin: 25,
+        margin: 10,
         verticalAlign: 'top',
         horizontalAlign: 'center',
     };
     topRepoLicensesConfig.subtitles = [{
         text: `${number.commas(noLicenseCount)} repositories (${(noLicenseCount / totalRepos * 100).toFixed(1)}%) use no license that GitHub can detect`,
-        fontColor: chart.colors.white,
-        fontFamily: 'monospace',
-        fontSize: 30,
+        fontColor: chart.colors.blue,
+        fontFamily: '\'VT323\', monospace',
+        fontSize: 36,
         padding: 15,
         verticalAlign: 'top',
         horizontalAlign: 'right',
@@ -354,6 +395,6 @@ module.exports = async (db, log) => {
     await chart.save(
         path.join(__dirname, '../../generated/repos_by_license_bar.png'),
         await chart.render(topRepoLicensesConfig),
-        { width: 350, x: 780, y: 275 },
+        { width: 200, x: 880, y: 300 },
     );
 };
