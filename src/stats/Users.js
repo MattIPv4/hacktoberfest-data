@@ -2,62 +2,27 @@ require('../prototypes');
 
 const path = require('path');
 const number = require('../helpers/number');
+const country = require('../helpers/country');
 const chart = require('../helpers/chart');
+const color = require('../helpers/color');
 
 module.exports = async (db, log) => {
-
     /***************
      * User Stats
      ***************/
     log('\n\n----\nUser Stats\n----');
 
+    // Total users
     const totalUsers = await db.collection('users').find({}).count();
     const totalUsersByPRs = await db.collection('pull_requests').aggregate([
         {
-            '$match': { 'labels.name': { '$nin': [ 'invalid' ] } },
+            '$match': {
+                'app.state': 'eligible',
+            },
         },
         {
             '$group': {
-                _id: '$base.repo.id',
-                users: { '$push': {user: '$user.id'} },
-            },
-        },
-        {
-            '$lookup': {
-                from: 'repositories',
-                localField: '_id',
-                foreignField: 'id',
-                as: 'repository',
-            },
-        },
-        {
-            '$project': {
-                users: '$users',
-                repository: { '$arrayElemAt': [ '$repository', 0 ] },
-            },
-        },
-        {
-            '$lookup': {
-                from: 'spam_repositories',
-                localField: 'repository.id',
-                foreignField: 'Repo ID',
-                as: 'spam',
-            },
-        },
-        {
-            '$match': { 'spam.Verified?': { '$nin': [ 'checked' ] } },
-        },
-        {
-            '$project': {
-                users: '$users.user',
-            },
-        },
-        {
-            '$unwind': '$users',
-        },
-        {
-            '$group': {
-                _id: '$users',
+                _id: '$user.id',
                 count: { '$sum': 1 },
             },
         },
@@ -70,11 +35,14 @@ module.exports = async (db, log) => {
     ], { allowDiskUse: true }).toArray();
     const totalUsersWithPRs = totalUsersByPRs.map(score => score['_id'] > 0 ? score.count : 0).sum();
     const totalWinnerUsers = totalUsersByPRs.map(score => score['_id'] >= 4 ? score.count : 0).sum();
+    const totalWinnerStateUsers = await db.collection('users').find({ 'app.state': { '$in': ['completed', 'won_shirt', 'won_sticker'] } }).count();
     log('');
     log(`Total Users: ${number.commas(totalUsers)}`);
     log(`  Users that submitted 1+ valid PR: ${number.commas(totalUsersWithPRs)} (${(totalUsersWithPRs / totalUsers * 100).toFixed(2)}%)`);
     log(`  Users that won (4+ PRs): ${number.commas(totalWinnerUsers)} (${(totalWinnerUsers / totalUsers * 100).toFixed(2)}%)`);
+    log(`  Users that won (winning state): ${number.commas(totalWinnerStateUsers)} (${(totalWinnerStateUsers / totalUsers * 100).toFixed(2)}%)`);
 
+    // Users by PRs
     log('');
     log('Users by number of PRs submitted:');
     Object.entries(totalUsersByPRs.reduce(function (result, item) {
@@ -97,12 +65,9 @@ module.exports = async (db, log) => {
                 case 1:
                 case 2:
                 case 3:
-                    color = chart.colors.lightBox;
-                    break;
-                case 4:
                     color = chart.colors.blue;
                     break;
-                default:
+                case 4:
                     color = chart.colors.pink;
                     break;
             }
@@ -125,10 +90,15 @@ module.exports = async (db, log) => {
             })
             .sort((a, b) => a.order - b.order),
     }]);
+    totalUsersByPRsExtConfig.axisX = {
+        ...totalUsersByPRsExtConfig.axisX,
+        labelFontSize: 38,
+    };
     totalUsersByPRsExtConfig.title = {
         text: 'Users: Valid Pull Requests',
         fontColor: chart.colors.text,
-        fontFamily: 'monospace',
+        fontFamily: '\'VT323\', monospace',
+        fontSize: 72,
         padding: 5,
         verticalAlign: 'top',
         horizontalAlign: 'center',
@@ -136,7 +106,7 @@ module.exports = async (db, log) => {
     await chart.save(
         path.join(__dirname, '../../generated/users_by_prs_extended_column.png'),
         await chart.render(totalUsersByPRsExtConfig),
-        { width: 400, x: 1250, y: 150 },
+        { width: 200, x: 1250, y: 180 },
     );
 
     const totalUsersByPRsConfig = chart.config(1000, 1000, [{
@@ -148,12 +118,9 @@ module.exports = async (db, log) => {
                 case 1:
                 case 2:
                 case 3:
-                    color = chart.colors.lightBox;
-                    break;
-                case 4:
                     color = chart.colors.blue;
                     break;
-                default:
+                case 4:
                     color = chart.colors.pink;
                     break;
             }
@@ -176,12 +143,16 @@ module.exports = async (db, log) => {
             })
             .sort((a, b) => a.order - b.order),
     }]);
+    totalUsersByPRsConfig.axisX = {
+        ...totalUsersByPRsConfig.axisX,
+        labelFontSize: 38,
+    };
     totalUsersByPRsConfig.title = {
         text: 'Users: Valid Pull Requests',
         fontColor: chart.colors.text,
-        fontFamily: 'monospace',
+        fontFamily: '\'VT323\', monospace',
         fontWeight: 'bold',
-        fontSize: 46,
+        fontSize: 72,
         padding: 5,
         margin: 20,
         verticalAlign: 'top',
@@ -190,78 +161,174 @@ module.exports = async (db, log) => {
     await chart.save(
         path.join(__dirname, '../../generated/users_by_prs_column.png'),
         await chart.render(totalUsersByPRsConfig),
-        { width: 350, x: 500, y: 125 },
+        { width: 200, x: 500, y: 180 },
     );
 
-    const topUsersByPRs = await db.collection('pull_requests').aggregate([
+    // Registrations by country
+    const totalRegistrationsByCountry = await db.collection('users').aggregate([
         {
-            '$match': { 'labels.name': { '$nin': [ 'invalid' ] } },
-        },
-        {
-            '$group': {
-                _id: '$base.repo.id',
-                users: { '$push': {user: '$user.id'} },
-            },
-        },
-        {
-            '$lookup': {
-                from: 'repositories',
-                localField: '_id',
-                foreignField: 'id',
-                as: 'repository',
+            '$match': {
+                'app.state': {
+                    '$nin': ['new'],
+                },
             },
         },
         {
             '$project': {
-                users: '$users',
-                repository: { '$arrayElemAt': [ '$repository', 0 ] },
+                country: {
+                    '$cond': {
+                        if: {
+                            '$in': [
+                                '$app.country',
+                                [null, ''],
+                            ],
+                        },
+                        then: null,
+                        else: '$app.country',
+                    },
+                },
             },
-        },
-        {
-            '$lookup': {
-                from: 'spam_repositories',
-                localField: 'repository.id',
-                foreignField: 'Repo ID',
-                as: 'spam',
-            },
-        },
-        {
-            '$match': { 'spam.Verified?': { '$nin': [ 'checked' ] } },
-        },
-        {
-            '$project': {
-                users: '$users.user',
-            },
-        },
-        {
-            '$unwind': '$users',
         },
         {
             '$group': {
-                _id: '$users',
+                _id: '$country',
                 count: { '$sum': 1 },
             },
         },
         { '$sort': { count: -1 } },
         { '$limit': 15 },
+    ]).toArray();
+    log('');
+    log('Top countries by registrations:');
+    totalRegistrationsByCountry.forEach(data => {
+        log(`  ${country.getCountryName(data._id)} | ${number.commas(data.count)} (${(data.count / totalUsers * 100).toFixed(2)}%)`);
+    });
+    const totalRegistrationsByCountryConfig = chart.config(1000, 1000, [{
+        type: 'bar',
+        indexLabelFontSize: 24,
+        indexLabelFontFamily: '\'Inter\', sans-serif',
+        dataPoints: totalRegistrationsByCountry.limit(10).map((data, i) => {
+            const colors = [
+                chart.colors.blue, chart.colors.pink, chart.colors.crimson,
+            ];
+            const dataColor = colors[i % colors.length];
+            return {
+                y: data.count,
+                color: dataColor,
+                indexLabel: `${country.getCountryName(data._id)} (${(data.count / totalUsers * 100).toFixed(2)}%)`,
+                indexLabelFontColor: color.isBright(dataColor) ? chart.colors.background : chart.colors.white,
+            };
+        }).reverse(),
+    }]);
+    totalRegistrationsByCountryConfig.axisY = {
+        ...totalRegistrationsByCountryConfig.axisY,
+        labelFontSize: 34,
+    };
+    totalRegistrationsByCountryConfig.axisX = {
+        ...totalRegistrationsByCountryConfig.axisX,
+        tickThickness: 0,
+        labelFormatter: function () {
+            return '';
+        },
+    };
+    totalRegistrationsByCountryConfig.title = {
+        text: 'Users (registered): Top Countries',
+        fontColor: chart.colors.text,
+        fontFamily: '\'VT323\', monospace',
+        fontWeight: 'bold',
+        fontSize: 64,
+        padding: 5,
+        margin: 10,
+        verticalAlign: 'top',
+        horizontalAlign: 'center',
+    };
+    await chart.save(
+        path.join(__dirname, '../../generated/users_top_countries_by_registrations.png'),
+        await chart.render(totalRegistrationsByCountryConfig),
+        { width: 200, x: 880, y: 820 },
+    );
+
+    // Completions by country
+    const totalCompletionsByCountry = await db.collection('users').aggregate([
         {
-            '$lookup': {
-                from: 'users',
-                localField: '_id',
-                foreignField: 'id',
-                as: 'user',
+            '$match': {
+                'app.state': {
+                    '$in': ['completed', 'won_shirt', 'won_sticker'],
+                },
             },
         },
         {
             '$project': {
-                prs: '$count',
-                user: { '$arrayElemAt': [ '$user', 0 ] },
+                country: {
+                    '$cond': {
+                        if: {
+                            '$in': [
+                                '$app.country',
+                                [null, ''],
+                            ],
+                        },
+                        then: 'Not given',
+                        else: '$app.country',
+                    },
+                },
             },
         },
-    ], { allowDiskUse: true }).toArray();
+        {
+            '$group': {
+                _id: '$country',
+                count: { '$sum': 1 },
+            },
+        },
+        { '$sort': { count: -1 } },
+        { '$limit': 15 },
+    ]).toArray();
     log('');
-    log('Top users by valid PRs');
-    topUsersByPRs.forEach(data => {
-        log(`  ${number.commas(data.prs)} | ${data.user.html_url}`);
+    log('Top countries by completions:');
+    totalCompletionsByCountry.forEach(data => {
+        log(`  ${country.getCountryName(data._id)} | ${number.commas(data.count)} (${(data.count / totalUsers * 100).toFixed(2)}%)`);
     });
+    const totalCompletionsByCountryConfig = chart.config(1000, 1000, [{
+        type: 'bar',
+        indexLabelFontSize: 24,
+        indexLabelFontFamily: '\'Inter\', sans-serif',
+        dataPoints: totalCompletionsByCountry.limit(10).map((data, i) => {
+            const colors = [
+                chart.colors.blue, chart.colors.pink, chart.colors.crimson,
+            ];
+            const dataColor = colors[i % colors.length];
+            return {
+                y: data.count,
+                color: dataColor,
+                indexLabel: `${country.getCountryName(data._id)} (${(data.count / totalUsers * 100).toFixed(2)}%)`,
+                indexLabelFontColor: color.isBright(dataColor) ? chart.colors.background : chart.colors.white,
+            };
+        }).reverse(),
+    }]);
+    totalCompletionsByCountryConfig.axisY = {
+        ...totalCompletionsByCountryConfig.axisY,
+        labelFontSize: 34,
+    };
+    totalCompletionsByCountryConfig.axisX = {
+        ...totalCompletionsByCountryConfig.axisX,
+        tickThickness: 0,
+        labelFormatter: function () {
+            return '';
+        },
+    };
+    totalCompletionsByCountryConfig.title = {
+        text: 'Users (completions): Top Countries',
+        fontColor: chart.colors.text,
+        fontFamily: '\'VT323\', monospace',
+        fontWeight: 'bold',
+        fontSize: 64,
+        padding: 5,
+        margin: 10,
+        verticalAlign: 'top',
+        horizontalAlign: 'center',
+    };
+    await chart.save(
+        path.join(__dirname, '../../generated/users_top_countries_by_completions.png'),
+        await chart.render(totalCompletionsByCountryConfig),
+        { width: 200, x: 880, y: 820 },
+    );
 };
