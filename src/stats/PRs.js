@@ -150,7 +150,7 @@ module.exports = async (db, log) => {
                                 dateString: '2020-10-03T12:00:00.000Z',
                             },
                         },
-                    ]
+                    ],
                 },
                 // The REST data doesn't have approval, so if not in frozen assume false
                 state_approved: { '$ifNull': [ { '$eq': [ '$frozen.reviewDecision', 'APPROVED' ] }, false ] },
@@ -254,27 +254,27 @@ module.exports = async (db, log) => {
     ]).toArray();
     const stateMap = {
         labelled_external_repo: {
-            label: "Labelled hacktoberfest-accepted",
+            label: 'Labelled hacktoberfest-accepted',
             color: chart.colors.pink,
         },
         labelled_participating_repo: {
-            label: "Labelled hacktoberfest-accepted, with hacktoberfest topic",
+            label: 'Labelled hacktoberfest-accepted, with hacktoberfest topic',
             color: chart.colors.blue,
         },
         merged_participating_repo: {
-            label: "Merged by maintainer, with hacktoberfest topic",
+            label: 'Merged by maintainer, with hacktoberfest topic',
             color: chart.colors.blue,
         },
         approved_participating_repo: {
-            label: "Approved by maintainer, with hacktoberfest topic",
+            label: 'Approved by maintainer, with hacktoberfest topic',
             color: chart.colors.blue,
         },
         before_rules_change: {
-            label: "Created before rules change",
+            label: 'Created before rules change',
             color: chart.colors.crimson,
         },
         unknown: {
-            label: "Unknown",
+            label: 'Unknown',
             color: chart.colors.light,
         },
     };
@@ -296,7 +296,7 @@ module.exports = async (db, log) => {
                 y: state.count,
                 indexLabel: `${data.label}\n${number.commas(state.count)} (${(state.count / totalEligiblePRs * 100).toFixed(1)}%)`,
                 color: data.color,
-            }
+            };
         }),
     }]);
     totalPRsByAcceptanceConfig.title = {

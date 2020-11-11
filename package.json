@@ -7,7 +7,8 @@
     "start": "node src/index.js",
     "start:user-lang-relations": "node src/extras/user_languages.js",
     "start:sandbox": "node src/extras/sandbox.js",
-    "test": "eslint src/{**/*,*}.js"
+    "test": "eslint src/{**/*,*}.js",
+    "test:fix": "npm run test -- --fix"
   },
   "repository": {
     "type": "git",

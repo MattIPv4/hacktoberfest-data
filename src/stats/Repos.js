@@ -134,8 +134,8 @@ module.exports = async (db, log) => {
                             },
                         },
                     ],
-                }
-            }
+                },
+            },
         },
         { '$group': { _id: null, count: { '$sum': 1 } } },
     ]).limit(1).toArray())[0] || { count: 0 }).count;
