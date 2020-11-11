@@ -243,7 +243,7 @@ module.exports = async (db, log) => {
         horizontalAlign: 'center',
     };
     await chart.save(
-        path.join(__dirname, '../../generated/users_top_countries_by_registrations.png'),
+        path.join(__dirname, '../../generated/users_registrations_top_countries_bar.png'),
         await chart.render(totalRegistrationsByCountryConfig),
         { width: 200, x: 880, y: 820 },
     );
@@ -327,7 +327,7 @@ module.exports = async (db, log) => {
         horizontalAlign: 'center',
     };
     await chart.save(
-        path.join(__dirname, '../../generated/users_top_countries_by_completions.png'),
+        path.join(__dirname, '../../generated/users_completions_top_countries_bar.png'),
         await chart.render(totalCompletionsByCountryConfig),
         { width: 200, x: 880, y: 820 },
     );
