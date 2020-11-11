@@ -40,32 +40,37 @@ module.exports = async (db, log) => {
         indexLabelFontFamily: '\'Inter\', sans-serif',
         dataPoints: [
             {
+                exploded: true,
                 y: totalEligiblePRs,
                 indexLabel: `Eligible\n${number.commas(totalEligiblePRs)} (${(totalEligiblePRs / totalPRs * 100).toFixed(1)}%)`,
                 color: chart.colors.blue,
                 indexLabelFontSize: 32,
             },
             {
+                exploded: true,
                 y: totalTopicMissingPRs,
                 indexLabel: `Repo not participating\n${number.commas(totalTopicMissingPRs)} (${(totalTopicMissingPRs / totalPRs * 100).toFixed(1)}%)`,
                 color: chart.colors.pink,
             },
             {
+                exploded: true,
                 y: totalNotAcceptedPRs,
                 indexLabel: `Not accepted by maintainer\n${number.commas(totalNotAcceptedPRs)} (${(totalNotAcceptedPRs / totalPRs * 100).toFixed(1)}%)`,
                 color: chart.colors.pink,
             },
             {
+                exploded: true,
                 y: totalSpamRepoPRs,
                 indexLabel: `Excluded repository\n${number.commas(totalSpamRepoPRs)} (${(totalSpamRepoPRs / totalPRs * 100).toFixed(1)}%)`,
                 color: chart.colors.crimson,
             },
             {
+                exploded: true,
                 y: totalInvalidLabelPRs,
                 indexLabel: `Labelled invalid or spam\n${number.commas(totalInvalidLabelPRs)} (${(totalInvalidLabelPRs / totalPRs * 100).toFixed(1)}%)`,
                 color: chart.colors.crimson,
             },
-        ],
+        ].filter(item => item.y > 0),
     }]);
     totalPRsByStateConfig.title = {
         text: 'PRs: Breakdown by State',
@@ -82,6 +87,7 @@ module.exports = async (db, log) => {
         await chart.render(totalPRsByStateConfig),
         { width: 150, x: 500, y: 540 },
     );
+    // TODO: Review sizing etc. with full data
 
     // PRs by acceptance method
     const totalPRsByAcceptance = await db.collection('pull_requests').aggregate([
@@ -238,11 +244,77 @@ module.exports = async (db, log) => {
                 },
             },
         },
+        {
+            '$group': {
+                _id: '$state',
+                count: { '$sum': 1 },
+            },
+        },
+        { '$sort': { count: -1 } },
     ]).toArray();
-    console.log(totalPRsByAcceptance);
-
-    // TODO: Eligible PRs by acceptance method
-    // TODO: Doughnut: PRs by acceptance
+    const stateMap = {
+        labelled_external_repo: {
+            label: "Labelled hacktoberfest-accepted",
+            color: chart.colors.pink,
+        },
+        labelled_participating_repo: {
+            label: "Labelled hacktoberfest-accepted, with hacktoberfest topic",
+            color: chart.colors.blue,
+        },
+        merged_participating_repo: {
+            label: "Merged by maintainer, with hacktoberfest topic",
+            color: chart.colors.blue,
+        },
+        approved_participating_repo: {
+            label: "Approved by maintainer, with hacktoberfest topic",
+            color: chart.colors.blue,
+        },
+        before_rules_change: {
+            label: "Created before rules change",
+            color: chart.colors.crimson,
+        },
+        unknown: {
+            label: "Unknown",
+            color: chart.colors.light,
+        },
+    };
+    log('');
+    log('Eligible PRs by acceptance method:');
+    for (const state of totalPRsByAcceptance) {
+        log(`  ${stateMap[state._id].label}: ${number.commas(state.count)} (${(state.count / totalEligiblePRs * 100).toFixed(2)}%)`);
+    }
+    const totalPRsByAcceptanceConfig = chart.config(1000, 1000, [{
+        type: 'doughnut',
+        indexLabelPlacement: 'outside',
+        indexLabelFontSize: 22,
+        indexLabelFontColor: chart.colors.text,
+        indexLabelFontFamily: '\'Inter\', sans-serif',
+        dataPoints: totalPRsByAcceptance.map(state => {
+            const data = stateMap[state._id];
+            return {
+                exploded: true,
+                y: state.count,
+                indexLabel: `${data.label}\n${number.commas(state.count)} (${(state.count / totalEligiblePRs * 100).toFixed(1)}%)`,
+                color: data.color,
+            }
+        }),
+    }]);
+    totalPRsByAcceptanceConfig.title = {
+        text: 'PRs: Acceptance Method',
+        fontColor: chart.colors.text,
+        fontFamily: '\'VT323\', monospace',
+        fontSize: 72,
+        padding: 5,
+        verticalAlign: 'top',
+        horizontalAlign: 'center',
+        maxWidth: 800,
+    };
+    await chart.save(
+        path.join(__dirname, '../../generated/prs_by_acceptance_doughnut.png'),
+        await chart.render(totalPRsByAcceptanceConfig),
+        { width: 150, x: 500, y: 540 },
+    );
+    // TODO: Review sizing etc. with full data
 
     // Users x PRs
     const totalUsers = await db.collection('users').find({}).count();
