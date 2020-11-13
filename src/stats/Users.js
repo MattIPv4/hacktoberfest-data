@@ -6,6 +6,69 @@ const country = require('../helpers/country');
 const chart = require('../helpers/chart');
 const color = require('../helpers/color');
 
+const usersTopCountriesChart = async (userData, totalUsers, title, file, subtitle = null) => {
+    const config = chart.config(1000, 1000, [{
+        type: 'bar',
+        indexLabelFontSize: 24,
+        indexLabelFontFamily: '\'Inter\', sans-serif',
+        dataPoints: userData.limit(10).map((data, i) => {
+            const colors = [
+                chart.colors.blue, chart.colors.pink, chart.colors.crimson,
+            ];
+            const dataColor = colors[i % colors.length];
+            return {
+                y: data.count,
+                color: dataColor,
+                indexLabel: `${country.getCountryName(data._id)} (${(data.count / totalUsers * 100).toFixed(2)}%)`,
+                indexLabelFontColor: color.isBright(dataColor) ? chart.colors.background : chart.colors.white,
+            };
+        }).reverse(),
+    }]);
+    config.axisY = {
+        ...config.axisY,
+        labelFontSize: 34,
+    };
+    config.axisX = {
+        ...config.axisX,
+        tickThickness: 0,
+        labelFormatter: function () {
+            return '';
+        },
+    };
+    config.title = {
+        text: title,
+        fontColor: chart.colors.text,
+        fontFamily: '\'VT323\', monospace',
+        fontWeight: 'bold',
+        fontSize: 64,
+        padding: subtitle ? 10 : 5,
+        margin: subtitle ? 5 : 10,
+        verticalAlign: 'top',
+        horizontalAlign: subtitle ? 'left' : 'center',
+        maxWidth: subtitle ? 600 : 900,
+    };
+    if (subtitle) {
+        config.subtitles = [{
+            text: subtitle,
+            fontColor: chart.colors.blue,
+            fontFamily: '\'VT323\', monospace',
+            fontSize: 28,
+            padding: 5,
+            verticalAlign: 'bottom',
+            horizontalAlign: 'right',
+            dockInsidePlotArea: true,
+            maxWidth: 350,
+            backgroundColor: chart.colors.darkBackground,
+        }];
+    }
+    await chart.save(
+        path.join(__dirname, `../../generated/${file}.png`),
+        await chart.render(config),
+        subtitle ? { width: 200, x: 890, y: 100 }
+                 : { width: 200, x: 880, y: 820 },
+    );
+};
+
 module.exports = async (db, log) => {
     /***************
      * User Stats
@@ -203,49 +266,18 @@ module.exports = async (db, log) => {
     totalRegistrationsByCountry.forEach(data => {
         log(`  ${country.getCountryName(data._id)} | ${number.commas(data.count)} (${(data.count / totalUsers * 100).toFixed(2)}%)`);
     });
-    const totalRegistrationsByCountryConfig = chart.config(1000, 1000, [{
-        type: 'bar',
-        indexLabelFontSize: 24,
-        indexLabelFontFamily: '\'Inter\', sans-serif',
-        dataPoints: totalRegistrationsByCountry.limit(10).map((data, i) => {
-            const colors = [
-                chart.colors.blue, chart.colors.pink, chart.colors.crimson,
-            ];
-            const dataColor = colors[i % colors.length];
-            return {
-                y: data.count,
-                color: dataColor,
-                indexLabel: `${country.getCountryName(data._id)} (${(data.count / totalUsers * 100).toFixed(2)}%)`,
-                indexLabelFontColor: color.isBright(dataColor) ? chart.colors.background : chart.colors.white,
-            };
-        }).reverse(),
-    }]);
-    totalRegistrationsByCountryConfig.axisY = {
-        ...totalRegistrationsByCountryConfig.axisY,
-        labelFontSize: 34,
-    };
-    totalRegistrationsByCountryConfig.axisX = {
-        ...totalRegistrationsByCountryConfig.axisX,
-        tickThickness: 0,
-        labelFormatter: function () {
-            return '';
-        },
-    };
-    totalRegistrationsByCountryConfig.title = {
-        text: 'Users (registered): Top Countries',
-        fontColor: chart.colors.text,
-        fontFamily: '\'VT323\', monospace',
-        fontWeight: 'bold',
-        fontSize: 64,
-        padding: 5,
-        margin: 10,
-        verticalAlign: 'top',
-        horizontalAlign: 'center',
-    };
-    await chart.save(
-        path.join(__dirname, '../../generated/users_registrations_top_countries_bar.png'),
-        await chart.render(totalRegistrationsByCountryConfig),
-        { width: 200, x: 880, y: 820 },
+    await usersTopCountriesChart(
+        totalRegistrationsByCountry,
+        totalUsers,
+        'Users (registered): Top Countries',
+        'users_registrations_top_countries_bar',
+    );
+    await usersTopCountriesChart(
+        totalRegistrationsByCountry.filter(x => ![null, 'US', 'IN'].includes(x._id)),
+        totalUsers,
+        'Users (registered): Top Countries',
+        'users_registrations_top_countries_bar_excl',
+        'Excluding the United States, India and users that did not specify their country.',
     );
 
     // Completions by country
@@ -287,48 +319,17 @@ module.exports = async (db, log) => {
     totalCompletionsByCountry.forEach(data => {
         log(`  ${country.getCountryName(data._id)} | ${number.commas(data.count)} (${(data.count / totalUsers * 100).toFixed(2)}%)`);
     });
-    const totalCompletionsByCountryConfig = chart.config(1000, 1000, [{
-        type: 'bar',
-        indexLabelFontSize: 24,
-        indexLabelFontFamily: '\'Inter\', sans-serif',
-        dataPoints: totalCompletionsByCountry.limit(10).map((data, i) => {
-            const colors = [
-                chart.colors.blue, chart.colors.pink, chart.colors.crimson,
-            ];
-            const dataColor = colors[i % colors.length];
-            return {
-                y: data.count,
-                color: dataColor,
-                indexLabel: `${country.getCountryName(data._id)} (${(data.count / totalUsers * 100).toFixed(2)}%)`,
-                indexLabelFontColor: color.isBright(dataColor) ? chart.colors.background : chart.colors.white,
-            };
-        }).reverse(),
-    }]);
-    totalCompletionsByCountryConfig.axisY = {
-        ...totalCompletionsByCountryConfig.axisY,
-        labelFontSize: 34,
-    };
-    totalCompletionsByCountryConfig.axisX = {
-        ...totalCompletionsByCountryConfig.axisX,
-        tickThickness: 0,
-        labelFormatter: function () {
-            return '';
-        },
-    };
-    totalCompletionsByCountryConfig.title = {
-        text: 'Users (completions): Top Countries',
-        fontColor: chart.colors.text,
-        fontFamily: '\'VT323\', monospace',
-        fontWeight: 'bold',
-        fontSize: 64,
-        padding: 5,
-        margin: 10,
-        verticalAlign: 'top',
-        horizontalAlign: 'center',
-    };
-    await chart.save(
-        path.join(__dirname, '../../generated/users_completions_top_countries_bar.png'),
-        await chart.render(totalCompletionsByCountryConfig),
-        { width: 200, x: 880, y: 820 },
+    await usersTopCountriesChart(
+        totalCompletionsByCountry,
+        totalUsers,
+        'Users (completions): Top Countries',
+        'users_completions_top_countries_bar',
+    );
+    await usersTopCountriesChart(
+        totalCompletionsByCountry.filter(x => ![null, 'US', 'IN'].includes(x._id)),
+        totalUsers,
+        'Users (completions): Top Countries',
+        'users_completions_top_countries_bar_excl',
+        'Excluding the United States, India and users that did not specify their country.',
     );
 };
