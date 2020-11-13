@@ -175,20 +175,22 @@ module.exports = async (db, log) => {
             doughnutTotal += data.count;
             return {
                 y: data.count,
-                indexLabel: `${displayName}\n${percent.toFixed(1)}%`,
+                indexLabel: `${displayName}\n${number.commas(data.count)} (${percent.toFixed(1)}%)`,
                 color: dataColor,
                 indexLabelFontColor: color.isBright(dataColor) ? chart.colors.background : chart.colors.white,
                 indexLabelFontSize: percent > 10 ? 28 : percent > 5 ? 24 : percent > 4 ? 22 : 20,
             };
         }),
     }]);
-    totalReposByLanguageConfig.data[0].dataPoints.push({
-        y: totalRepos - doughnutTotal,
-        indexLabel: `Others\n${((totalRepos - doughnutTotal) / totalRepos * 100).toFixed(1)}%`,
-        color: chart.colors.darkBox,
-        indexLabelFontColor: chart.colors.white,
-        indexLabelFontSize: 28,
-    });
+    if (totalRepos > doughnutTotal) {
+        totalReposByLanguageConfig.data[0].dataPoints.push({
+            y: totalRepos - doughnutTotal,
+            indexLabel: `Others\n${number.commas(totalRepos - doughnutTotal)} (${((totalRepos - doughnutTotal) / totalRepos * 100).toFixed(1)}%)`,
+            color: chart.colors.darkBox,
+            indexLabelFontColor: chart.colors.white,
+            indexLabelFontSize: 28,
+        });
+    }
     totalReposByLanguageConfig.title = {
         text: 'Repos: Top 10 Languages',
         fontColor: chart.colors.text,
