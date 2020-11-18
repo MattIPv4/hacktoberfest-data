@@ -7,7 +7,7 @@ const statsGenerators = [
 
 module.exports = async (db, log) => {
     for (const generator in statsGenerators) {
-        if (!statsGenerators.hasOwnProperty(generator)) return;
+        if (!statsGenerators.hasOwnProperty(generator)) continue;
         await statsGenerators[generator](db, log);
     }
 };

@@ -79,20 +79,20 @@ module.exports = async (db, log) => {
         }]).flat(1),
     }], { padding: { top: 10, left: 5, right: 5, bottom: 20 }});
     totalPRsByStateConfig.title = {
-        text: 'PRs: Breakdown by State',
+        text: 'All PRs: Breakdown by State',
         fontColor: chart.colors.text,
         fontFamily: '\'VT323\', monospace',
         fontSize: 72,
         padding: 5,
         verticalAlign: 'top',
         horizontalAlign: 'center',
-        maxWidth: 800,
+        maxWidth: 900,
     };
     totalPRsByStateConfig.legend = {
         fontColor: chart.colors.text,
         fontFamily: '\'VT323\', monospace',
         fontSize: 44,
-        markerMargin: 12,
+        markerMargin: 24,
         horizontalAlign: 'center',
         verticalAlign: 'bottom',
         maxWidth: 980,
@@ -100,7 +100,7 @@ module.exports = async (db, log) => {
     await chart.save(
         path.join(__dirname, '../../generated/prs_by_state_doughnut.png'),
         await chart.render(totalPRsByStateConfig),
-        { width: 150, x: 500, y: 430 },
+        { width: 150, x: 500, y: 425 },
     );
 
     // PRs by acceptance method
@@ -341,20 +341,19 @@ module.exports = async (db, log) => {
         }]).flat(1),
     }], { padding: { top: 10, left: 5, right: 5, bottom: 20 }});
     totalPRsByAcceptanceConfig.title = {
-        text: 'PRs: Acceptance Method',
+        text: 'Eligible PRs: Acceptance Method',
         fontColor: chart.colors.text,
         fontFamily: '\'VT323\', monospace',
         fontSize: 72,
         padding: 5,
         verticalAlign: 'top',
         horizontalAlign: 'center',
-        maxWidth: 800,
+        maxWidth: 980,
     };
     totalPRsByAcceptanceConfig.legend = {
         fontColor: chart.colors.text,
         fontFamily: '\'VT323\', monospace',
         fontSize: 44,
-        markerMargin: 12,
         horizontalAlign: 'center',
         verticalAlign: 'bottom',
         maxWidth: 980,
@@ -362,7 +361,7 @@ module.exports = async (db, log) => {
     await chart.save(
         path.join(__dirname, '../../generated/prs_by_acceptance_doughnut.png'),
         await chart.render(totalPRsByAcceptanceConfig),
-        { width: 150, x: 500, y: 340 },
+        { width: 150, x: 500, y: 335 },
     );
 
     // Users x PRs
@@ -402,56 +401,144 @@ module.exports = async (db, log) => {
         { '$sort': { count: -1 } },
     ]).toArray();
     log('');
-    log(`PRs by language: ${number.commas(totalPRsByLanguage.length)} languages`);
+    log(`Eligible PRs by language: ${number.commas(totalPRsByLanguage.length)} languages`);
     totalPRsByLanguage.limit(50).forEach(group => {
         const name = group['_id'] || 'Undetermined';
-        log(`  ${name}: ${number.commas(group.count)} (${(group.count / totalPRs * 100).toFixed(2)}%)`);
+        log(`  ${name}: ${number.commas(group.count)} (${(group.count / totalEligiblePRs * 100).toFixed(2)}%)`);
     });
     let doughnutTotal = 0;
     const totalPRsByLanguageConfig = chart.config(1000, 1000, [{
         type: 'doughnut',
-        indexLabelPlacement: 'inside',
+        startAngle: 170,
+        indexLabelPlacement: 'outside',
         indexLabelFontSize: 22,
         indexLabelFontFamily: '\'Inter\', sans-serif',
-        dataPoints: totalPRsByLanguage.limit(10).map(data => {
-            const name = data['_id'] || 'Undetermined';
-            const dataColor = linguist.get(name) || chart.colors.lightBox;
-            const percent = data.count / totalPRs * 100;
+        indexLabelFontColor: chart.colors.white,
+        dataPoints: totalPRsByLanguage.filter(data => data['_id']).limit(20).map(data => {
+            const dataColor = linguist.get(data['_id']) || chart.colors.lightBox;
+            const percent = data.count / totalEligiblePRs * 100;
             doughnutTotal += data.count;
             return {
                 y: data.count,
-                indexLabel: `${name}\n${number.commas(data.count)} (${percent.toFixed(1)}%)`,
+                indexLabel: `${data['_id']}: ${number.commas(data.count)} (${percent.toFixed(1)}%)`,
                 color: dataColor,
-                indexLabelFontColor: color.isBright(dataColor) ? chart.colors.background : chart.colors.white,
-                indexLabelFontSize: percent > 10 ? 28 : percent > 5 ? 24 : percent > 4 ? 22 : 20,
+                indexLabelFontSize: percent > 10 ? 24 : percent > 4 ? 22 : 20,
             };
         }),
-    }]);
-    if (totalPRs > doughnutTotal) {
+    }], { padding: { top: 5, left: 10, right: 10, bottom: 30 }});
+    if (totalEligiblePRs > doughnutTotal) {
         totalPRsByLanguageConfig.data[0].dataPoints.push({
             y: totalPRs - doughnutTotal,
-            indexLabel: `Others\n${number.commas(totalPRs - doughnutTotal)} (${((totalPRs - doughnutTotal) / totalPRs * 100).toFixed(1)}%)`,
+            indexLabel: `Others: ${number.commas(totalEligiblePRs - doughnutTotal)} (${((totalEligiblePRs - doughnutTotal) / totalEligiblePRs * 100).toFixed(1)}%)`,
             color: chart.colors.darkBox,
             indexLabelFontColor: chart.colors.white,
-            indexLabelFontSize: 28,
+            indexLabelFontSize: 24,
         });
     }
+    totalPRsByLanguageConfig.data[0].dataPoints = totalPRsByLanguageConfig.data[0].dataPoints.map(x => [x, {
+        y: totalEligiblePRs * 0.005,
+        color: 'transparent',
+        showInLegend: false
+    }]).flat(1);
     totalPRsByLanguageConfig.title = {
-        text: 'PRs: Top 10 Languages',
+        text: 'Eligible PRs: Top 20 Languages',
         fontColor: chart.colors.text,
         fontFamily: '\'VT323\', monospace',
         fontSize: 72,
         padding: 5,
-        verticalAlign: 'center',
+        verticalAlign: 'top',
         horizontalAlign: 'center',
-        maxWidth: 500,
+        maxWidth: 900,
     };
+    totalPRsByLanguageConfig.subtitles = [{
+        text: `Hacktoberfest saw ${number.commas(totalPRsByLanguage.length)} different programming languages represented across the ${number.commas(totalEligiblePRs)} eligible PRs submitted by users.`,
+        fontColor: chart.colors.blue,
+        fontFamily: '\'VT323\', monospace',
+        fontSize: 40,
+        padding: 0,
+        verticalAlign: 'bottom',
+        horizontalAlign: 'center',
+        maxWidth: 750,
+        backgroundColor: chart.colors.darkBackground,
+    }];
     await chart.save(
         path.join(__dirname, '../../generated/prs_by_language_doughnut.png'),
         await chart.render(totalPRsByLanguageConfig),
-        { width: 150, x: 500, y: 660 },
+        { width: 150, x: 500, y: 460 },
     );
 
+    // Breaking down PRs by day
+    const totalPRsByDay = await db.collection('pull_requests').aggregate([
+        {
+            '$match': {
+                'app.state': 'eligible',
+            },
+        },
+        {
+            '$set': {
+                day: { '$dayOfYear': { '$dateFromString': { dateString: '$created_at' } } },
+            },
+        },
+        {
+            '$group': {
+                _id: '$day',
+                count: { '$sum': 1 },
+            },
+        },
+        { '$sort': { count: -1 } },
+        { '$limit': 15 },
+    ]).toArray();
+    log('');
+    log('Top days by eligible PRs:');
+    totalPRsByDay.forEach(day => {
+        log(`  ${formatDate(dateFromDay(2020, day['_id']))} | ${number.commas(day.count)} (${(day.count / totalEligiblePRs * 100).toFixed(2)}%)`);
+    });
+    const totalPRsByDayConfig = chart.config(1000, 1000, [{
+        type: 'bar',
+        indexLabelPlacement: 'inside',
+        indexLabelFontSize: 24,
+        indexLabelFontFamily: '\'Inter\', sans-serif',
+        indexLabelFontColor: chart.colors.white,
+        dataPoints: totalPRsByDay.limit(10).map((data, i) => {
+            const colors = [
+                chart.colors.blue, chart.colors.pink, chart.colors.crimson,
+            ];
+            const dataColor = colors[i % colors.length];
+            return {
+                y: data.count,
+                label: formatDate(dateFromDay(2020, data['_id']), true),
+                color: dataColor,
+                indexLabel: `${(data.count / totalEligiblePRs * 100).toFixed(2)}%`,
+                indexLabelFontColor: color.isBright(dataColor) ? chart.colors.background : chart.colors.white,
+            };
+        }).reverse(),
+    }]);
+    totalPRsByDayConfig.axisX = {
+        ...totalPRsByDayConfig.axisX,
+        labelFontSize: 34,
+    };
+    totalPRsByDayConfig.axisY = {
+        ...totalPRsByDayConfig.axisY,
+        labelFontSize: 34,
+    };
+    totalPRsByDayConfig.title = {
+        text: 'Eligible PRs: Most Popular Days',
+        fontColor: chart.colors.text,
+        fontFamily: '\'VT323\', monospace',
+        fontWeight: 'bold',
+        fontSize: 72,
+        padding: 5,
+        margin: 10,
+        verticalAlign: 'top',
+        horizontalAlign: 'center',
+    };
+    await chart.save(
+        path.join(__dirname, '../../generated/prs_by_day_bar.png'),
+        await chart.render(totalPRsByDayConfig),
+        { width: 200, x: 880, y: 820 },
+    );
+
+    // Breaking down PRs by day and by language
     const totalPRsByDayByLanguage = await db.collection('pull_requests').aggregate([
         {
             '$match': {
@@ -493,9 +580,9 @@ module.exports = async (db, log) => {
     ]).toArray();
     const totalPRsByDayByLanguageConfig = chart.config(2500, 1000, totalPRsByDayByLanguage.map(data => {
         const name = data['_id'] || 'Undetermined';
-        const dates = getDateArray(new Date('2019-09-30'), new Date('2019-11-01'));
+        const dates = getDateArray(new Date('2020-09-30'), new Date('2020-11-01'));
         const PRsByDate = data.data.reduce(function(result, item) {
-            result[dateFromDay(2019, item.day).toDateString()] = item.count;
+            result[dateFromDay(2020, item.day).toDateString()] = item.count;
             return result;
         }, {});
         const PRData = dates.map(date => {
@@ -519,89 +606,30 @@ module.exports = async (db, log) => {
         intervalType: 'week',
     };
     totalPRsByDayByLanguageConfig.title = {
-        text: 'PRs: Top 10 Languages',
+        text: 'Eligible PRs: Top 10 Languages',
         fontColor: chart.colors.text,
         fontFamily: '\'VT323\', monospace',
-        fontSize: 72,
+        fontSize: 84,
         padding: 5,
         verticalAlign: 'top',
         horizontalAlign: 'center',
     };
+    totalPRsByDayByLanguageConfig.subtitles = [{
+        text: `On ${formatDate(dateFromDay(2020, totalPRsByDay[0]._id), false)}, over ${Math.floor(totalPRsByDay[0].count / totalEligiblePRs * 100)}% of the total eligible PRs for Hacktoberfest were submitted in just one day: ${number.commas(totalPRsByDay[0].count)} PRs.`,
+        fontColor: chart.colors.blue,
+        fontFamily: '\'VT323\', monospace',
+        fontSize: 40,
+        padding: 100,
+        verticalAlign: 'top',
+        horizontalAlign: 'right',
+        dockInsidePlotArea: true,
+        maxWidth: 700,
+        backgroundColor: chart.colors.darkBackground,
+    }];
     totalPRsByDayByLanguageConfig.backgroundColor = chart.colors.dark;
     await chart.save(
         path.join(__dirname, '../../generated/prs_by_language_spline.png'),
         await chart.render(totalPRsByDayByLanguageConfig),
-        { width: 200, x: 1250, y: 180 },
-    );
-
-    // Breaking down PRs by day
-    const totalPRsByDay = await db.collection('pull_requests').aggregate([
-        {
-            '$match': {
-                'app.state': 'eligible',
-            },
-        },
-        {
-            '$set': {
-                day: { '$dayOfYear': { '$dateFromString': { dateString: '$created_at' } } },
-            },
-        },
-        {
-            '$group': {
-                _id: '$day',
-                count: { '$sum': 1 },
-            },
-        },
-        { '$sort': { count: -1 } },
-        { '$limit': 15 },
-    ]).toArray();
-    log('');
-    log('Top days by PRs:');
-    totalPRsByDay.forEach(day => {
-        log(`  ${formatDate(dateFromDay(2019, day['_id']))} | ${number.commas(day.count)} (${(day.count / totalPRs * 100).toFixed(2)}%)`);
-    });
-    const totalPRsByDayConfig = chart.config(1000, 1000, [{
-        type: 'bar',
-        indexLabelPlacement: 'inside',
-        indexLabelFontSize: 24,
-        indexLabelFontFamily: '\'Inter\', sans-serif',
-        indexLabelFontColor: chart.colors.white,
-        dataPoints: totalPRsByDay.limit(10).map((data, i) => {
-            const colors = [
-                chart.colors.blue, chart.colors.pink, chart.colors.crimson,
-            ];
-            const dataColor = colors[i % colors.length];
-            return {
-                y: data.count,
-                label: formatDate(dateFromDay(2019, data['_id']), true),
-                color: dataColor,
-                indexLabel: `${(data.count / totalPRs * 100).toFixed(2)}%`,
-                indexLabelFontColor: color.isBright(dataColor) ? chart.colors.background : chart.colors.white,
-            };
-        }).reverse(),
-    }]);
-    totalPRsByDayConfig.axisX = {
-        ...totalPRsByDayConfig.axisX,
-        labelFontSize: 34,
-    };
-    totalPRsByDayConfig.axisY = {
-        ...totalPRsByDayConfig.axisY,
-        labelFontSize: 34,
-    };
-    totalPRsByDayConfig.title = {
-        text: 'PRs: Most Popular Days',
-        fontColor: chart.colors.text,
-        fontFamily: '\'VT323\', monospace',
-        fontWeight: 'bold',
-        fontSize: 72,
-        padding: 5,
-        margin: 10,
-        verticalAlign: 'top',
-        horizontalAlign: 'center',
-    };
-    await chart.save(
-        path.join(__dirname, '../../generated/prs_by_day_bar.png'),
-        await chart.render(totalPRsByDayConfig),
-        { width: 200, x: 880, y: 820 },
+        { width: 200, x: 1250, y: 220 },
     );
 };

@@ -8,7 +8,7 @@ const main = async () => {
     log.log(`Started ${new Date().toLocaleString()}`);
 
     const db = await mongo.connect();
-    const dbo = db.db('hacktoberfest-2020-dev');
+    const dbo = db.db('hacktoberfest-2020');
     await stats(dbo, log.log);
     db.close();
 
