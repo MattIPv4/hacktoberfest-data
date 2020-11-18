@@ -34,44 +34,50 @@ module.exports = async (db, log) => {
     log(`    of which were labeled as invalid: ${number.commas(totalInvalidLabelPRs)} (${(totalInvalidLabelPRs / totalInvalidPRs * 100).toFixed(2)}%)`);
     const totalPRsByStateConfig = chart.config(1000, 1000, [{
         type: 'doughnut',
+        startAngle: 160,
         indexLabelPlacement: 'outside',
         indexLabelFontSize: 22,
         indexLabelFontColor: chart.colors.text,
         indexLabelFontFamily: '\'Inter\', sans-serif',
+        showInLegend: true,
         dataPoints: [
             {
-                exploded: true,
                 y: totalEligiblePRs,
-                indexLabel: `Eligible\n${number.commas(totalEligiblePRs)} (${(totalEligiblePRs / totalPRs * 100).toFixed(1)}%)`,
+                indexLabel: 'Eligible',
+                legendText: `Eligible: ${number.commas(totalEligiblePRs)} (${(totalEligiblePRs / totalPRs * 100).toFixed(1)}%)`,
                 color: chart.colors.blue,
                 indexLabelFontSize: 32,
             },
             {
-                exploded: true,
                 y: totalTopicMissingPRs,
-                indexLabel: `Repo not participating\n${number.commas(totalTopicMissingPRs)} (${(totalTopicMissingPRs / totalPRs * 100).toFixed(1)}%)`,
+                indexLabel: 'Repo not participating',
+                legendText: `Repo not participating: ${number.commas(totalTopicMissingPRs)} (${(totalTopicMissingPRs / totalPRs * 100).toFixed(1)}%)`,
                 color: chart.colors.pink,
             },
             {
-                exploded: true,
                 y: totalNotAcceptedPRs,
-                indexLabel: `Not accepted by maintainer\n${number.commas(totalNotAcceptedPRs)} (${(totalNotAcceptedPRs / totalPRs * 100).toFixed(1)}%)`,
+                indexLabel: 'Not accepted',
+                legendText: `Not accepted by maintainer: ${number.commas(totalNotAcceptedPRs)} (${(totalNotAcceptedPRs / totalPRs * 100).toFixed(1)}%)`,
                 color: chart.colors.pink,
             },
             {
-                exploded: true,
                 y: totalSpamRepoPRs,
-                indexLabel: `Excluded repository\n${number.commas(totalSpamRepoPRs)} (${(totalSpamRepoPRs / totalPRs * 100).toFixed(1)}%)`,
+                indexLabel: 'Excluded repo',
+                legendText: `Excluded repository: ${number.commas(totalSpamRepoPRs)} (${(totalSpamRepoPRs / totalPRs * 100).toFixed(1)}%)`,
                 color: chart.colors.crimson,
             },
             {
-                exploded: true,
                 y: totalInvalidLabelPRs,
-                indexLabel: `Labelled invalid or spam\n${number.commas(totalInvalidLabelPRs)} (${(totalInvalidLabelPRs / totalPRs * 100).toFixed(1)}%)`,
+                indexLabel: 'Labelled invalid',
+                legendText: `Labelled invalid or spam: ${number.commas(totalInvalidLabelPRs)} (${(totalInvalidLabelPRs / totalPRs * 100).toFixed(1)}%)`,
                 color: chart.colors.crimson,
             },
-        ].filter(item => item.y > 0),
-    }]);
+        ].map(x => [x, {
+            y: totalPRs * 0.007,
+            color: 'transparent',
+            showInLegend: false
+        }]).flat(1),
+    }], { padding: { top: 10, left: 5, right: 5, bottom: 20 }});
     totalPRsByStateConfig.title = {
         text: 'PRs: Breakdown by State',
         fontColor: chart.colors.text,
@@ -82,12 +88,20 @@ module.exports = async (db, log) => {
         horizontalAlign: 'center',
         maxWidth: 800,
     };
+    totalPRsByStateConfig.legend = {
+        fontColor: chart.colors.text,
+        fontFamily: '\'VT323\', monospace',
+        fontSize: 44,
+        markerMargin: 12,
+        horizontalAlign: 'center',
+        verticalAlign: 'bottom',
+        maxWidth: 980,
+    };
     await chart.save(
         path.join(__dirname, '../../generated/prs_by_state_doughnut.png'),
         await chart.render(totalPRsByStateConfig),
-        { width: 150, x: 500, y: 540 },
+        { width: 150, x: 500, y: 430 },
     );
-    // TODO: Review sizing etc. with full data
 
     // PRs by acceptance method
     const totalPRsByAcceptance = await db.collection('pull_requests').aggregate([
@@ -159,22 +173,27 @@ module.exports = async (db, log) => {
                     '$in': [
                         'hacktoberfest',
                         {
-                            '$map': {
-                                input: {
-                                    '$ifNull': [
-                                        {
-                                            '$map': {
-                                                input: '$frozen.repository.repositoryTopics.edges',
-                                                as: 'topic',
-                                                in: '$$topic.node.topic.name',
-                                            },
+                            '$ifNull': [
+                                {
+                                    '$map': {
+                                        input: {
+                                            '$ifNull': [
+                                                {
+                                                    '$map': {
+                                                        input: '$frozen.repository.repositoryTopics.edges',
+                                                        as: 'topic',
+                                                        in: '$$topic.node.topic.name',
+                                                    },
+                                                },
+                                                '$repository.topics.names',
+                                            ],
                                         },
-                                        '$repository.topics.names',
-                                    ],
+                                        as: 'topic',
+                                        in: { '$trim': { input: { '$toLower': '$$topic' } } },
+                                    },
                                 },
-                                as: 'topic',
-                                in: { '$trim': { input: { '$toLower': '$$topic' } } },
-                            },
+                                [],
+                            ],
                         },
                     ],
                 },
@@ -182,28 +201,33 @@ module.exports = async (db, log) => {
                     '$in': [
                         'hacktoberfest-accepted',
                         {
-                            '$map': {
-                                input: {
-                                    '$ifNull': [
-                                        {
-                                            '$map': {
-                                                input: '$frozen.labels.edges',
-                                                as: 'label',
-                                                in: '$$label.node.name',
-                                            },
+                            '$ifNull': [
+                                {
+                                    '$map': {
+                                        input: {
+                                            '$ifNull': [
+                                                {
+                                                    '$map': {
+                                                        input: '$frozen.labels.edges',
+                                                        as: 'label',
+                                                        in: '$$label.node.name',
+                                                    },
+                                                },
+                                                {
+                                                    '$map': {
+                                                        input: '$labels',
+                                                        as: 'label',
+                                                        in: '$$label.name',
+                                                    },
+                                                },
+                                            ],
                                         },
-                                        {
-                                            '$map': {
-                                                input: '$labels',
-                                                as: 'label',
-                                                in: '$$label.name',
-                                            },
-                                        },
-                                    ],
+                                        as: 'label',
+                                        in: { '$trim': { input: { '$toLower': '$$label' } } },
+                                    },
                                 },
-                                as: 'label',
-                                in: { '$trim': { input: { '$toLower': '$$label' } } },
-                            },
+                                [],
+                            ],
                         },
                     ],
                 },
@@ -254,26 +278,32 @@ module.exports = async (db, log) => {
     ]).toArray();
     const stateMap = {
         labelled_external_repo: {
+            short: 'Labelled accepted',
             label: 'Labelled hacktoberfest-accepted',
             color: chart.colors.pink,
         },
         labelled_participating_repo: {
+            short: 'Labelled accepted, with topic',
             label: 'Labelled hacktoberfest-accepted, with hacktoberfest topic',
             color: chart.colors.blue,
         },
         merged_participating_repo: {
+            short: 'Merged, with topic',
             label: 'Merged by maintainer, with hacktoberfest topic',
             color: chart.colors.blue,
         },
         approved_participating_repo: {
+            short: 'Approved, with topic',
             label: 'Approved by maintainer, with hacktoberfest topic',
             color: chart.colors.blue,
         },
         before_rules_change: {
+            short: 'Before rules change',
             label: 'Created before rules change',
             color: chart.colors.crimson,
         },
         unknown: {
+            short: 'Unknown',
             label: 'Unknown',
             color: chart.colors.light,
         },
@@ -283,22 +313,33 @@ module.exports = async (db, log) => {
     for (const state of totalPRsByAcceptance) {
         log(`  ${stateMap[state._id].label}: ${number.commas(state.count)} (${(state.count / totalEligiblePRs * 100).toFixed(2)}%)`);
     }
+    const missingKeys = Object.keys(stateMap).filter(x => !totalPRsByAcceptance.map(y => y._id).includes(x));
+    totalPRsByAcceptance.push(...missingKeys.map(x => ({
+        _id: x,
+        count: 0,
+    })));
     const totalPRsByAcceptanceConfig = chart.config(1000, 1000, [{
         type: 'doughnut',
+        startAngle: 160,
         indexLabelPlacement: 'outside',
         indexLabelFontSize: 22,
         indexLabelFontColor: chart.colors.text,
         indexLabelFontFamily: '\'Inter\', sans-serif',
+        showInLegend: true,
         dataPoints: totalPRsByAcceptance.map(state => {
             const data = stateMap[state._id];
             return {
-                exploded: true,
                 y: state.count,
-                indexLabel: `${data.label}\n${number.commas(state.count)} (${(state.count / totalEligiblePRs * 100).toFixed(1)}%)`,
+                indexLabel: data.short,
+                legendText: `${data.label}: ${number.commas(state.count)} (${(state.count / totalEligiblePRs * 100).toFixed(1)}%)`,
                 color: data.color,
             };
-        }),
-    }]);
+        }).map(x => [x, {
+            y: totalEligiblePRs * 0.007,
+            color: 'transparent',
+            showInLegend: false
+        }]).flat(1),
+    }], { padding: { top: 10, left: 5, right: 5, bottom: 20 }});
     totalPRsByAcceptanceConfig.title = {
         text: 'PRs: Acceptance Method',
         fontColor: chart.colors.text,
@@ -309,12 +350,20 @@ module.exports = async (db, log) => {
         horizontalAlign: 'center',
         maxWidth: 800,
     };
+    totalPRsByAcceptanceConfig.legend = {
+        fontColor: chart.colors.text,
+        fontFamily: '\'VT323\', monospace',
+        fontSize: 44,
+        markerMargin: 12,
+        horizontalAlign: 'center',
+        verticalAlign: 'bottom',
+        maxWidth: 980,
+    };
     await chart.save(
         path.join(__dirname, '../../generated/prs_by_acceptance_doughnut.png'),
         await chart.render(totalPRsByAcceptanceConfig),
-        { width: 150, x: 500, y: 540 },
+        { width: 150, x: 500, y: 340 },
     );
-    // TODO: Review sizing etc. with full data
 
     // Users x PRs
     const totalUsers = await db.collection('users').find({}).count();
@@ -367,12 +416,11 @@ module.exports = async (db, log) => {
         dataPoints: totalPRsByLanguage.limit(10).map(data => {
             const name = data['_id'] || 'Undetermined';
             const dataColor = linguist.get(name) || chart.colors.lightBox;
-            const displayName = name === 'TypeScript' ? 'TS' : name; // TypeScript causes length/overlap issues
             const percent = data.count / totalPRs * 100;
             doughnutTotal += data.count;
             return {
                 y: data.count,
-                indexLabel: `${displayName}\n${number.commas(data.count)} (${percent.toFixed(1)}%)`,
+                indexLabel: `${name}\n${number.commas(data.count)} (${percent.toFixed(1)}%)`,
                 color: dataColor,
                 indexLabelFontColor: color.isBright(dataColor) ? chart.colors.background : chart.colors.white,
                 indexLabelFontSize: percent > 10 ? 28 : percent > 5 ? 24 : percent > 4 ? 22 : 20,
