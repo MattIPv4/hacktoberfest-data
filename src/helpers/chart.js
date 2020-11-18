@@ -22,7 +22,18 @@ const colors = {
     crimson: '#9C4668',
 };
 
-const config = (width, height, data) => {
+const config = (width, height, data, opts) => {
+    opts = opts || {};
+    opts.size = {
+        width,
+        height,
+    };
+    opts.padding = opts.padding || {};
+    opts.padding.top = opts.padding.top || 0;
+    opts.padding.right = opts.padding.right || 0;
+    opts.padding.bottom = opts.padding.bottom || 0;
+    opts.padding.left = opts.padding.left || 0;
+
     const axis = {
         gridColor: colors.lightBox,
         lineColor: colors.lightBox,
@@ -35,8 +46,8 @@ const config = (width, height, data) => {
         titleFontFamily: '\'VT323\', monospace',
     };
     return {
-        width,
-        height,
+        width: width - opts.padding.left - opts.padding.right,
+        height: height - opts.padding.top - opts.padding.bottom,
         theme: 'dark2',
         backgroundColor: colors.background,
         axisX: axis,
@@ -47,9 +58,10 @@ const config = (width, height, data) => {
             fontFamily: '\'Inter\', sans-serif',
             horizontalAlign: 'center',
             verticalAlign: 'bottom',
-            maxWidth: width * .9,
+            maxWidth: (width - opts.padding.left - opts.padding.right) * .9,
         },
         data,
+        renderOpts: opts,
     };
 };
 
@@ -62,11 +74,23 @@ const render = async config => {
         };
         const getCanvas = window => {
             const canvas = window.document.body.querySelector('#chartContainer canvas');
+
+            // Apply padding
+            if (config.renderOpts.size.width !== config.width || config.renderOpts.size.height !== config.height) {
+                const ctx = canvas.getContext('2d');
+                const temp = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                ctx.canvas.width = config.renderOpts.size.width;
+                ctx.canvas.height = config.renderOpts.size.height;
+                ctx.fillStyle = config.backgroundColor;
+                ctx.fillRect(0, 0, config.renderOpts.size.width, config.renderOpts.size.height);
+                ctx.putImageData(temp, config.renderOpts.padding.left, config.renderOpts.padding.top);
+            }
+
             resolve(canvas.toDataURL('image/png'));
         };
         const virtualConsole = new jsdom.VirtualConsole();
         virtualConsole.sendTo(console, { omitJSDOMErrors: true });
-        new JSDOM(`<html><body style="height: ${config.height*1.5}px; width: ${config.width*1.5}px;"><div id="chartContainer" style="height: ${config.height*1.1}px; width: ${config.width*1.1}px;"></div><script src="https://cdnjs.cloudflare.com/ajax/libs/canvasjs/1.7.0/canvasjs.min.js" onload="makeCanvas(window)"></script></body></html>`, {
+        new JSDOM(`<html><body style="height: ${config.renderOpts.size.height*1.5}px; width: ${config.renderOpts.size.width*1.5}px;"><div id="chartContainer" style="height: ${config.renderOpts.size.height*1.1}px; width: ${config.renderOpts.size.width*1.1}px; background: ${config.backgroundColor};"></div><script src="https://cdnjs.cloudflare.com/ajax/libs/canvasjs/1.7.0/canvasjs.min.js" onload="makeCanvas(window)"></script></body></html>`, {
             resources: 'usable',
             runScripts: 'dangerously',
             virtualConsole,
