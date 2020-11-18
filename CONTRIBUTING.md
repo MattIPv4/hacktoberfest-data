@@ -18,24 +18,41 @@ brew install mongodb-community@4.2
 mongod --config /usr/local/etc/mongod.conf
 ```
 
-### Import the data
-
-```
-mongoimport --db hacktoberfest-2020 --collection pull_requests --file data/pull_requests.json --jsonArray
-mongoimport --db hacktoberfest-2020 --collection repositories --file data/repositories.json --jsonArray
-mongoimport --db hacktoberfest-2020 --collection users --file data/users.json --jsonArray
-mongoimport --db hacktoberfest-2020 --collection spam_repositories --type csv --headerline --file data/spam_repos.csv
-```
-
-### Create some indexes
+### Create the empty collections
 
 ```
 mongo
 > use hacktoberfest-2020
-> db.pull_requests.createIndex({ id: 1 })
-> db.repositories.createIndex({ id: 1 })
-> db.users.createIndex({ id: 1 })
-> db.spam_repositories.createIndex({ 'Repo ID': 1 })
+> db.createCollection('pull_requests')
+> db.createCollection('repositories')
+> db.createCollection('users')
+> db.createCollection('spam_repositories')
+```
+
+### Create some indexes
+
+This helps with faster lookups, but also to ensure unique records
+
+```
+mongo
+> use hacktoberfest-2020
+> db.pull_requests.createIndex({ id: 1 }, { unique: true })
+> db.pull_requests.createIndex({ 'app.state': 1 }, { unique: false })
+> db.pull_requests.createIndex({ 'base.repo.id': 1 }, { unique: false })
+> db.repositories.createIndex({ id: 1 }, { unique: true })
+> db.users.createIndex({ 'app.id': 1 }, { unique: true })
+> db.users.createIndex({ id: 1 }, { unique: false })
+> db.users.createIndex({ 'app.receipt.repository.databaseId': 1 }, { unique: false })
+> db.spam_repositories.createIndex({ 'Repo ID': 1 }, { unique: true })
+```
+
+### Import the data
+
+```
+mongoimport --db hacktoberfest-2020 --collection pull_requests --file data/2020/pull_requests.json --jsonArray
+mongoimport --db hacktoberfest-2020 --collection repositories --file data/2020/repositories.json --jsonArray
+mongoimport --db hacktoberfest-2020 --collection users --file data/2020/users.json --jsonArray
+mongoimport --db hacktoberfest-2020 --collection spam_repositories --type csv --headerline --file data/2020/spam_repos.csv
 ```
 
 ## Generating the stats
