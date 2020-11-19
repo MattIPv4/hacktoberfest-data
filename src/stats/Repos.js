@@ -208,7 +208,7 @@ module.exports = async (db, log) => {
         },
     ]).toArray())[0];
     log('');
-    log(`Average stars per repo: ${number.commas(Math.round(allRepoStars.stars / totalRepos))}`);
+    log(`Average stars per repo: ${number.commas(allRepoStars.stars / totalRepos)}`);
     const allRepoForks = (await db.collection('repositories').aggregate([
         {
             '$group': {
@@ -218,7 +218,7 @@ module.exports = async (db, log) => {
         },
     ]).toArray())[0];
     log('');
-    log(`Average forks per repo: ${number.commas(Math.round(allRepoForks.forks / totalRepos))}`);
+    log(`Average forks per repo: ${number.commas(allRepoForks.forks / totalRepos)}`);
     const allRepoWatchers = (await db.collection('repositories').aggregate([
         {
             '$group': {
@@ -228,7 +228,7 @@ module.exports = async (db, log) => {
         },
     ]).toArray())[0];
     log('');
-    log(`Average watchers per repo: ${number.commas(Math.round(allRepoWatchers.watchers / totalRepos))}`);
+    log(`Average watchers per repo: ${number.commas(allRepoWatchers.watchers / totalRepos)}`);
 
     // Plot stars vs forks.
     const ReposStarsVsForks = await db.collection('repositories').aggregate([
