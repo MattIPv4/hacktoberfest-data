@@ -28,40 +28,13 @@ module.exports = async (db, log) => {
         { '$match': { 'spam.Verified?': 'checked' } },
         { '$group': { _id: null, count: { '$sum': 1 } } },
     ]).limit(1).toArray())[0] || { count: 0 }).count;
-    const totalParticipatingRepos = ((await db.collection('repositories').aggregate([
-        {
-            '$lookup': {
-                from: 'pull_requests',
-                localField: 'id',
-                foreignField: 'base.repo.id',
-                as: 'prs',
-            },
-        },
-        {
-            '$project': {
-                eligible_prs: {
-                    '$filter': {
-                        input: '$prs',
-                        as: 'pr',
-                        cond: {
-                            '$eq': ['$$pr.app.state', 'eligible'],
-                        },
-                    },
-                },
-            },
-        },
+    const totalParticipatingRepos = ((await db.collection('pull_requests').aggregate([
         {
             '$match': {
-                '$expr': {
-                    '$gt': [
-                        {
-                            '$size': '$eligible_prs',
-                        },
-                        0,
-                    ],
-                },
+                'app.state': 'eligible',
             },
         },
+        { '$group': { _id: '$base.repo.id' } },
         { '$group': { _id: null, count: { '$sum': 1 } } },
     ]).limit(1).toArray())[0] || { count: 0 }).count;
     const totalTopicRepos = ((await db.collection('repositories').aggregate([
@@ -143,7 +116,9 @@ module.exports = async (db, log) => {
     log(`Total repos: ${number.commas(totalRepos)}`);
     log(`  Participating repos: ${number.commas(totalParticipatingRepos)} (${(totalParticipatingRepos / totalRepos * 100).toFixed(2)}%)`);
     log(`    of which used the hacktoberfest-topic: ${number.commas(totalTopicRepos)} (${(totalTopicRepos / totalParticipatingRepos * 100).toFixed(2)}%)`);
+    log('    (A repository was considered participating if it received or one more PRs that were considered eligible)');
     log(`  Excluded repos: ${number.commas(totalInvalidRepos)} (${(totalInvalidRepos / totalRepos * 100).toFixed(2)}%)`);
+    log('    (A repository was excluded if we felt it did not follow the values of the event after reports from our community and internal review)');
 
     // Breaking down repos by language
     const totalReposByLanguage = await db.collection('repositories').aggregate([
@@ -164,47 +139,63 @@ module.exports = async (db, log) => {
     let doughnutTotal = 0;
     const totalReposByLanguageConfig = chart.config(1000, 1000, [{
         type: 'doughnut',
-        indexLabelPlacement: 'inside',
+        startAngle: 125,
+        indexLabelPlacement: 'outside',
         indexLabelFontSize: 22,
         indexLabelFontFamily: '\'Inter\', sans-serif',
+        indexLabelFontColor: chart.colors.white,
         dataPoints: totalReposByLanguage.limit(10).map(data => {
             const name = data['_id'] || 'Undetermined';
             const dataColor = linguist.get(name) || chart.colors.lightBox;
-            const displayName = name === 'TypeScript' ? 'TS' : name; // TypeScript causes length/overlap issues
             const percent = data.count / totalRepos * 100;
             doughnutTotal += data.count;
             return {
                 y: data.count,
-                indexLabel: `${displayName}\n${number.commas(data.count)} (${percent.toFixed(1)}%)`,
+                indexLabel: `${name}: ${number.commas(data.count)} (${percent.toFixed(1)}%)`,
                 color: dataColor,
-                indexLabelFontColor: color.isBright(dataColor) ? chart.colors.background : chart.colors.white,
-                indexLabelFontSize: percent > 10 ? 28 : percent > 5 ? 24 : percent > 4 ? 22 : 20,
+                indexLabelFontSize: percent > 10 ? 24 : percent > 4 ? 22 : 20,
             };
         }),
-    }]);
+    }], { padding: { top: 5, left: 10, right: 10, bottom: 30 }});
     if (totalRepos > doughnutTotal) {
         totalReposByLanguageConfig.data[0].dataPoints.push({
             y: totalRepos - doughnutTotal,
-            indexLabel: `Others\n${number.commas(totalRepos - doughnutTotal)} (${((totalRepos - doughnutTotal) / totalRepos * 100).toFixed(1)}%)`,
+            indexLabel: `Others: ${number.commas(totalRepos - doughnutTotal)} (${((totalRepos - doughnutTotal) / totalRepos * 100).toFixed(1)}%)`,
             color: chart.colors.darkBox,
             indexLabelFontColor: chart.colors.white,
-            indexLabelFontSize: 28,
+            indexLabelFontSize: 24,
         });
     }
+    totalReposByLanguageConfig.data[0].dataPoints = totalReposByLanguageConfig.data[0].dataPoints.map(x => [x, {
+        y: totalRepos * 0.005,
+        color: 'transparent',
+        showInLegend: false
+    }]).flat(1);
     totalReposByLanguageConfig.title = {
         text: 'Repos: Top 10 Languages',
         fontColor: chart.colors.text,
         fontFamily: '\'VT323\', monospace',
         fontSize: 72,
         padding: 5,
-        verticalAlign: 'center',
+        verticalAlign: 'top',
         horizontalAlign: 'center',
-        maxWidth: 500,
+        maxWidth: 900,
     };
+    totalReposByLanguageConfig.subtitles = [{
+        text: `Hacktoberfest saw ${number.commas(totalReposByLanguage.length)} different programming languages represented across the ${number.commas(totalRepos)} repositories involved.`,
+        fontColor: chart.colors.blue,
+        fontFamily: '\'VT323\', monospace',
+        fontSize: 40,
+        padding: 0,
+        verticalAlign: 'bottom',
+        horizontalAlign: 'center',
+        maxWidth: 750,
+        backgroundColor: chart.colors.darkBackground,
+    }];
     await chart.save(
         path.join(__dirname, '../../generated/repos_by_language_doughnut.png'),
         await chart.render(totalReposByLanguageConfig),
-        { width: 150, x: 500, y: 660 },
+        { width: 150, x: 500, y: 460 },
     );
 
     // Projects by popularity, contributors, stars (repo metadata)
@@ -269,6 +260,7 @@ module.exports = async (db, log) => {
         },
         {
             type: 'line',
+            lineThickness: 5,
             markerSize: 0,
             color: chart.colors.blue,
             dataPoints: [
@@ -343,26 +335,29 @@ module.exports = async (db, log) => {
             const colors = [
                 chart.colors.blue, chart.colors.pink, chart.colors.crimson,
             ];
+            const licenseColor = colors[i % colors.length];
             const licenseName = data['_id'] === 'NOASSERTION' ? 'Custom License' : data['_id'];
             topRepoLicensesTotal += data.count;
             return {
                 y: data.count,
-                indexLabel: `${licenseName}\n${number.commas(data.count)} (${(data.count / totalRepos * 100).toFixed(1)}%)`,
-                color: colors[i % colors.length],
-                indexLabelFontColor: color.isBright(colors[i % colors.length]) ? chart.colors.background : chart.colors.white,
+                indexLabelPlacement: i === 0 ? 'inside' : 'outside',
+                indexLabel: `${licenseName}: ${number.commas(data.count)} (${(data.count / totalRepos * 100).toFixed(1)}%)`,
+                color: licenseColor,
+                indexLabelFontColor: i === 0 ? (color.isBright(licenseColor) ? chart.colors.background : chart.colors.white) : chart.colors.white,
             };
         }),
     }]);
     topRepoLicensesConfig.data[0].dataPoints.push({
         y: totalRepos - topRepoLicensesTotal,
-        indexLabel: `Others\n${((totalRepos - topRepoLicensesTotal) / totalRepos * 100).toFixed(1)}%`,
+        indexLabelPlacement: 'outside',
+        indexLabel: `Others: ${((totalRepos - topRepoLicensesTotal) / totalRepos * 100).toFixed(1)}%`,
         color: chart.colors.darkBox,
         indexLabelFontColor: chart.colors.white,
-        indexLabelFontSize: 28,
     });
     topRepoLicensesConfig.axisY = {
         ...topRepoLicensesConfig.axisY,
         labelFontSize: 34,
+        interval: 10000,
     };
     topRepoLicensesConfig.axisX = {
         ...topRepoLicensesConfig.axisX,
@@ -399,4 +394,79 @@ module.exports = async (db, log) => {
         await chart.render(topRepoLicensesConfig),
         { width: 200, x: 880, y: 300 },
     );
+
+    // Breakdown by state
+    const totalPRsByState = (await db.collection('pull_requests').aggregate([
+        {
+            '$match': {
+                'app.state': { '$ne': null },
+            },
+        },
+        {
+            '$group': {
+                _id: {
+                    repo: '$base.repo.id',
+                    state: '$app.state',
+                },
+                count: { '$sum': 1 },
+            },
+        },
+        {
+            '$group': {
+                _id: '$_id.repo',
+                data: {
+                    '$push': {
+                        k: '$_id.state',
+                        v: '$count',
+                    },
+                },
+            },
+        },
+        {
+            '$match': {
+                '$expr': {
+                    '$let': {
+                        vars: {
+                            dataObj: { '$arrayToObject': '$data' },
+                        },
+                        in: {
+                            '$and': [
+                                {
+                                    '$ne': [
+                                        '$$dataObj.eligible',
+                                        null,
+                                    ],
+                                },
+                                {
+                                    '$gt': [
+                                        '$$dataObj.eligible',
+                                        0,
+                                    ],
+                                }
+                            ],
+                        },
+                    },
+                },
+            },
+        },
+        {
+            '$unwind': '$data',
+        },
+        {
+            '$group': {
+                _id: '$data.k',
+                count: { '$sum': '$data.v' },
+            },
+        },
+        { '$sort': { count: -1 } },
+    ]).toArray()).reduce((acc, cur) => {
+        acc[cur._id] = cur.count;
+        return acc;
+    }, {});
+    log('');
+    log('On average, a participating repository received the following:');
+    log('  (A repository was considered participating if it received or one more PRs that were considered eligible)');
+    log(`  Eligible PRs, accepted by a maintainer: ${number.commas(totalPRsByState.eligible / totalParticipatingRepos)}`);
+    log(`  PRs not accepted by a maintainer: ${number.commas(totalPRsByState.not_accepted / totalParticipatingRepos)}`);
+    log(`  PRs labelled as invalid or spam: ${number.commas(totalPRsByState.invalid_label / totalParticipatingRepos)}`);
 };

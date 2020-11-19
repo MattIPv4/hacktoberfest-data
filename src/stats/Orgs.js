@@ -41,6 +41,6 @@ module.exports = async (db, log) => {
     }).count();
     log('');
     log(`Total orgs: ${number.commas(totalOrgs)}`);
-    log(`Total PRs to repos in orgs: ${number.commas(totalPRsToOrgs)}`);
-    log(`  Avg. PRs to each org: ${number.commas(Math.round(totalPRsToOrgs / totalOrgs))}`);
+    log(`Total eligible PRs to repos in orgs: ${number.commas(totalPRsToOrgs)}`);
+    log(`  Avg. eligible PRs to each org: ${number.commas(totalPRsToOrgs / totalOrgs)}`);
 };

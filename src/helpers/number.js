@@ -1,6 +1,5 @@
 const commas = num => {
-    // Thanks https://stackoverflow.com/a/2901298
-    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return num.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 });
 };
 
 module.exports = { commas };
