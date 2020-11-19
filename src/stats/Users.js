@@ -54,7 +54,7 @@ const usersTopCountriesChart = async (userData, totalUsers, title, file, interva
             text: mainSubtitle,
             fontColor: chart.colors.blue,
             fontFamily: '\'VT323\', monospace',
-            fontSize: 34,
+            fontSize: 36,
             padding: 15,
             verticalAlign: 'bottom',
             horizontalAlign: 'right',
@@ -68,7 +68,7 @@ const usersTopCountriesChart = async (userData, totalUsers, title, file, interva
                 text: smallSubtitle,
                 fontColor: chart.colors.blue,
                 fontFamily: '\'VT323\', monospace',
-                fontSize: 20,
+                fontSize: 22,
                 padding: 15,
                 verticalAlign: 'bottom',
                 horizontalAlign: 'right',
@@ -94,6 +94,7 @@ module.exports = async (db, log) => {
 
     // Total users
     const totalUsers = await db.collection('users').find({}).count();
+    const totalRegisteredUsers = await db.collection('users').find({ 'app.state': { '$nin': ['new'] } }).count();
     const totalUsersByPRs = await db.collection('pull_requests').aggregate([
         {
             '$match': {
@@ -118,6 +119,7 @@ module.exports = async (db, log) => {
     const totalWinnerStateUsers = await db.collection('users').find({ 'app.state': { '$in': ['completed', 'won_shirt', 'won_sticker'] } }).count();
     log('');
     log(`Total Users: ${number.commas(totalUsers)}`);
+    log(`  Users that completed registration: ${number.commas(totalRegisteredUsers)} (${(totalRegisteredUsers / totalUsers * 100).toFixed(2)}%)`);
     log(`  Users that submitted 1+ eligible PR: ${number.commas(totalUsersWithPRs)} (${(totalUsersWithPRs / totalUsers * 100).toFixed(2)}%)`);
     log(`  Users that won (4+ eligible PRs): ${number.commas(totalWinnerUsers)} (${(totalWinnerUsers / totalUsers * 100).toFixed(2)}%)`);
     log(`  Users that won (winning state): ${number.commas(totalWinnerStateUsers)} (${(totalWinnerStateUsers / totalUsers * 100).toFixed(2)}%)`);
@@ -300,12 +302,12 @@ module.exports = async (db, log) => {
     log('');
     log('Top countries by registrations:');
     totalRegistrationsByCountry.forEach(data => {
-        log(`  [${data._id || '--'}] ${country.getCountryName(data._id)} | ${number.commas(data.count)} (${(data.count / totalUsers * 100).toFixed(2)}%)`);
+        log(`  [${data._id || '--'}] ${country.getCountryName(data._id)} | ${number.commas(data.count)} (${(data.count / totalRegisteredUsers * 100).toFixed(2)}%)`);
     });
     const registrationsCaption = `In total, at least ${number.commas(totalRegistrationsByCountry.filter(x => x._id !== null).length)} countries were represented by users who registered to participate in Hacktoberfest.`;
     await usersTopCountriesChart(
         totalRegistrationsByCountry,
-        totalUsers,
+        totalRegisteredUsers,
         'Users (registered): Top Countries',
         'users_registrations_top_countries_bar',
         10000,
@@ -313,12 +315,12 @@ module.exports = async (db, log) => {
     );
     await usersTopCountriesChart(
         totalRegistrationsByCountry.filter(x => ![null, 'US', 'IN'].includes(x._id)),
-        totalUsers,
+        totalRegisteredUsers,
         'Users (registered): Top Countries',
         'users_registrations_top_countries_bar_excl',
         1000,
         registrationsCaption,
-        'Graphic does not include the United States, India and users that did not specify their country.',
+        `Graphic does not include the United States (${(totalRegistrationsByCountry.find(x => x._id === 'US').count / totalRegisteredUsers * 100).toFixed(2)}%), India (${(totalRegistrationsByCountry.find(x => x._id === 'IN').count / totalRegisteredUsers * 100).toFixed(2)}%) and users that did not specify their country (${(totalRegistrationsByCountry.find(x => x._id === null).count / totalRegisteredUsers * 100).toFixed(2)}%).`,
     );
 
     // Completions by country
@@ -358,12 +360,12 @@ module.exports = async (db, log) => {
     log('');
     log('Top countries by completions:');
     totalCompletionsByCountry.forEach(data => {
-        log(`  [${data._id || '--'}] ${country.getCountryName(data._id)} | ${number.commas(data.count)} (${(data.count / totalUsers * 100).toFixed(2)}%)`);
+        log(`  [${data._id || '--'}] ${country.getCountryName(data._id)} | ${number.commas(data.count)} (${(data.count / totalWinnerStateUsers * 100).toFixed(2)}%)`);
     });
     const completionsCaption = `In total, at least ${number.commas(totalCompletionsByCountry.filter(x => x._id !== null).length)} countries were represented by users who completed and won Hacktoberfest.`;
     await usersTopCountriesChart(
         totalCompletionsByCountry,
-        totalUsers,
+        totalWinnerStateUsers,
         'Users (completions): Top Countries',
         'users_completions_top_countries_bar',
         10000,
@@ -371,11 +373,11 @@ module.exports = async (db, log) => {
     );
     await usersTopCountriesChart(
         totalCompletionsByCountry.filter(x => ![null, 'US', 'IN'].includes(x._id)),
-        totalUsers,
+        totalWinnerStateUsers,
         'Users (completions): Top Countries',
         'users_completions_top_countries_bar_excl',
         1000,
         completionsCaption,
-        'Graphic does not include the United States, India and users that did not specify their country.',
+        `Graphic does not include the United States (${(totalCompletionsByCountry.find(x => x._id === 'US').count / totalWinnerStateUsers * 100).toFixed(2)}%), India (${(totalCompletionsByCountry.find(x => x._id === 'IN').count / totalWinnerStateUsers * 100).toFixed(2)}%) and users that did not specify their country (${(totalCompletionsByCountry.find(x => x._id === null).count / totalWinnerStateUsers * 100).toFixed(2)}%).`,
     );
 };
