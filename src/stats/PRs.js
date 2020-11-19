@@ -75,7 +75,7 @@ module.exports = async (db, log) => {
         ].map(x => [x, {
             y: totalPRs * 0.007,
             color: 'transparent',
-            showInLegend: false
+            showInLegend: false,
         }]).flat(1),
     }], { padding: { top: 10, left: 5, right: 5, bottom: 20 }});
     totalPRsByStateConfig.title = {
@@ -337,7 +337,7 @@ module.exports = async (db, log) => {
         }).map(x => [x, {
             y: totalEligiblePRs * 0.007,
             color: 'transparent',
-            showInLegend: false
+            showInLegend: false,
         }]).flat(1),
     }], { padding: { top: 10, left: 5, right: 5, bottom: 20 }});
     totalPRsByAcceptanceConfig.title = {
@@ -438,7 +438,7 @@ module.exports = async (db, log) => {
     totalPRsByLanguageConfig.data[0].dataPoints = totalPRsByLanguageConfig.data[0].dataPoints.map(x => [x, {
         y: totalEligiblePRs * 0.005,
         color: 'transparent',
-        showInLegend: false
+        showInLegend: false,
     }]).flat(1);
     totalPRsByLanguageConfig.title = {
         text: 'Eligible PRs: Top 20 Languages',

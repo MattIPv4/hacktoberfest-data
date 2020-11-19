@@ -169,7 +169,7 @@ module.exports = async (db, log) => {
     totalReposByLanguageConfig.data[0].dataPoints = totalReposByLanguageConfig.data[0].dataPoints.map(x => [x, {
         y: totalRepos * 0.005,
         color: 'transparent',
-        showInLegend: false
+        showInLegend: false,
     }]).flat(1);
     totalReposByLanguageConfig.title = {
         text: 'Repos: Top 10 Languages',
@@ -442,7 +442,7 @@ module.exports = async (db, log) => {
                                         '$$dataObj.eligible',
                                         0,
                                     ],
-                                }
+                                },
                             ],
                         },
                     },
