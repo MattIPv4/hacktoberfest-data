@@ -632,4 +632,38 @@ module.exports = async (db, log) => {
         await chart.render(totalPRsByDayByLanguageConfig),
         { width: 200, x: 1250, y: 220 },
     );
+
+    // Averages of certain metrics
+    const averagesPRs = (await db.collection('pull_requests').aggregate([
+        {
+            '$match': {
+                'app.state': 'eligible',
+            },
+        },
+        {
+            '$group': {
+                _id: null,
+                additions: { '$avg': '$additions' },
+                assignees: { '$avg': { '$size': { '$ifNull': [ '$assignees', [] ] } } },
+                changed_files: { '$avg': '$changed_files' },
+                comments: { '$avg': '$comments' },
+                commits: { '$avg': '$commits' },
+                deletions: { '$avg': '$deletions' },
+                labels: { '$avg': { '$size': { '$ifNull': [ '$labels', [] ] } } },
+                requested_reviewers: { '$avg': { '$size': { '$ifNull': [ '$requested_reviewers', [] ] } } },
+                requested_teams: { '$avg': { '$size': { '$ifNull': [ '$requested_teams', [] ] } } },
+                review_comments: { '$avg': '$review_comments' },
+            },
+        },
+    ]).toArray())[0];
+    log('');
+    log('On average, an eligible PR had:');
+    log(`  ${number.integer(averagesPRs.commits)} commits`);
+    log(`  ${number.integer(averagesPRs.changed_files)} modified files`);
+    log(`  ${number.integer(averagesPRs.additions)} additions, ${number.integer(averagesPRs.deletions)} deletions`);
+    log(`  ${number.integer(averagesPRs.comments)} comments`);
+    log(`  ${number.integer(averagesPRs.review_comments)} review comments`);
+    log(`  ${number.integer(averagesPRs.labels)} labels`);
+    log(`  ${number.integer(averagesPRs.assignees)} assigned users`);
+    log(`  ${number.integer(averagesPRs.requested_reviewers)} requested reviews, ${number.integer(averagesPRs.requested_teams)} requested team reviewers`);
 };

@@ -123,7 +123,8 @@ module.exports = async (db, log) => {
     log(`  Users that submitted 1+ eligible PR: ${number.commas(totalUsersWithPRs)} (${(totalUsersWithPRs / totalUsers * 100).toFixed(2)}%)`);
     log(`  Users that won (4+ eligible PRs): ${number.commas(totalWinnerUsers)} (${(totalWinnerUsers / totalUsers * 100).toFixed(2)}%)`);
     log(`  Users that won (winning state): ${number.commas(totalWinnerStateUsers)} (${(totalWinnerStateUsers / totalUsers * 100).toFixed(2)}%)`);
-    log('    This number represents how many users actually won. It may be slightly higher that the 4+ eligible PRs number if PRs submitted by some users are no longer publicly available.');
+    log('    (This number may be slightly higher that the 4+ eligible PRs number if PRs submitted by some users are no longer publicly available.)');
+    log('    (It may still be lower than the published number of winners, as this report does not consider users who no longer can be found on GitHub.)');
 
     // Users by PRs
     log('');

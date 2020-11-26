@@ -115,8 +115,8 @@ module.exports = async (db, log) => {
     log('');
     log(`Total repos: ${number.commas(totalRepos)}`);
     log(`  Participating repos: ${number.commas(totalParticipatingRepos)} (${(totalParticipatingRepos / totalRepos * 100).toFixed(2)}%)`);
-    log(`    of which used the hacktoberfest-topic: ${number.commas(totalTopicRepos)} (${(totalTopicRepos / totalParticipatingRepos * 100).toFixed(2)}%)`);
     log('    (A repository was considered participating if it received or one more PRs that were considered eligible)');
+    log(`  Repositories using the hacktoberfest topic: ${number.commas(totalTopicRepos)} (${(totalTopicRepos / totalRepos * 100).toFixed(2)}%)`);
     log(`  Excluded repos: ${number.commas(totalInvalidRepos)} (${(totalInvalidRepos / totalRepos * 100).toFixed(2)}%)`);
     log('    (A repository was excluded if we felt it did not follow the values of the event after reports from our community and internal review)');
 
