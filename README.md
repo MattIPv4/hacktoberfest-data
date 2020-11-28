@@ -9,89 +9,131 @@ I work on some awesome things at DigitalOcean, such as our [Community website](h
 Welcome to my stats breakdown from the [Hacktoberfest 2020](https://hacktoberfest.digitalocean.com/) raw GitHub and
  application data.
 
-## Coming soon
-
-Hacktoberfest hasn't quite finished completely yet, so I can't generate and write the final stats report.
-Keep an eye out soon for when I publish the document!
-
-<!--
-2019 Copy:
-
 ## At a glance
 
-What did we accomplish together in October? These are the highlights from Hacktoberfest #6:
+What did we accomplish together in October 2020? These are the highlights from Hacktoberfest #7:
 
- - Pull requests from all participants: **483,127 PRs**
- - Participating repositories: **154,767 repos**
- - Participating countries, based on addresses: **142 countries**
- - Day with the most PRs: 29,742 (6%) on October 1
- - Most used license\*: MIT in 36,314 repositories (23.46%)
- - Top language: JavaScript with 89,603 PRs (18.55%)
+ - Users who registered for Hacktoberfest 2020\*: **169,886 users**
+ - Users who completed and won Hacktoberfest\*: **66,739 users**
+ - Eligible pull requests from all participants: **387,052 PRs**
+ - Participating repositories: **116,361 repos**
+ - Represented countries in participants: **204 countries**
+ - Day with the most PRs: 77,993 (20.15%) on October 1
+ - Most used license\*\*: MIT in 37,626 repositories (21.37%)
+ - Top language: Python with 60,285 eligible PRs (15.58%)
 
-\*_Over 50% of repositories (83,010) in Hacktoberfest had no license that GitHub could detect._
+\*_Exact number from the Hacktoberfest database as of 2020-11-26. May differ from other reported numbers._
+\*\*_Over 50% of repositories (103,184 [58.61%]) in Hacktoberfest had no license that GitHub could detect._
 
-> Take a read of our overall recap blog post for Hacktoberfest 2019 here: https://blog.digitalocean.com/recapping-hacktoberfest-6/
+> Take a read of our overall recap blog post for Hacktoberfest 2020 here:
+> https://www.digitalocean.com/blog/hacktoberfest-recap2020/
 
 <p align="center">
     <img src="generated/prs_by_language_spline.png" width="100%" />
     <br/>
-    <i>Pull requests each day for the top 10 languages during Hacktoberfest 2019</i>
+    <i>Pull requests each day for the top 10 languages during Hacktoberfest 2020</i>
 </p>
+
+Before we go any further, we should note that this stats report excludes any users that no longer existed on GitHub
+ after Hacktoberfest, as well as excluding any PRs that were no longer publicly available.
 
 ## Diving in: Pull Requests
 
-Taking a closer look at the pull requests of Hacktoberfest 2019, we can pull out some more interesting insights.
-The first thing that can be done is to take a look at how the Hacktoberfest-related spam was this year, and more
- importantly how much of it was identified by us, the community and maintainers.
+Taking a closer look at the pull requests of Hacktoberfest 2020, we can pull out some more interesting insights.
 
-Of the **483,127** PRs submitted during Hacktoberfest, only **23,299 (4.82%)** were identified as spam, with
- **19,587 (84.07%)** of those being in a repository that the Hacktoberfest team excluded from the competition for not
- following the shared values and **3,712 (15.93%)** being labeled as "invalid" by project maintainers.
+First of all, we need to take a look at the breakdown of pull requests that Hacktoberfest tracked this year, and how
+ many were considered eligible for the competition. In case you missed it, Hacktoberfest became opt-in this year after
+ the first few days, requiring a PR be submitted in a repository with the `hacktoberfest` topic and the PR then being
+ merged or approved by a maintainer to count, or the PR could be given the `hacktoberfest-accepted` label in any repo to
+ count. PRs submitted before the rules change did not need to be accepted, the same as last year.
 
-Thank you to all those in the community who helped us by reporting repositories through the Hacktoberfest website and
- to the maintainers who spent their time reviewing pull requests and labeling spammy ones as "invalid".
+<img src="generated/prs_by_state_doughnut.png" align="right" width="40%" />
 
-<img src="generated/prs_by_language_doughnut.png" align="right" width="50%" />
+In total, Hacktoberfest tracked **632,223** pull requests, with **387,052 (61.22%)** of those being eligible and
+ counting toward a user winning Hacktoberfest! We can breakdown exactly how those PRs were accepted and considered
+ eligible in just a second. Beyond the eligible PRs, there were also **207,194 (32.77%)** PRs that weren't accepted,
+ with **172,599 (83.30%)** of those being submitted to repositories not participating in Hacktoberfest 2020 and
+ **34,595 (16.70%)** not accepted by a maintainer in an otherwise participating repo.
 
-From the data, based on the reported language for each repository from GitHub, we can also guess the main language in
- every PR.
+There were also **26,858 (4.25%)** PRs that were considered actively invalid by the Hacktoberfest app. This consists of
+ two types of PRs, those that have been actively identified by a maintainer as spam, and those that were submitted to a
+ repository we felt didn't follow the values of Hacktoberfest, and so were excluded from the competition. There were
+ **17,260 (64.26%)** PRs submitted to excluded repositories, and **9,598 (35.74%)** PRs labelled as invalid or spam by
+ maintainers (if a PR was merged in a participating repo but also labelled as spam/invalid, the label was ignored and
+ the PR would be considered eligible).
 
-Here's a breakdown of the top 15 languages in Hacktoberfest PRs (there were **213 programming languages** in total):
+Thank you to all those in the community who helped us by reporting repositories that didn't follow the values of
+ Hacktoberfest through the Hacktoberfest website and to the maintainers who opted-in to Hacktoberfest and spent their
+ time reviewing pull requests, accepting legitimate contributions and identifying spammy or invalid PRs via labels.
 
- - JavaScript: 89,603 (18.55%)
- - Undetermined: 59,556 (12.33%)
- - Python: 58,146 (12.04%)
- - HTML: 43,206 (8.94%)
- - Java: 33,289 (6.89%)
- - C++: 29,427 (6.09%)
- - TypeScript: 20,664 (4.28%)
- - PHP: 18,647 (3.86%)
- - CSS: 16,580 (3.43%)
- - Ruby: 15,626 (3.23%)
- - Go: 15,288 (3.16%)
- - C: 14,601 (3.02%)
- - C#: 9,667 (2.00%)
- - Shell: 8,059 (1.67%)
- - Jupyter Notebook: 7,841 (1.62%)
+<img src="generated/prs_by_acceptance_doughnut.png" align="right" width="40%" />
 
-<img src="generated/prs_by_day_bar.png" align="right" width="50%" />
+Now, let's take a closer look at those **387,052 (61.22%)** PRs that were eligible for Hacktoberfest, and by what
+ criteria they became eligible. Prior to the opt-in rules coming into effect on October 3rd, **114,944 (29.70%)** PRs
+ were created on public repositories and counted toward Hacktoberfest.
+ 
+Within the repositories that opted-in to Hacktoberfest 2020 with the `hacktoberfest` topic, there were a few ways for a
+ PR to be considered eligible. **166,057 (42.90%)** PRs were merged by a maintainer, within an opted-in repository,
+ counting toward Hacktoberfest. Just **1,043 (0.27%)** PRs were considered eligible for Hacktoberfest by having an
+ overall approving review by maintainers within a participating repository, and **67,533 (17.45%)** PRs were accepted
+ with the `hacktoberfest-accepted` label in a repo with the `hacktoberfest` topic. 
 
-We can also take a look at when the most pull requests were submitted by day during Hacktoberfest.
-The data we have would suggest that Hacktoberfest 2019 made a big splash this year as over **18% of PRs were submitted
- in the first 4 days** of the competition this year.
+Outside of the participating repositories, any PR on a public GitHub repo could also be given the
+ `hacktoberfest-accepted` label to count toward the competition, with **34,698 (8.96%)** PRs being considered eligible
+ through this method. There were also **2,777 (0.72%)** PRs in the dataset for which we could not derive an acceptance
+ method from the scraped GitHub data, but that had been accepted by the Hacktoberfest app during the competition.
 
-Here's a breakdown of the busiest 10 days during the competition based on PRs opened:
+<img src="generated/prs_by_language_doughnut.png" align="right" width="40%" />
 
- - October 1 | 29,742 (6.16%)
- - October 2 | 24,427 (5.06%)
- - October 3 | 20,155 (4.17%)
- - October 31 | 17,539 (3.63%)
- - October 4 | 16,801 (3.48%)
- - October 24 | 16,571 (3.43%)
- - October 9 | 15,822 (3.27%)
- - October 10 | 15,681 (3.25%)
- - October 23 | 15,341 (3.18%)
- - October 8 | 15,312 (3.17%)
+From the data we've collected not only for PRs but also for repositories, we can tie each PR to a programming language,
+ based on the primary language that GitHub attributes to each repository.
+
+Here's a breakdown of the top 15 languages in Hacktoberfest PRs (there were **225 programming languages** in total):
+
+ - Python: 60,285 (15.58%)
+ - JavaScript: 54,363 (14.05%)
+ - HTML: 40,697 (10.51%)
+ - C++: 40,444 (10.45%)
+ - Undetermined: 37,293 (9.64%)
+ - Java: 29,468 (7.61%)
+ - TypeScript: 15,891 (4.11%)
+ - Jupyter Notebook: 14,972 (3.87%)
+ - C: 13,616 (3.52%)
+ - PHP: 11,653 (3.01%)
+ - CSS: 10,337 (2.67%)
+ - Go: 8,542 (2.21%)
+ - C#: 6,729 (1.74%)
+ - Ruby: 5,253 (1.36%)
+ - Dart: 4,815 (1.24%)
+
+<img src="generated/prs_by_day_bar.png" align="right" width="40%" />
+
+We can also take a look at when the most pull requests were submitted by day during Hacktoberfest. There was a massive
+ initial splash on the first of October this year, when Hacktoberfest saw **20% of all eligible PRs submitted in
+ just a single day**. This is likely in-part due to the spam issue that many users may be aware happened at the start of
+ Hacktoberfest this year, and led to the opt-in change that we made.
+
+Here's a breakdown of the busiest 10 days during the competition based on when eligible PRs, those that counted toward
+ winning Hacktoberfest, were created:
+
+ - October 1 | 77,993 (20.15%)
+ - October 2 | 43,138 (11.15%)
+ - September 30 | 27,327 (7.06%)
+ - October 3 | 20,474 (5.29%)
+ - October 4 | 12,801 (3.31%)
+ - October 5 | 12,360 (3.19%)
+ - October 6 | 12,019 (3.11%)
+ - October 17 | 9,933 (2.57%)
+ - October 7 | 9,821 (2.54%)
+ - October 31 | 9,527 (2.46%)
+
+You may also note that *September 30* is included in this list -- to allow Hacktoberfest to run from October 1st to 31st
+ in all timezones, Hacktoberfest actually starts tracking PRs from Sept. 30 at 10:00am UTC all the way through to Nov. 1
+ at 12:00pm UTC.
+
+<!--
+
+2019 copy
 
 ## Diving in: Repositories
 
