@@ -1,4 +1,4 @@
-Started 11/26/2020, 3:41:12 PM
+Started 11/26/2020, 4:04:56 PM
 Please note that these stats do not consider users that were banned or deleted on GitHub, nor pull requests that are no longer publicly available.
 
 
@@ -210,8 +210,8 @@ Most used licenses in repos:
   AFL-3.0 | 79  (0.04%)
   BSL-1.0 | 52  (0.03%)
   EPL-1.0 | 45  (0.03%)
-  EUPL-1.2 | 30  (0.02%)
   Artistic-2.0 | 30  (0.02%)
+  EUPL-1.2 | 30  (0.02%)
 
 On average, a participating repository received the following:
   (A repository was considered participating if it received or one more PRs that were considered eligible)
@@ -245,7 +245,7 @@ Users by number of eligible PRs submitted:
   10 PRs: 1,010 (0.52%)
   10+ PRs: 3,152 (1.63%)
 
-Top countries by registrations:
+Top countries by registrations: 204 countries
   [IN] India | 71,884 (42.79%)
   [US] United States | 17,516 (10.43%)
   [--] Not given | 13,135 (7.82%)
@@ -262,7 +262,7 @@ Top countries by registrations:
   [NL] Netherlands | 1,430 (0.85%)
   [PL] Poland | 1,428 (0.85%)
 
-Top countries by completions:
+Top countries by completions: 162 countries
   [IN] India | 34,462 (52.33%)
   [US] United States | 5,054 (7.67%)
   [--] Not given | 4,517 (6.86%)
@@ -279,4 +279,4 @@ Top countries by completions:
   [AU] Australia | 532 (0.81%)
   [PL] Poland | 468 (0.71%)
 
-Finished 11/26/2020, 3:50:22 PM
+Finished 11/26/2020, 4:16:01 PM

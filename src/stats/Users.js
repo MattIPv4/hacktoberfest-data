@@ -298,11 +298,10 @@ module.exports = async (db, log) => {
             },
         },
         { '$sort': { count: -1 } },
-        { '$limit': 15 },
     ]).toArray();
     log('');
-    log('Top countries by registrations:');
-    totalRegistrationsByCountry.forEach(data => {
+    log(`Top countries by registrations: ${number.commas(totalRegistrationsByCountry.length)} countries`);
+    totalRegistrationsByCountry.limit(15).forEach(data => {
         log(`  [${data._id || '--'}] ${country.getCountryName(data._id)} | ${number.commas(data.count)} (${(data.count / totalRegisteredUsers * 100).toFixed(2)}%)`);
     });
     const registrationsCaption = `In total, at least ${number.commas(totalRegistrationsByCountry.filter(x => x._id !== null).length)} countries were represented by users who registered to participate in Hacktoberfest.`;
@@ -356,11 +355,10 @@ module.exports = async (db, log) => {
             },
         },
         { '$sort': { count: -1 } },
-        { '$limit': 15 },
     ]).toArray();
     log('');
-    log('Top countries by completions:');
-    totalCompletionsByCountry.forEach(data => {
+    log(`Top countries by completions: ${number.commas(totalCompletionsByCountry.length)} countries`);
+    totalCompletionsByCountry.limit(15).forEach(data => {
         log(`  [${data._id || '--'}] ${country.getCountryName(data._id)} | ${number.commas(data.count)} (${(data.count / totalWinnerStateUsers * 100).toFixed(2)}%)`);
     });
     const completionsCaption = `In total, at least ${number.commas(totalCompletionsByCountry.filter(x => x._id !== null).length)} countries were represented by users who completed and won Hacktoberfest.`;
