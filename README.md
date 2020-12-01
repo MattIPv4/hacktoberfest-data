@@ -17,12 +17,12 @@ What did we accomplish together in October 2020? These are the highlights from H
  - Users who completed and won Hacktoberfest\*: **66,739 users**
  - Eligible pull requests from all participants: **387,052 PRs**
  - Participating repositories: **116,361 repos**
- - Represented countries in participants: **204 countries**
+ - Represented countries in participants: **203 countries**
  - Day with the most PRs: 77,993 (20.15%) on October 1
  - Most used license\*\*: MIT in 37,626 repositories (21.37%)
  - Top language: Python with 60,285 eligible PRs (15.58%)
 
-\*_Exact number from the Hacktoberfest database as of 2020-11-26. May differ from other reported numbers._
+\*_Exact number from the Hacktoberfest database as of 2020-11-26. May differ from other reported numbers._\
 \*\*_Over 50% of repositories (103,184 [58.61%]) in Hacktoberfest had no license that GitHub could detect._
 
 > Take a read of our overall recap blog post for Hacktoberfest 2020 here:
@@ -131,95 +131,82 @@ You may also note that *September 30* is included in this list -- to allow Hackt
  in all timezones, Hacktoberfest actually starts tracking PRs from Sept. 30 at 10:00am UTC all the way through to Nov. 1
  at 12:00pm UTC.
 
-<!--
-
-2019 copy
-
 ## Diving in: Repositories
 
-Like the pull requests, we can use the data that GitHub provides for each repository involved with Hacktoberfest to
- generate a breakdown of the most popular languages that Hacktoberfest saw.
+Using the pull requests that we track during GitHub, we can also determine the set of repositories there were involved
+ in Hacktoberfest and fetch data on those from GitHub.
 
-<img src="generated/repos_by_language_doughnut.png" align="right" width="50%" />
+As mentioned before, Hacktoberfest switched to being an opt-in event, where repositories had to add the `hacktoberfest`
+ topic to have PRs count toward winning Hacktoberfest (PRs could also be opted-in individually with the
+ `hacktoberfest-accepted` label). During Hacktoberfest 2020, we tracked a total of **176,053 repos** involved in
+ Hacktoberfest, with **116,361 (66.09%)** considered to be participating as they received one or more eligible PRs
+ during the competition. Alongside that, **42,413 (24.09%) repos** out of all those that we tracked made use of the
+ `hacktoberfest` topic to actively opt-in to the Hacktoberfest competition.  
+
+<img src="generated/repos_by_language_doughnut.png" align="right" width="40%" />
 
 Here's a breakdown of the top 15 languages across all the repositories:
 
- - JavaScript: 27,859 (18.00%)
- - Undetermined: 21,565 (13.93%)
- - Python: 18,837 (12.17%)
- - HTML: 12,858 (8.31%)
- - Java: 10,696 (6.91%)
- - C++: 7,345 (4.75%)
- - PHP: 6,539 (4.23%)
- - CSS: 5,495 (3.55%)
- - TypeScript: 5,386 (3.48%)
- - Ruby: 5,209 (3.37%)
- - Go: 4,416 (2.85%)
- - C: 4,262 (2.75%)
- - C#: 3,207 (2.07%)
- - Shell: 3,088 (2.00%)
- - Jupyter Notebook: 2,523 (1.63%)
+ - JavaScript: 26,658 (15.14%)
+ - Python: 26,150 (14.85%)
+ - Undetermined: 23,481 (13.34%)
+ - HTML: 19,050 (10.82%)
+ - Java: 12,085 (6.86%)
+ - C++: 9,889 (5.62%)
+ - TypeScript: 7,100 (4.03%)
+ - PHP: 6,117 (3.47%)
+ - CSS: 5,412 (3.07%)
+ - C: 5,095 (2.89%)
+ - Jupyter Notebook: 4,521 (2.57%)
+ - Go: 4,169 (2.37%)
+ - C#: 3,292 (1.87%)
+ - Ruby: 2,983 (1.69%)
+ - Shell: 2,851 (1.62%)
 
 Unfortunately, in many cases, GitHub cannot identify the main language for a repository and so this is shown as
- "Undetermined" in the data we're presenting here.
+ "Undetermined" in the data we're presenting here. In total, we saw **249 programming languages** across all the
+ repositories that we could fetch data for as part of Hacktoberfest this year.
 
 Much like with the Hacktoberfest PRs, we can directly take a look at how we dealt with spam in the form of repos.
-This year, Hacktoberfest had a new system in place where the community could report repositories to us, which we could
- then review and exclude if we determined they didn't follow the shared values for the competition.
+This year, we used the same system as in 2019 to allow the community to report repositories that they felt didn't follow
+ our values, and we then reviewed and excluded those that we agreed didn't follow the shared values for the competition.
 
-This system seemed to work well, as it allowed us to identify and exclude **138 repos (0.09%)** that we decided didn't
- follow our shared values, of the **154,767 total repos** that were involved with Hacktoberfest.
+This system worked well once again, as it allowed us to identify and exclude **124 (0.07%) repos** that the community
+ felt didn't follow our shared values, of the **176,053 total repos** that were involved with Hacktoberfest.
 
-We can also pull out some interesting data on the number of stars, forks & watchers that each repository has.
-In the repositories involved with Hacktoberfest, the **average number stars per repo was 264** whilst the **average fork
- count was only 67** and the **average number of watchers of a repo was 16**.
+We can also pull out some interesting data on assorted averages for a participating repositories in Hacktoberfest, such
+ as that the average number of stars a repository had was **244.55 stars**, with **65.92 forks** and **13.24 watchers**
+ on average. We can also look at the average contributions to a repository, where we saw that a participating repository
+ received **3.33 eligible PRs** on average, alongside **0.29 unaccepted PRs** and **0.06 identified invalid/spam PRs**.
 
-<img src="generated/repos_stars_vs_forks_scatter.png" align="right" width="50%" />
-
-Using these same attributes, we can also find the top repositories based on them:
-
-Top repos by number of stars:
-
- - 306,075 | https://github.com/freeCodeCamp/freeCodeCamp
- - 247,691 | https://github.com/996icu/996.ICU
- - 151,823 | https://github.com/vuejs/vue
- - 139,136 | https://github.com/facebook/react
- - 137,038 | https://github.com/tensorflow/tensorflow
-
-Top repos by number of forks:
-
- - 198,065 | https://github.com/jtleek/datasharing
- - 106,800 | https://github.com/octocat/Spoon-Knife
- - 78,385 | https://github.com/tensorflow/tensorflow
- - 67,315 | https://github.com/twbs/bootstrap
- - 61,473 | https://github.com/SmartThingsCommunity/SmartThingsPublic
-
-Top repos by number of watchers:
-
- - 8,551 | https://github.com/tensorflow/tensorflow
- - 8,344 | https://github.com/freeCodeCamp/freeCodeCamp
- - 8,308 | https://github.com/EbookFoundation/free-programming-books
- - 7,216 | https://github.com/twbs/bootstrap
- - 6,841 | https://github.com/torvalds/linux
-
-<img src="generated/repos_by_license_bar.png" align="right" width="50%" />
+<img src="generated/repos_by_license_bar.png" align="right" width="40%" />
 
 Another interesting bit of analysis that we can do is to take a look at the different licenses that GitHub detects for
- each repository. Whilst doing this, it became very apparent that many repositories don't use a license, with GitHub
- reporting that **over 50% of repositories had no detectable license**.
+ each repository. Whilst doing this, it became very apparent that many repositories either don't use a license or a
+ license in a format that GitHub cannot detect, as the data indicates that **over 50% of repositories had no detectable
+ license**.
 
 We can also do a breakdown of these to see what licenses are the most popular in the open-source space:
 
- - No License | 83,010 (53.64%)
- - MIT | 36,314 (23.46%)
- - Custom License | 11,089 (7.16%)
- - Apache-2.0 | 9,373 (6.06%)
- - GPL-3.0 | 6,502 (4.20%)
- - BSD-3-Clause | 1,960 (1.27%)
- - AGPL-3.0 | 1,347 (0.87%)
- - GPL-2.0 | 1,253 (0.81%)
- - MPL-2.0 | 711 (0.46%)
- - Unlicense | 476 (0.31%)
+ - No License | 103,184  (58.61%)
+ - MIT | 37,626  (21.37%)
+ - Apache-2.0 | 10,228  (5.81%)
+ - Custom License | 8,753  (4.97%)
+ - GPL-3.0 | 6,997  (3.97%)
+ - BSD-3-Clause | 2,012  (1.14%)
+ - AGPL-3.0 | 1,393  (0.79%)
+ - GPL-2.0 | 1,294  (0.74%)
+ - MPL-2.0 | 855  (0.49%)
+ - CC0-1.0 | 722  (0.41%)
+ - Unlicense | 574  (0.33%)
+ - LGPL-3.0 | 428  (0.24%)
+ - BSD-2-Clause | 426  (0.24%)
+ - ISC | 302  (0.17%)
+ - LGPL-2.1 | 220  (0.12%)
+
+<!--
+
+2019 copy
 
 ## Diving in: Users
 
