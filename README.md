@@ -34,8 +34,9 @@ What did we accomplish together in October 2020? These are the highlights from H
     <i>Pull requests each day for the top 10 languages during Hacktoberfest 2020</i>
 </p>
 
-Before we go any further, we should note that this stats report excludes any users that no longer existed on GitHub
- after Hacktoberfest, as well as excluding any PRs that were no longer publicly available.
+**Before we go any further, we should note that this stats report excludes any users that no longer existed on GitHub
+ after Hacktoberfest, as well as excluding any PRs that were no longer publicly available, which may result in slightly
+ different total numbers reported compared to other posts.**
 
 ## Diving in: Pull Requests
 
@@ -204,49 +205,93 @@ We can also do a breakdown of these to see what licenses are the most popular in
  - ISC | 302  (0.17%)
  - LGPL-2.1 | 220  (0.12%)
 
-<!--
-
-2019 copy
-
 ## Diving in: Users
 
-With the user data we have, the key thing that we can take a look at is how many pull requests each participant in
- Hacktoberfest 2019 submitted.
+With the user data we have as part of Hacktoberfest, we can take a look at the number of pull requests users submitted
+ on average as well as the countries that the users of Hacktoberfest represent. In total **192,804 users** authenticated
+ with the Hacktoberfest, with **167,991 (87.13%)** completing registration. 
 
-<img src="generated/users_by_prs_column.png" align="right" width="50%" />
+Of those users, there were **84,238 (43.69%) users** who participated in Hacktoberfest by submitting one or more
+ eligible PRs (80,334), with **65,859 (34.16%)** who won Hacktoberfest.
 
-Of the users who submitted one or more PR (80,334), **on average they each submitted just under 6 PRs**.
-Going beyond the requirement for winning Hacktoberfest, contributing to open-source even more! 🎉
+This number is based on the number of users in the stats report that were in a winning state within the application.
+ This is lower than the number reported at the top of this stats report as the main body of this report does not include
+ users who no longer exist on GitHub. We also have **864,839 (33.63%)** users in the report that met the 4+ eligible PRs
+ criteria, which is also even lower as the stats report only considers PRs that are still publicly available, not any in
+ repos that have been deleted or made private.
 
-Taking a look at the breakdown for the number of PRs each user in Hacktoberfest submitted, it's awesome to see so many
- submitting more than 4, which was what was needed to win swag this year:
+Similarly, the number of total registrations differs in this section when compared to the number at the top, as again,
+ this report only considers users that can still be found on GitHub whereas the number at the top of this report is raw
+ from the Hacktoberfest database. From this, we can make a guess that approximately **1,895 users** were deleted from or
+ suspended on GitHub during Hacktoberfest.
 
- - 1 PR: 10,942 (7.91%)
- - 2 PRs: 5,345 (3.86%)
- - 3 PRs: 3,735 (2.70%)
- - **4 PRs: 26,787 (19.36%)**
- - 5 PRs: 11,731 (8.48%)
- - 6 PRs: 6,093 (4.40%)
- - 7 PRs: 3,458 (2.50%)
- - 8 PRs: 2,467 (1.78%)
- - 9 PRs: 1,656 (1.20%)
- - 10 PRs: 1,230 (0.89%)
- - 10+ PRs: 6,890 (4.98%)
+<img src="generated/users_by_prs_column.png" align="right" width="40%" />
 
-Well, that's all the stats I've generated from the Hacktoberfest 2019 raw data.
+From the data, we can see that a user in Hacktoberfest submitted an average of **3.28 PRs**, with **2.01 PRs** being
+ considered eligible, **1.07 PRs** not being accepted and **0.14 PRs** being identified as spam on average. 
+
+Taking a look at the breakdown for the number of eligible PRs each user in Hacktoberfest submitted, it's awesome to see
+ so many users who go above and beyond, submitting more than the 4 needed to win swag this year:
+
+ - 1 PR: 10,614 (5.51%)
+ - 2 PRs: 5,157 (2.67%)
+ - 3 PRs: 3,628 (1.88%)
+ - **4 PRs: 34,741 (18.02%)**
+ - 5 PRs: 12,736 (6.61%)
+ - 6 PRs: 6,086 (3.16%)
+ - 7 PRs: 3,341 (1.73%)
+ - 8 PRs: 2,344 (1.22%)
+ - 9 PRs: 1,429 (0.74%)
+ - 10 PRs: 1,010 (0.52%)
+ - 10+ PRs: 3,152 (1.63%)
+
+This year Hacktoberfest users also had the option to specify which country they were from when they signed up to
+participate, which gives us some awesome insight into the global reach of Hacktoberfest and the open-source community!
+
+| - | - |
+|---|---|
+| ![](generated/users_completions_top_countries_bar.png) | ![](generated/users_registrations_top_countries_bar.png) |
+
+Although this field was completely optional, we can see from the data that at least **203 countries** were represented
+ by users who registered to participate in Hacktoberfest 2020, and at least **161 countries** were represented by users
+ who completed and won the competition. Out of all the users who registered, only **13,135 (7.82%)** opted to not
+ provide their country during the registration process.
+
+Looking at the breakdown of registrations by country, we can see the massive reach that open-source has in India, with
+ over **40%** of registrations being from India, as well as in the US where over **10%** of participants were located:
+
+ - [IN] India | 71,884 (42.79%)
+ - [US] United States | 17,516 (10.43%)
+ - [--] Not given | 13,135 (7.82%)
+ - [BR] Brazil | 8,756 (5.21%)
+ - [ID] Indonesia | 5,330 (3.17%)
+ - [DE] Germany | 4,843 (2.88%)
+ - [GB] United Kingdom | 4,248 (2.53%)
+ - [CA] Canada | 2,894 (1.72%)
+ - [FR] France | 2,311 (1.38%)
+ - [RU] Russian Federation | 2,082 (1.24%)
+ - [ES] Spain | 1,730 (1.03%)
+ - [LK] Sri Lanka | 1,665 (0.99%)
+ - [AU] Australia | 1,487 (0.89%)
+ - [NL] Netherlands | 1,430 (0.85%)
+ - [PL] Poland | 1,428 (0.85%)
+
+Well, that's all the stats I've generated from the Hacktoberfest 2020 raw data -- you can find the raw output of the
+ stats generation script in the [`generated/stats.txt`](generated/stats.txt) file, as well as all the graphics which are
+ housed in [`generated`](generated) directory.
+
 If there is anything more you'd like to see/know, please feel free to reach out and ask, I'll be more than happy to
  generate it if possible.
 
-All the scripts used to generate these stats & graphics are contained within this repository.
-I have some more information about this in the [CONTRIBUTING.md](CONTRIBUTING.md) file, however, the Hacktoberfest 2019
- raw data isn't public currently.
+All the scripts used to generate these stats & graphics are contained in this repository, in the [`src`](src) directory.
+I have some more information about this in the [CONTRIBUTING.md](CONTRIBUTING.md) file, however, the Hacktoberfest 2020
+ raw data, like the 2019 data, isn't public currently due to it containing PII about Hacktoberfest participants.
 
 <p align="center">
     <img src="generated/users_by_prs_extended_column.png" width="100%" />
     <br/>
-    <i>Number of pull requests submitted by each participant during Hacktoberfest 2019</i>
+    <i>Number of pull requests submitted by each participant during Hacktoberfest 2020</i>
 </p>
 
 Author: [Matt Cowley](https://mattcowley.co.uk/) - If you notice any errors within this document, please let me know and
  I will endeavour to correct them. 💙
--->

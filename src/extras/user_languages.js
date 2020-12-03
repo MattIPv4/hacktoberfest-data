@@ -4,7 +4,7 @@ const mongo = require('../helpers/mongo');
 
 const main = async () => {
     const db = await mongo.connect();
-    const dbo = db.db('hacktoberfest-2019');
+    const dbo = db.db('hacktoberfest-2020');
 
     const cursor = dbo.collection('pull_requests').aggregate([
         {

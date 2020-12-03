@@ -1,7 +1,7 @@
 {
   "name": "hacktoberfest-data",
   "version": "1.0.0",
-  "description": "Generating stats from the Hacktoberfest 2019 raw data.",
+  "description": "Generating stats from the Hacktoberfest 2020 raw data.",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
