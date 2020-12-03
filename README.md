@@ -13,20 +13,20 @@ Welcome to my stats breakdown from the [Hacktoberfest 2020](https://hacktoberfes
 
 What did we accomplish together in October 2020? These are the highlights from Hacktoberfest #7:
 
- - Users who registered for Hacktoberfest 2020\*: **169,886 users**
- - Users who completed and won Hacktoberfest\*: **66,739 users**
- - Eligible pull requests from all participants: **387,052 PRs**
- - Participating repositories: **116,361 repos**
- - Represented countries in participants: **203 countries**
- - Day with the most PRs: 77,993 (20.15%) on October 1
- - Most used license\*\*: MIT in 37,626 repositories (21.37%)
- - Top language: Python with 60,285 eligible PRs (15.58%)
+- Users who registered for Hacktoberfest 2020\*: **169,886 users**
+- Users who completed and won Hacktoberfest\*: **66,739 users**
+- Eligible pull requests from all participants: **387,052 PRs**
+- Participating repositories: **116,361 repos**
+- Represented countries in participants: **203 countries**
+- Day with the most PRs: 77,993 (20.15%) on October 1
+- Most used license\*\*: MIT in 37,626 repositories (21.37%)
+- Top language: Python with 60,285 eligible PRs (15.58%)
 
 \*_Exact number from the Hacktoberfest database as of 2020-11-26. May differ from other reported numbers._\
 \*\*_Over 50% of repositories (103,184 [58.61%]) in Hacktoberfest had no license that GitHub could detect._
 
 > Take a read of our overall recap blog post for Hacktoberfest 2020 here:
-> https://www.digitalocean.com/blog/hacktoberfest-recap2020/
+> [www.digitalocean.com/blog/hacktoberfest-recap2020](https://www.digitalocean.com/blog/hacktoberfest-recap2020/)
 
 <p align="center">
     <img src="generated/prs_by_language_spline.png" width="100%" />
@@ -72,12 +72,12 @@ Thank you to all those in the community who helped us by reporting repositories 
 Now, let's take a closer look at those **387,052 (61.22%)** PRs that were eligible for Hacktoberfest, and by what
  criteria they became eligible. Prior to the opt-in rules coming into effect on October 3rd, **114,944 (29.70%)** PRs
  were created on public repositories and counted toward Hacktoberfest.
- 
+
 Within the repositories that opted-in to Hacktoberfest 2020 with the `hacktoberfest` topic, there were a few ways for a
  PR to be considered eligible. **166,057 (42.90%)** PRs were merged by a maintainer, within an opted-in repository,
  counting toward Hacktoberfest. Just **1,043 (0.27%)** PRs were considered eligible for Hacktoberfest by having an
  overall approving review by maintainers within a participating repository, and **67,533 (17.45%)** PRs were accepted
- with the `hacktoberfest-accepted` label in a repo with the `hacktoberfest` topic. 
+ with the `hacktoberfest-accepted` label in a repo with the `hacktoberfest` topic.
 
 Outside of the participating repositories, any PR on a public GitHub repo could also be given the
  `hacktoberfest-accepted` label to count toward the competition, with **34,698 (8.96%)** PRs being considered eligible
@@ -91,21 +91,21 @@ From the data we've collected not only for PRs but also for repositories, we can
 
 Here's a breakdown of the top 15 languages in Hacktoberfest PRs (there were **225 programming languages** in total):
 
- - Python: 60,285 (15.58%)
- - JavaScript: 54,363 (14.05%)
- - HTML: 40,697 (10.51%)
- - C++: 40,444 (10.45%)
- - Undetermined: 37,293 (9.64%)
- - Java: 29,468 (7.61%)
- - TypeScript: 15,891 (4.11%)
- - Jupyter Notebook: 14,972 (3.87%)
- - C: 13,616 (3.52%)
- - PHP: 11,653 (3.01%)
- - CSS: 10,337 (2.67%)
- - Go: 8,542 (2.21%)
- - C#: 6,729 (1.74%)
- - Ruby: 5,253 (1.36%)
- - Dart: 4,815 (1.24%)
+- Python: 60,285 (15.58%)
+- JavaScript: 54,363 (14.05%)
+- HTML: 40,697 (10.51%)
+- C++: 40,444 (10.45%)
+- Undetermined: 37,293 (9.64%)
+- Java: 29,468 (7.61%)
+- TypeScript: 15,891 (4.11%)
+- Jupyter Notebook: 14,972 (3.87%)
+- C: 13,616 (3.52%)
+- PHP: 11,653 (3.01%)
+- CSS: 10,337 (2.67%)
+- Go: 8,542 (2.21%)
+- C#: 6,729 (1.74%)
+- Ruby: 5,253 (1.36%)
+- Dart: 4,815 (1.24%)
 
 <img src="generated/prs_by_day_bar.png" align="right" width="40%" />
 
@@ -117,16 +117,16 @@ We can also take a look at when the most pull requests were submitted by day dur
 Here's a breakdown of the busiest 10 days during the competition based on when eligible PRs, those that counted toward
  winning Hacktoberfest, were created:
 
- - October 1 | 77,993 (20.15%)
- - October 2 | 43,138 (11.15%)
- - September 30 | 27,327 (7.06%)
- - October 3 | 20,474 (5.29%)
- - October 4 | 12,801 (3.31%)
- - October 5 | 12,360 (3.19%)
- - October 6 | 12,019 (3.11%)
- - October 17 | 9,933 (2.57%)
- - October 7 | 9,821 (2.54%)
- - October 31 | 9,527 (2.46%)
+- October 1 | 77,993 (20.15%)
+- October 2 | 43,138 (11.15%)
+- September 30 | 27,327 (7.06%)
+- October 3 | 20,474 (5.29%)
+- October 4 | 12,801 (3.31%)
+- October 5 | 12,360 (3.19%)
+- October 6 | 12,019 (3.11%)
+- October 17 | 9,933 (2.57%)
+- October 7 | 9,821 (2.54%)
+- October 31 | 9,527 (2.46%)
 
 You may also note that *September 30* is included in this list -- to allow Hacktoberfest to run from October 1st to 31st
  in all timezones, Hacktoberfest actually starts tracking PRs from Sept. 30 at 10:00am UTC all the way through to Nov. 1
@@ -148,21 +148,21 @@ As mentioned before, Hacktoberfest switched to being an opt-in event, where repo
 
 Here's a breakdown of the top 15 languages across all the repositories:
 
- - JavaScript: 26,658 (15.14%)
- - Python: 26,150 (14.85%)
- - Undetermined: 23,481 (13.34%)
- - HTML: 19,050 (10.82%)
- - Java: 12,085 (6.86%)
- - C++: 9,889 (5.62%)
- - TypeScript: 7,100 (4.03%)
- - PHP: 6,117 (3.47%)
- - CSS: 5,412 (3.07%)
- - C: 5,095 (2.89%)
- - Jupyter Notebook: 4,521 (2.57%)
- - Go: 4,169 (2.37%)
- - C#: 3,292 (1.87%)
- - Ruby: 2,983 (1.69%)
- - Shell: 2,851 (1.62%)
+- JavaScript: 26,658 (15.14%)
+- Python: 26,150 (14.85%)
+- Undetermined: 23,481 (13.34%)
+- HTML: 19,050 (10.82%)
+- Java: 12,085 (6.86%)
+- C++: 9,889 (5.62%)
+- TypeScript: 7,100 (4.03%)
+- PHP: 6,117 (3.47%)
+- CSS: 5,412 (3.07%)
+- C: 5,095 (2.89%)
+- Jupyter Notebook: 4,521 (2.57%)
+- Go: 4,169 (2.37%)
+- C#: 3,292 (1.87%)
+- Ruby: 2,983 (1.69%)
+- Shell: 2,851 (1.62%)
 
 Unfortunately, in many cases, GitHub cannot identify the main language for a repository and so this is shown as
  "Undetermined" in the data we're presenting here. In total, we saw **249 programming languages** across all the
@@ -189,21 +189,21 @@ Another interesting bit of analysis that we can do is to take a look at the diff
 
 We can also do a breakdown of these to see what licenses are the most popular in the open-source space:
 
- - No License | 103,184  (58.61%)
- - MIT | 37,626  (21.37%)
- - Apache-2.0 | 10,228  (5.81%)
- - Custom License | 8,753  (4.97%)
- - GPL-3.0 | 6,997  (3.97%)
- - BSD-3-Clause | 2,012  (1.14%)
- - AGPL-3.0 | 1,393  (0.79%)
- - GPL-2.0 | 1,294  (0.74%)
- - MPL-2.0 | 855  (0.49%)
- - CC0-1.0 | 722  (0.41%)
- - Unlicense | 574  (0.33%)
- - LGPL-3.0 | 428  (0.24%)
- - BSD-2-Clause | 426  (0.24%)
- - ISC | 302  (0.17%)
- - LGPL-2.1 | 220  (0.12%)
+- No License | 103,184  (58.61%)
+- MIT | 37,626  (21.37%)
+- Apache-2.0 | 10,228  (5.81%)
+- Custom License | 8,753  (4.97%)
+- GPL-3.0 | 6,997  (3.97%)
+- BSD-3-Clause | 2,012  (1.14%)
+- AGPL-3.0 | 1,393  (0.79%)
+- GPL-2.0 | 1,294  (0.74%)
+- MPL-2.0 | 855  (0.49%)
+- CC0-1.0 | 722  (0.41%)
+- Unlicense | 574  (0.33%)
+- LGPL-3.0 | 428  (0.24%)
+- BSD-2-Clause | 426  (0.24%)
+- ISC | 302  (0.17%)
+- LGPL-2.1 | 220  (0.12%)
 
 ## Diving in: Users
 
@@ -233,17 +233,17 @@ From the data, we can see that a user in Hacktoberfest submitted an average of *
 Taking a look at the breakdown for the number of eligible PRs each user in Hacktoberfest submitted, it's awesome to see
  so many users who go above and beyond, submitting more than the 4 needed to win swag this year:
 
- - 1 PR: 10,614 (5.51%)
- - 2 PRs: 5,157 (2.67%)
- - 3 PRs: 3,628 (1.88%)
- - **4 PRs: 34,741 (18.02%)**
- - 5 PRs: 12,736 (6.61%)
- - 6 PRs: 6,086 (3.16%)
- - 7 PRs: 3,341 (1.73%)
- - 8 PRs: 2,344 (1.22%)
- - 9 PRs: 1,429 (0.74%)
- - 10 PRs: 1,010 (0.52%)
- - 10+ PRs: 3,152 (1.63%)
+- 1 PR: 10,614 (5.51%)
+- 2 PRs: 5,157 (2.67%)
+- 3 PRs: 3,628 (1.88%)
+- **4 PRs: 34,741 (18.02%)**
+- 5 PRs: 12,736 (6.61%)
+- 6 PRs: 6,086 (3.16%)
+- 7 PRs: 3,341 (1.73%)
+- 8 PRs: 2,344 (1.22%)
+- 9 PRs: 1,429 (0.74%)
+- 10 PRs: 1,010 (0.52%)
+- 10+ PRs: 3,152 (1.63%)
 
 This year Hacktoberfest users also had the option to specify which country they were from when they signed up to
 participate, which gives us some awesome insight into the global reach of Hacktoberfest and the open-source community!
@@ -260,21 +260,21 @@ Although this field was completely optional, we can see from the data that at le
 Looking at the breakdown of registrations by country, we can see the massive reach that open-source has in India, with
  over **40%** of registrations being from India, as well as in the US where over **10%** of participants were located:
 
- - [IN] India | 71,884 (42.79%)
- - [US] United States | 17,516 (10.43%)
- - [--] Not given | 13,135 (7.82%)
- - [BR] Brazil | 8,756 (5.21%)
- - [ID] Indonesia | 5,330 (3.17%)
- - [DE] Germany | 4,843 (2.88%)
- - [GB] United Kingdom | 4,248 (2.53%)
- - [CA] Canada | 2,894 (1.72%)
- - [FR] France | 2,311 (1.38%)
- - [RU] Russian Federation | 2,082 (1.24%)
- - [ES] Spain | 1,730 (1.03%)
- - [LK] Sri Lanka | 1,665 (0.99%)
- - [AU] Australia | 1,487 (0.89%)
- - [NL] Netherlands | 1,430 (0.85%)
- - [PL] Poland | 1,428 (0.85%)
+- [IN] India | 71,884 (42.79%)
+- [US] United States | 17,516 (10.43%)
+- [--] Not given | 13,135 (7.82%)
+- [BR] Brazil | 8,756 (5.21%)
+- [ID] Indonesia | 5,330 (3.17%)
+- [DE] Germany | 4,843 (2.88%)
+- [GB] United Kingdom | 4,248 (2.53%)
+- [CA] Canada | 2,894 (1.72%)
+- [FR] France | 2,311 (1.38%)
+- [RU] Russian Federation | 2,082 (1.24%)
+- [ES] Spain | 1,730 (1.03%)
+- [LK] Sri Lanka | 1,665 (0.99%)
+- [AU] Australia | 1,487 (0.89%)
+- [NL] Netherlands | 1,430 (0.85%)
+- [PL] Poland | 1,428 (0.85%)
 
 Well, that's all the stats I've generated from the Hacktoberfest 2020 raw data -- you can find the raw output of the
  stats generation script in the [`generated/stats.txt`](generated/stats.txt) file, as well as all the graphics which are
