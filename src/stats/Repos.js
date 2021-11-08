@@ -1,5 +1,3 @@
-require('../prototypes');
-
 const path = require('path');
 const LinearLeastSquares = require('linear-least-squares');
 const number = require('../helpers/number');

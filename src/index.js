@@ -1,5 +1,5 @@
+const fs = require('fs');
 const path = require('path');
-const mongo = require('./helpers/mongo');
 const log = require('./helpers/log');
 const stats = require('./stats');
 
@@ -8,9 +8,8 @@ const main = async () => {
     log.log(`Started ${new Date().toLocaleString()}`);
     log.log('Please note that these stats do not consider users that were banned or deleted on GitHub, nor pull requests that are no longer publicly available.');
 
-    const db = await mongo.connect();
-    const dbo = db.db('hacktoberfest-2020');
-    await stats(dbo, log.log);
+    const data = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', '2021', 'stats.json'), 'utf8'));
+    await stats(data, log.log);
     db.close();
 
     log.log('');
@@ -18,4 +17,7 @@ const main = async () => {
     log.save(path.join(__dirname, '../generated/stats.txt'));
 };
 
-main();
+main().catch(err => {
+    console.error(err);
+    process.exit(1);
+});

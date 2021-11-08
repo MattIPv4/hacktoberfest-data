@@ -1,5 +1,3 @@
-require('../prototypes');
-
 const path = require('path');
 const number = require('../helpers/number');
 const chart = require('../helpers/chart');
