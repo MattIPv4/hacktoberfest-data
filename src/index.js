@@ -6,7 +6,6 @@ const stats = require('./stats');
 const main = async () => {
     log.reset();
     log.log(`Started ${new Date().toLocaleString()}`);
-    log.log('Please note that these stats do not consider users that were banned or deleted on GitHub, nor pull requests that are no longer publicly available.');
 
     const { data } = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', '2021', 'stats.json'), 'utf8'));
     await stats(data, log.log);

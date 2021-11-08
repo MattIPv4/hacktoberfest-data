@@ -7,4 +7,8 @@ const integer = num => {
     return Math.round(num).toLocaleString();
 };
 
-module.exports = { commas, integer };
+const percentage = num => {
+    return `${(num * 100).toFixed(2)}%`;
+};
+
+module.exports = { commas, integer, percentage };
