@@ -181,7 +181,7 @@ module.exports = async (db, log) => {
     };
     totalReposByLanguageConfig.subtitles = [{
         text: `Hacktoberfest saw ${number.commas(totalReposByLanguage.length)} different programming languages represented across the ${number.commas(totalRepos)} repositories involved.`,
-        fontColor: chart.colors.blue,
+        fontColor: chart.colors.highlightPositive,
         fontFamily: '\'VT323\', monospace',
         fontSize: 40,
         padding: 0,
@@ -247,7 +247,7 @@ module.exports = async (db, log) => {
                 if (data.stars > 25000) return null;
                 if (data.forks > 15000) return null;
                 const colors = [
-                    chart.colors.pink, chart.colors.crimson,
+                    chart.colors.highlightNeutral, chart.colors.highlightNegative,
                 ];
                 return {
                     x: data.stars,
@@ -260,7 +260,7 @@ module.exports = async (db, log) => {
             type: 'line',
             lineThickness: 5,
             markerSize: 0,
-            color: chart.colors.blue,
+            color: chart.colors.highlightPositive,
             dataPoints: [
                 {
                     x: 0,
@@ -331,7 +331,7 @@ module.exports = async (db, log) => {
         indexLabelFontFamily: '\'Inter\', sans-serif',
         dataPoints: topRepoLicenses.limit(10).filter(x => x['_id'] !== null).map((data, i) => {
             const colors = [
-                chart.colors.blue, chart.colors.pink, chart.colors.crimson,
+                chart.colors.highlightPositive, chart.colors.highlightNeutral, chart.colors.highlightNegative,
             ];
             const licenseColor = colors[i % colors.length];
             const licenseName = data['_id'] === 'NOASSERTION' ? 'Custom License' : data['_id'];
@@ -377,7 +377,7 @@ module.exports = async (db, log) => {
     };
     topRepoLicensesConfig.subtitles = [{
         text: `${number.commas(noLicenseCount)} repositories (${(noLicenseCount / totalRepos * 100).toFixed(1)}%) use no license that GitHub can detect`,
-        fontColor: chart.colors.blue,
+        fontColor: chart.colors.highlightPositive,
         fontFamily: '\'VT323\', monospace',
         fontSize: 36,
         padding: 15,

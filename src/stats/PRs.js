@@ -5,467 +5,268 @@ const linguist = require('../helpers/linguist');
 const color = require('../helpers/color');
 const { getDateArray, dateFromDay, formatDate } = require('../helpers/date');
 
-module.exports = async (db, log) => {
+module.exports = async (data, log) => {
     /***************
      * PR Stats
      ***************/
     log('\n\n----\nPR Stats\n----');
+    const results = {};
     await linguist.load();
 
     // PRs by state
-    const totalPRs = await db.collection('pull_requests').find({}).count();
-    const totalInvalidLabelPRs = await db.collection('pull_requests').find({'app.state': 'invalid_label'}).count();
-    const totalSpamRepoPRs = await db.collection('pull_requests').find({'app.state': 'spam_repo'}).count();
-    const totalInvalidPRs = totalInvalidLabelPRs + totalSpamRepoPRs;
-    const totalTopicMissingPRs = await db.collection('pull_requests').find({'app.state': 'topic_missing'}).count();
-    const totalNotAcceptedPRs = await db.collection('pull_requests').find({'app.state': 'not_accepted'}).count();
-    const totalUnacceptedPRs = totalTopicMissingPRs + totalNotAcceptedPRs;
-    const totalEligiblePRs = await db.collection('pull_requests').find({'app.state': 'eligible'}).count();
+    results.totalPRs = data.pull_requests.states.all.count - data.pull_requests.states.all.states['out-of-bounds'];
+    results.totalAcceptedPRs = data.pull_requests.states.all.states['accepted'];
+    results.totalNotAcceptedPRs = data.pull_requests.states.all.states['not-accepted'];
+    results.totalNotParticipatingPRs = data.pull_requests.states.all.states['not-participating'];
+    results.totalSpamPRs = data.pull_requests.states.all.states['spam'];
+    results.totalExcludedPRs = data.pull_requests.states.all.states['excluded'];
+
+    const totalInvalidPRs = results.totalSpamPRs + results.totalExcludedPRs;
+    const totalUnacceptedPRs = results.totalNotAcceptedPRs + results.totalNotParticipatingPRs;
     log('');
-    log(`Total PRs: ${number.commas(totalPRs)}`);
-    log(`  Eligible PRs: ${number.commas(totalEligiblePRs)} (${(totalEligiblePRs / totalPRs * 100).toFixed(2)}%)`);
-    log(`  Unaccepted PRs: ${number.commas(totalUnacceptedPRs)} (${(totalUnacceptedPRs / totalPRs * 100).toFixed(2)}%)`);
-    log(`    of which were not in a participating repo: ${number.commas(totalTopicMissingPRs)} (${(totalTopicMissingPRs / totalUnacceptedPRs * 100).toFixed(2)}%)`);
-    log(`    of which were not accepted by a maintainer: ${number.commas(totalNotAcceptedPRs)} (${(totalNotAcceptedPRs / totalUnacceptedPRs * 100).toFixed(2)}%)`);
-    log(`  Invalid PRs: ${number.commas(totalInvalidPRs)} (${(totalInvalidPRs / totalPRs * 100).toFixed(2)}%)`);
-    log(`    of which were in an excluded repo: ${number.commas(totalSpamRepoPRs)} (${(totalSpamRepoPRs / totalInvalidPRs * 100).toFixed(2)}%)`);
-    log(`    of which were labeled as invalid: ${number.commas(totalInvalidLabelPRs)} (${(totalInvalidLabelPRs / totalInvalidPRs * 100).toFixed(2)}%)`);
+    log(`Total PRs: ${number.commas(results.totalPRs)}`);
+    log(`  Accepted PRs: ${number.commas(results.totalAcceptedPRs)} (${number.percentage(results.totalAcceptedPRs / results.totalPRs)})`);
+    log(`  Unaccepted PRs: ${number.commas(totalUnacceptedPRs)} (${number.percentage(totalUnacceptedPRs / results.totalPRs)})`);
+    log(`    of which were not in a participating repo: ${number.commas(results.totalNotParticipatingPRs)} (${number.percentage(results.totalNotParticipatingPRs / totalUnacceptedPRs)})`);
+    log(`    of which were not accepted by a maintainer: ${number.commas(results.totalNotAcceptedPRs)} (${number.percentage(results.totalNotAcceptedPRs / totalUnacceptedPRs)})`);
+    log(`  Invalid PRs: ${number.commas(totalInvalidPRs)} (${number.percentage(totalInvalidPRs / results.totalPRs)})`);
+    log(`    of which were in an excluded repo: ${number.commas(results.totalExcludedPRs)} (${number.percentage(results.totalExcludedPRs / totalInvalidPRs)})`);
+    log(`    of which were labeled as spam/invalid: ${number.commas(results.totalSpamPRs)} (${number.percentage(results.totalSpamPRs / totalInvalidPRs)})`);
+
     const totalPRsByStateConfig = chart.config(1000, 1000, [{
         type: 'doughnut',
         startAngle: 160,
         indexLabelPlacement: 'outside',
         indexLabelFontSize: 22,
-        indexLabelFontColor: chart.colors.text,
-        indexLabelFontFamily: '\'Inter\', sans-serif',
         showInLegend: true,
         dataPoints: [
             {
-                y: totalEligiblePRs,
-                indexLabel: 'Eligible',
-                legendText: `Eligible: ${number.commas(totalEligiblePRs)} (${(totalEligiblePRs / totalPRs * 100).toFixed(1)}%)`,
-                color: chart.colors.blue,
+                y: results.totalAcceptedPRs,
+                indexLabel: 'Accepted',
+                legendText: `Accepted: ${number.commas(results.totalAcceptedPRs)} (${number.percentage(results.totalAcceptedPRs / results.totalPRs)})`,
+                color: chart.colors.highlightPositive,
                 indexLabelFontSize: 32,
             },
             {
-                y: totalTopicMissingPRs,
-                indexLabel: 'Repo not participating',
-                legendText: `Repo not participating: ${number.commas(totalTopicMissingPRs)} (${(totalTopicMissingPRs / totalPRs * 100).toFixed(1)}%)`,
-                color: chart.colors.pink,
+                y: results.totalNotParticipatingPRs,
+                indexLabel: 'Not participating',
+                legendText: `Repo not participating: ${number.commas(results.totalNotParticipatingPRs)} (${number.percentage(results.totalNotParticipatingPRs / results.totalPRs)})`,
+                color: chart.colors.highlightNeutral,
             },
             {
-                y: totalNotAcceptedPRs,
+                y: results.totalNotAcceptedPRs,
                 indexLabel: 'Not accepted',
-                legendText: `Not accepted by maintainer: ${number.commas(totalNotAcceptedPRs)} (${(totalNotAcceptedPRs / totalPRs * 100).toFixed(1)}%)`,
-                color: chart.colors.pink,
+                legendText: `Not accepted by maintainer: ${number.commas(results.totalNotAcceptedPRs)} (${number.percentage(results.totalNotAcceptedPRs / results.totalPRs)})`,
+                color: chart.colors.highlightNeutral,
             },
             {
-                y: totalSpamRepoPRs,
+                y: results.totalExcludedPRs,
                 indexLabel: 'Excluded repo',
-                legendText: `Excluded repository: ${number.commas(totalSpamRepoPRs)} (${(totalSpamRepoPRs / totalPRs * 100).toFixed(1)}%)`,
-                color: chart.colors.crimson,
+                legendText: `Excluded repository: ${number.commas(results.totalExcludedPRs)} (${number.percentage(results.totalExcludedPRs / results.totalPRs)})`,
+                color: chart.colors.highlightNegative,
             },
             {
-                y: totalInvalidLabelPRs,
-                indexLabel: 'Labelled invalid',
-                legendText: `Labelled invalid or spam: ${number.commas(totalInvalidLabelPRs)} (${(totalInvalidLabelPRs / totalPRs * 100).toFixed(1)}%)`,
-                color: chart.colors.crimson,
+                y: results.totalSpamPRs,
+                indexLabel: 'Labeled invalid',
+                legendText: `Labeled invalid or spam: ${number.commas(results.totalSpamPRs)} (${number.percentage(results.totalSpamPRs / results.totalPRs)})`,
+                color: chart.colors.highlightNegative,
             },
         ].map(x => [x, {
-            y: totalPRs * 0.007,
+            y: results.totalPRs * 0.007,
             color: 'transparent',
             showInLegend: false,
         }]).flat(1),
     }], { padding: { top: 10, left: 5, right: 5, bottom: 20 }});
     totalPRsByStateConfig.title = {
+        ...totalPRsByStateConfig.title,
         text: 'All PRs: Breakdown by State',
-        fontColor: chart.colors.text,
-        fontFamily: '\'VT323\', monospace',
-        fontSize: 72,
+        fontSize: 48,
         padding: 5,
-        verticalAlign: 'top',
-        horizontalAlign: 'center',
-        maxWidth: 900,
+        margin: 15,
     };
     totalPRsByStateConfig.legend = {
-        fontColor: chart.colors.text,
-        fontFamily: '\'VT323\', monospace',
-        fontSize: 44,
-        markerMargin: 24,
-        horizontalAlign: 'center',
-        verticalAlign: 'bottom',
-        maxWidth: 980,
+        ...totalPRsByStateConfig.legend,
+        fontSize: 36,
+        markerMargin: 32,
     };
     await chart.save(
         path.join(__dirname, '../../generated/prs_by_state_doughnut.png'),
         await chart.render(totalPRsByStateConfig),
-        { width: 150, x: 500, y: 425 },
+        { width: 170, x: 500, y: 440 },
     );
 
-    // PRs by acceptance method
-    const totalPRsByAcceptance = await db.collection('pull_requests').aggregate([
-        {
-            '$match': {
-                'app.state': 'eligible',
-            },
-        },
-        {
-            '$lookup': {
-                from: 'users',
-                localField: 'user.id',
-                foreignField: 'id',
-                as: 'full_user',
-            },
-        },
-        {
-            '$lookup': {
-                from: 'repositories',
-                localField: 'base.repo.id',
-                foreignField: 'id',
-                as: 'repository',
-            },
-        },
-        {
-            '$set': {
-                full_user: { '$arrayElemAt': [ '$full_user', 0 ] },
-                repository: { '$arrayElemAt': [ '$repository', 0 ] },
-            },
-        },
-        {
-            '$set': {
-                frozen: {
-                    '$arrayElemAt': [
-                        {
-                            '$filter': {
-                                input: '$full_user.app.receipt',
-                                as: 'pr',
-                                cond: {
-                                    '$eq': [ '$$pr.id', '$app.gh_id' ],
-                                },
-                            },
-                        },
-                        0,
-                    ],
-                },
-            },
-        },
-        {
-            '$project': {
-                state_before_rules: {
-                    '$lte': [
-                        {
-                            '$dateFromString': {
-                                dateString: '$created_at',
-                            },
-                        },
-                        {
-                            '$dateFromString': {
-                                dateString: '2020-10-03T12:00:00.000Z',
-                            },
-                        },
-                    ],
-                },
-                // The REST data doesn't have approval, so if not in frozen assume false
-                state_approved: { '$ifNull': [ { '$eq': [ '$frozen.reviewDecision', 'APPROVED' ] }, false ] },
-                state_merged: { '$ifNull': [ '$frozen.merged', '$merged' ] },
-                state_has_topic: {
-                    '$in': [
-                        'hacktoberfest',
-                        {
-                            '$ifNull': [
-                                {
-                                    '$map': {
-                                        input: {
-                                            '$ifNull': [
-                                                {
-                                                    '$map': {
-                                                        input: '$frozen.repository.repositoryTopics.edges',
-                                                        as: 'topic',
-                                                        in: '$$topic.node.topic.name',
-                                                    },
-                                                },
-                                                '$repository.topics.names',
-                                            ],
-                                        },
-                                        as: 'topic',
-                                        in: { '$trim': { input: { '$toLower': '$$topic' } } },
-                                    },
-                                },
-                                [],
-                            ],
-                        },
-                    ],
-                },
-                state_has_label: {
-                    '$in': [
-                        'hacktoberfest-accepted',
-                        {
-                            '$ifNull': [
-                                {
-                                    '$map': {
-                                        input: {
-                                            '$ifNull': [
-                                                {
-                                                    '$map': {
-                                                        input: '$frozen.labels.edges',
-                                                        as: 'label',
-                                                        in: '$$label.node.name',
-                                                    },
-                                                },
-                                                {
-                                                    '$map': {
-                                                        input: '$labels',
-                                                        as: 'label',
-                                                        in: '$$label.name',
-                                                    },
-                                                },
-                                            ],
-                                        },
-                                        as: 'label',
-                                        in: { '$trim': { input: { '$toLower': '$$label' } } },
-                                    },
-                                },
-                                [],
-                            ],
-                        },
-                    ],
-                },
-            },
-        },
-        {
-            '$project': {
-                state: {
-                    '$cond': {
-                        if: { '$and': [ '$state_has_label', { '$not': '$state_has_topic' } ] },
-                        then: 'labelled_external_repo',
-                        else: {
-                            '$cond': {
-                                if: { '$and': [ '$state_has_label', '$state_has_topic' ] },
-                                then: 'labelled_participating_repo',
-                                else: {
-                                    '$cond': {
-                                        if: { '$and': [ '$state_merged', '$state_has_topic' ] },
-                                        then: 'merged_participating_repo',
-                                        else: {
-                                            '$cond': {
-                                                if: { '$and': [ '$state_approved', '$state_has_topic' ] },
-                                                then: 'approved_participating_repo',
-                                                else: {
-                                                    '$cond': {
-                                                        if: '$state_before_rules',
-                                                        then: 'before_rules_change',
-                                                        else: 'unknown',
-                                                    },
-                                                },
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                },
-            },
-        },
-        {
-            '$group': {
-                _id: '$state',
-                count: { '$sum': 1 },
-            },
-        },
-        { '$sort': { count: -1 } },
-    ]).toArray();
-    const stateMap = {
-        labelled_external_repo: {
-            short: 'Labelled accepted',
-            label: 'Labelled hacktoberfest-accepted',
-            color: chart.colors.pink,
-        },
-        labelled_participating_repo: {
-            short: 'Labelled accepted, with topic',
-            label: 'Labelled hacktoberfest-accepted, with hacktoberfest topic',
-            color: chart.colors.blue,
-        },
-        merged_participating_repo: {
-            short: 'Merged, with topic',
-            label: 'Merged by maintainer, with hacktoberfest topic',
-            color: chart.colors.blue,
-        },
-        approved_participating_repo: {
-            short: 'Approved, with topic',
-            label: 'Approved by maintainer, with hacktoberfest topic',
-            color: chart.colors.blue,
-        },
-        before_rules_change: {
-            short: 'Before rules change',
-            label: 'Created before rules change',
-            color: chart.colors.crimson,
-        },
-        unknown: {
-            short: 'Unknown',
-            label: 'Unknown',
-            color: chart.colors.light,
-        },
-    };
+    // Accepted PRs by merge status
+    results.totalAcceptedPRsMerged = data.pull_requests.merged.true.states.accepted;
+    results.totalAcceptedPRsNotMerged = data.pull_requests.merged.false.states.accepted;
+
     log('');
-    log('Eligible PRs by acceptance method:');
-    for (const state of totalPRsByAcceptance) {
-        log(`  ${stateMap[state._id].label}: ${number.commas(state.count)} (${(state.count / totalEligiblePRs * 100).toFixed(2)}%)`);
-    }
-    const missingKeys = Object.keys(stateMap).filter(x => !totalPRsByAcceptance.map(y => y._id).includes(x));
-    totalPRsByAcceptance.push(...missingKeys.map(x => ({
-        _id: x,
-        count: 0,
-    })));
-    const totalPRsByAcceptanceConfig = chart.config(1000, 1000, [{
-        type: 'doughnut',
-        startAngle: 160,
-        indexLabelPlacement: 'outside',
-        indexLabelFontSize: 22,
-        indexLabelFontColor: chart.colors.text,
-        indexLabelFontFamily: '\'Inter\', sans-serif',
-        showInLegend: true,
-        dataPoints: totalPRsByAcceptance.map(state => {
-            const data = stateMap[state._id];
-            return {
-                y: state.count,
-                indexLabel: data.short,
-                legendText: `${data.label}: ${number.commas(state.count)} (${(state.count / totalEligiblePRs * 100).toFixed(1)}%)`,
-                color: data.color,
-            };
-        }).map(x => [x, {
-            y: totalEligiblePRs * 0.007,
-            color: 'transparent',
-            showInLegend: false,
-        }]).flat(1),
-    }], { padding: { top: 10, left: 5, right: 5, bottom: 20 }});
-    totalPRsByAcceptanceConfig.title = {
-        text: 'Eligible PRs: Acceptance Method',
-        fontColor: chart.colors.text,
-        fontFamily: '\'VT323\', monospace',
-        fontSize: 72,
-        padding: 5,
-        verticalAlign: 'top',
-        horizontalAlign: 'center',
-        maxWidth: 980,
+    log('Accepted PRs by merge status:');
+    log(`  Merged: ${number.commas(results.totalAcceptedPRsMerged)} (${number.percentage(results.totalAcceptedPRsMerged / results.totalAcceptedPRs)})`);
+    log(`  Open: ${number.commas(results.totalAcceptedPRsNotMerged)} (${number.percentage(results.totalAcceptedPRsNotMerged / results.totalAcceptedPRs)})`);
+
+    const totalAcceptedPRsMergedConfig = chart.config(1000, 1000, [{
+        type: 'bar',
+        indexLabelFontSize: 32,
+        dataPoints: [
+            {
+                y: results.totalAcceptedPRsMerged,
+                label: 'Yes',
+                color: chart.colors.highlightPositive,
+                indexLabelPlacement: results.totalAcceptedPRsMerged / results.totalAcceptedPRs > 0.2 ? 'inside' : 'outside',
+                indexLabel: number.percentage(results.totalAcceptedPRsMerged / results.totalAcceptedPRs),
+            },
+            {
+                y: results.totalAcceptedPRsNotMerged,
+                label: 'No',
+                color: chart.colors.highlightNeutral,
+                indexLabelPlacement: results.totalAcceptedPRsNotMerged / results.totalAcceptedPRs > 0.2 ? 'inside' : 'outside',
+                indexLabel: number.percentage(results.totalAcceptedPRsNotMerged / results.totalAcceptedPRs),
+            },
+        ].sort((a, b) => a.y > b.y ? 1 : -1),
+    }]);
+    totalAcceptedPRsMergedConfig.axisX = {
+        ...totalAcceptedPRsMergedConfig.axisX,
+        labelFontSize: 36,
     };
-    totalPRsByAcceptanceConfig.legend = {
-        fontColor: chart.colors.text,
-        fontFamily: '\'VT323\', monospace',
-        fontSize: 44,
-        horizontalAlign: 'center',
-        verticalAlign: 'bottom',
-        maxWidth: 980,
+    totalAcceptedPRsMergedConfig.axisY = {
+        ...totalAcceptedPRsMergedConfig.axisY,
+        labelFontSize: 24,
+    };
+    totalAcceptedPRsMergedConfig.title = {
+        ...totalAcceptedPRsMergedConfig.title,
+        text: 'Accepted PRs: Changes Merged',
+        fontSize: 48,
+        padding: 5,
+        margin: 40,
     };
     await chart.save(
-        path.join(__dirname, '../../generated/prs_by_acceptance_doughnut.png'),
-        await chart.render(totalPRsByAcceptanceConfig),
-        { width: 150, x: 500, y: 335 },
+        path.join(__dirname, '../../generated/prs_accepted_by_merged_bar.png'),
+        await chart.render(totalAcceptedPRsMergedConfig),
+        { width: 200, x: 880, y: 820 },
     );
 
-    // Users x PRs
-    const totalUsers = await db.collection('users').find({}).count();
-    log('');
-    log(`Average PRs per user: ${number.commas(totalPRs / totalUsers)}`);
-    log(`  Average eligible PRs: ${number.commas(totalEligiblePRs / totalUsers)}`);
-    log(`  Average unaccepted PRs: ${number.commas(totalUnacceptedPRs / totalUsers)}`);
-    log(`  Average invalid PRs: ${number.commas(totalInvalidPRs / totalUsers)}`);
+    // Accepted PRs by approval
+    results.totalAcceptedPRsApproved = data.pull_requests.approved.true.states.accepted;
+    results.totalAcceptedPRsNotApproved = data.pull_requests.approved.false.states.accepted;
 
-    // Breaking down PRs by language, other tags
-    const totalPRsByLanguage = await db.collection('pull_requests').aggregate([
-        {
-            '$match': {
-                'app.state': 'eligible',
-            },
-        },
-        {
-            '$lookup': {
-                from: 'repositories',
-                localField: 'base.repo.id',
-                foreignField: 'id',
-                as: 'repository',
-            },
-        },
-        {
-            '$project': {
-                repository: { '$arrayElemAt': [ '$repository', 0 ] },
-            },
-        },
-        {
-            '$group': {
-                _id: '$repository.language',
-                count: { '$sum': 1 },
-            },
-        },
-        { '$sort': { count: -1 } },
-    ]).toArray();
     log('');
-    log(`Eligible PRs by language: ${number.commas(totalPRsByLanguage.length)} languages`);
-    totalPRsByLanguage.limit(50).forEach(group => {
-        const name = group['_id'] || 'Undetermined';
-        log(`  ${name}: ${number.commas(group.count)} (${(group.count / totalEligiblePRs * 100).toFixed(2)}%)`);
-    });
+    log('Accepted PRs by approval:');
+    log(`  Approved: ${number.commas(results.totalAcceptedPRsApproved)} (${number.percentage(results.totalAcceptedPRsApproved / results.totalAcceptedPRs)})`);
+    log(`  Pending: ${number.commas(results.totalAcceptedPRsNotApproved)} (${number.percentage(results.totalAcceptedPRsNotApproved / results.totalAcceptedPRs)})`);
+
+    const totalAcceptedPRsApprovedConfig = chart.config(1000, 1000, [{
+        type: 'bar',
+        indexLabelFontSize: 32,
+        dataPoints: [
+            {
+                y: results.totalAcceptedPRsApproved,
+                label: 'Yes',
+                color: chart.colors.highlightPositive,
+                indexLabelPlacement: results.totalAcceptedPRsApproved / results.totalAcceptedPRs > 0.2 ? 'inside' : 'outside',
+                indexLabel: number.percentage(results.totalAcceptedPRsApproved / results.totalAcceptedPRs),
+            },
+            {
+                y: results.totalAcceptedPRsNotApproved,
+                label: 'No',
+                color: chart.colors.highlightNeutral,
+                indexLabelPlacement: results.totalAcceptedPRsNotApproved / results.totalAcceptedPRs > 0.2 ? 'inside' : 'outside',
+                indexLabel: number.percentage(results.totalAcceptedPRsNotApproved / results.totalAcceptedPRs),
+            },
+        ].sort((a, b) => a.y > b.y ? 1 : -1),
+    }]);
+    totalAcceptedPRsApprovedConfig.axisX = {
+        ...totalAcceptedPRsApprovedConfig.axisX,
+        labelFontSize: 36,
+    };
+    totalAcceptedPRsApprovedConfig.axisY = {
+        ...totalAcceptedPRsApprovedConfig.axisY,
+        labelFontSize: 24,
+    };
+    totalAcceptedPRsApprovedConfig.title = {
+        ...totalAcceptedPRsApprovedConfig.title,
+        text: 'Accepted PRs: Maintainer Approval',
+        fontSize: 48,
+        padding: 5,
+        margin: 40,
+    };
+    await chart.save(
+        path.join(__dirname, '../../generated/prs_accepted_by_approval_bar.png'),
+        await chart.render(totalAcceptedPRsApprovedConfig),
+        { width: 200, x: 880, y: 820 },
+    );
+
+    // Breaking down accepted PRs by language, other tags
+    results.totalAcceptedPRsByLanguage = Object.entries(data.pull_requests.languages.all.languages)
+        .filter(([ lang ]) => lang && lang !== 'null')
+        .map(([ lang, data ]) => [ lang, data.states.accepted || 0 ])
+        .sort((a, b) => a[1] < b[1] ? 1 : -1);
+
+    log('');
+    log(`Accepted PRs by language: ${number.commas(results.totalAcceptedPRsByLanguage.length)} languages`);
+    for (const [ lang, count ] of results.totalAcceptedPRsByLanguage.slice(0, 50)) {
+        const name = lang || 'Unknown';
+        log(`  ${name}: ${number.commas(count)} (${number.percentage(count / results.totalAcceptedPRs)})`);
+    }
+
     let doughnutTotal = 0;
     const totalPRsByLanguageConfig = chart.config(1000, 1000, [{
         type: 'doughnut',
-        startAngle: 170,
+        startAngle: 180,
         indexLabelPlacement: 'outside',
-        indexLabelFontSize: 22,
-        indexLabelFontFamily: '\'Inter\', sans-serif',
-        indexLabelFontColor: chart.colors.white,
-        dataPoints: totalPRsByLanguage.filter(data => data['_id']).limit(20).map(data => {
-            const dataColor = linguist.get(data['_id']) || chart.colors.lightBox;
-            const percent = data.count / totalEligiblePRs * 100;
-            doughnutTotal += data.count;
+        dataPoints: results.totalAcceptedPRsByLanguage.slice(0, 10).map(([ lang, count ]) => {
+            const dataColor = linguist.get(lang) || chart.colors.highlightNeutral;
+            const percent = (count || 0) / results.totalAcceptedPRs;
+            doughnutTotal += (count || 0);
             return {
-                y: data.count,
-                indexLabel: `${data['_id']}: ${number.commas(data.count)} (${percent.toFixed(1)}%)`,
+                y: count || 0,
+                indexLabel: `${lang.split(' ')[0]}: ${number.commas(count || 0)} (${number.percentage(percent)})`,
                 color: dataColor,
-                indexLabelFontSize: percent > 10 ? 24 : percent > 4 ? 22 : 20,
+                indexLabelFontSize: percent > 0.1 ? 24 : percent > 0.05 ? 22 : 20,
+                indexLabelMaxWidth: 500,
             };
         }),
     }], { padding: { top: 5, left: 10, right: 10, bottom: 30 }});
-    if (totalEligiblePRs > doughnutTotal) {
+    if (results.totalAcceptedPRs > doughnutTotal) {
         totalPRsByLanguageConfig.data[0].dataPoints.push({
-            y: totalPRs - doughnutTotal,
-            indexLabel: `Others: ${number.commas(totalEligiblePRs - doughnutTotal)} (${((totalEligiblePRs - doughnutTotal) / totalEligiblePRs * 100).toFixed(1)}%)`,
-            color: chart.colors.darkBox,
-            indexLabelFontColor: chart.colors.white,
+            y: results.totalAcceptedPRs - doughnutTotal,
+            indexLabel: `Others: ${number.commas(results.totalAcceptedPRs - doughnutTotal)} (${number.percentage((results.totalAcceptedPRs - doughnutTotal) / results.totalAcceptedPRs)})`,
+            color: chart.colors.highlightNeutral,
             indexLabelFontSize: 24,
         });
     }
     totalPRsByLanguageConfig.data[0].dataPoints = totalPRsByLanguageConfig.data[0].dataPoints.map(x => [x, {
-        y: totalEligiblePRs * 0.005,
+        y: results.totalAcceptedPRs * 0.005,
         color: 'transparent',
         showInLegend: false,
     }]).flat(1);
     totalPRsByLanguageConfig.title = {
-        text: 'Eligible PRs: Top 20 Languages',
-        fontColor: chart.colors.text,
-        fontFamily: '\'VT323\', monospace',
-        fontSize: 72,
+        ...totalPRsByLanguageConfig.title,
+        text: 'Accepted PRs: Top 10 Languages',
+        fontSize: 48,
         padding: 5,
-        verticalAlign: 'top',
-        horizontalAlign: 'center',
-        maxWidth: 900,
+        margin: 15,
     };
     totalPRsByLanguageConfig.subtitles = [{
-        text: `Hacktoberfest saw ${number.commas(totalPRsByLanguage.length)} different programming languages represented across the ${number.commas(totalEligiblePRs)} eligible PRs submitted by users.`,
-        fontColor: chart.colors.blue,
-        fontFamily: '\'VT323\', monospace',
-        fontSize: 40,
-        padding: 0,
+        ...totalPRsByLanguageConfig.title,
+        text: `Hacktoberfest saw ${number.commas(results.totalAcceptedPRsByLanguage.length)} different programming languages represented across the ${number.commas(results.totalAcceptedPRs)} accepted PRs submitted by users.`,
+        fontSize: 32,
+        padding: 20,
+        cornerRadius: 5,
         verticalAlign: 'bottom',
         horizontalAlign: 'center',
-        maxWidth: 750,
-        backgroundColor: chart.colors.darkBackground,
+        maxWidth: 850,
+        backgroundColor: chart.colors.backgroundBox,
+        fontColor: chart.colors.textBox,
     }];
     await chart.save(
         path.join(__dirname, '../../generated/prs_by_language_doughnut.png'),
         await chart.render(totalPRsByLanguageConfig),
-        { width: 150, x: 500, y: 460 },
+        { width: 120, x: 500, y: 445 },
     );
 
-    // Breaking down PRs by day
+    return results;
+
+    /*// Breaking down PRs by day
     const totalPRsByDay = await db.collection('pull_requests').aggregate([
         {
             '$match': {
@@ -499,7 +300,7 @@ module.exports = async (db, log) => {
         indexLabelFontColor: chart.colors.white,
         dataPoints: totalPRsByDay.limit(10).map((data, i) => {
             const colors = [
-                chart.colors.blue, chart.colors.pink, chart.colors.crimson,
+                chart.colors.highlightPositive, chart.colors.highlightNeutral, chart.colors.highlightNegative,
             ];
             const dataColor = colors[i % colors.length];
             return {
@@ -614,7 +415,7 @@ module.exports = async (db, log) => {
     };
     totalPRsByDayByLanguageConfig.subtitles = [{
         text: `On ${formatDate(dateFromDay(2020, totalPRsByDay[0]._id), false)}, over ${Math.floor(totalPRsByDay[0].count / totalEligiblePRs * 100)}% of the total eligible PRs for Hacktoberfest were submitted in just one day: ${number.commas(totalPRsByDay[0].count)} PRs.`,
-        fontColor: chart.colors.blue,
+        fontColor: chart.colors.highlightPositive,
         fontFamily: '\'VT323\', monospace',
         fontSize: 40,
         padding: 100,
@@ -663,5 +464,5 @@ module.exports = async (db, log) => {
     log(`  ${number.integer(averagesPRs.review_comments)} review comments`);
     log(`  ${number.integer(averagesPRs.labels)} labels`);
     log(`  ${number.integer(averagesPRs.assignees)} assigned users`);
-    log(`  ${number.integer(averagesPRs.requested_reviewers)} requested reviews, ${number.integer(averagesPRs.requested_teams)} requested team reviewers`);
+    log(`  ${number.integer(averagesPRs.requested_reviewers)} requested reviews, ${number.integer(averagesPRs.requested_teams)} requested team reviewers`);*/
 };

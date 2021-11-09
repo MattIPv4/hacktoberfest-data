@@ -1,4 +1,4 @@
-Started 11/8/2021, 9:45:14 PM
+Started 11/9/2021, 9:50:43 PM
 
 
 ----
@@ -14,4 +14,84 @@ Countries represented by completed users: 135
 Day with most accepted PRs submitted: 2021-10-01 (10.06%)
 Most common repository language in accepted PRs: C++ (14.52%)
 
-Finished 11/8/2021, 9:45:14 PM
+Region-specific:
+  Registered users in the US: 12,946
+  Completed users in the US: 2,198
+  Registered users in India: 71,081
+  Completed users in India: 20,469
+
+
+----
+PR Stats
+----
+
+Total PRs: 519,937
+  Accepted PRs: 228,635 (43.97%)
+  Unaccepted PRs: 160,166 (30.80%)
+    of which were not in a participating repo: 121,442 (75.82%)
+    of which were not accepted by a maintainer: 38,724 (24.18%)
+  Invalid PRs: 65,333 (12.57%)
+    of which were in an excluded repo: 63,186 (96.71%)
+    of which were labeled as spam/invalid: 2,147 (3.29%)
+
+Accepted PRs by merge status:
+  Merged: 221,296 (96.79%)
+  Open: 7,339 (3.21%)
+
+Accepted PRs by approval:
+  Approved: 47,784 (20.90%)
+  Pending: 180,851 (79.10%)
+
+Accepted PRs by language: 347 languages
+  C++: 33,205 (14.52%)
+  Python: 30,344 (13.27%)
+  JavaScript: 29,483 (12.90%)
+  HTML: 24,009 (10.50%)
+  Java: 16,549 (7.24%)
+  TypeScript: 12,101 (5.29%)
+  Jupyter Notebook: 10,225 (4.47%)
+  C: 7,896 (3.45%)
+  PHP: 7,416 (3.24%)
+  CSS: 6,066 (2.65%)
+  Go: 4,997 (2.19%)
+  C#: 3,349 (1.46%)
+  Ruby: 2,803 (1.23%)
+  Dart: 2,795 (1.22%)
+  Shell: 2,645 (1.16%)
+  Kotlin: 2,594 (1.13%)
+  Rust: 2,139 (0.94%)
+  Vue: 2,089 (0.91%)
+  PowerShell: 1,171 (0.51%)
+  Swift: 822 (0.36%)
+  SCSS: 779 (0.34%)
+  Nix: 695 (0.30%)
+  DM: 570 (0.25%)
+  Dockerfile: 513 (0.22%)
+  Markdown: 451 (0.20%)
+  EJS: 434 (0.19%)
+  DIGITAL Command Language: 418 (0.18%)
+  Svelte: 360 (0.16%)
+  Elixir: 345 (0.15%)
+  Lua: 338 (0.15%)
+  Makefile: 306 (0.13%)
+  HCL: 296 (0.13%)
+  Julia: 238 (0.10%)
+  Scala: 236 (0.10%)
+  Haskell: 232 (0.10%)
+  Assembly: 206 (0.09%)
+  Perl: 201 (0.09%)
+  TeX: 186 (0.08%)
+  R: 170 (0.07%)
+  Groovy: 166 (0.07%)
+  Objective-C: 153 (0.07%)
+  Roff: 140 (0.06%)
+  Vim script: 122 (0.05%)
+  SQF: 115 (0.05%)
+  Nim: 112 (0.05%)
+  Jinja: 107 (0.05%)
+  GDScript: 104 (0.05%)
+  Handlebars: 98 (0.04%)
+  Nunjucks: 90 (0.04%)
+  MATLAB: 88 (0.04%)
+
+Finished 11/9/2021, 9:50:48 PM

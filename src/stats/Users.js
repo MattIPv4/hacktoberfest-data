@@ -11,7 +11,7 @@ const usersTopCountriesChart = async (userData, totalUsers, title, file, interva
         indexLabelFontFamily: '\'Inter\', sans-serif',
         dataPoints: userData.limit(10).map((data, i) => {
             const colors = [
-                chart.colors.blue, chart.colors.pink, chart.colors.crimson,
+                chart.colors.highlightPositive, chart.colors.highlightNeutral, chart.colors.highlightNegative,
             ];
             const dataColor = colors[i % colors.length];
             return {
@@ -50,7 +50,7 @@ const usersTopCountriesChart = async (userData, totalUsers, title, file, interva
     if (mainSubtitle) {
         config.subtitles = [{
             text: mainSubtitle,
-            fontColor: chart.colors.blue,
+            fontColor: chart.colors.highlightPositive,
             fontFamily: '\'VT323\', monospace',
             fontSize: 36,
             padding: 15,
@@ -64,7 +64,7 @@ const usersTopCountriesChart = async (userData, totalUsers, title, file, interva
         if (smallSubtitle) {
             config.subtitles.unshift({
                 text: smallSubtitle,
-                fontColor: chart.colors.blue,
+                fontColor: chart.colors.highlightPositive,
                 fontFamily: '\'VT323\', monospace',
                 fontSize: 22,
                 padding: 15,
@@ -147,13 +147,13 @@ module.exports = async (db, log) => {
                 case 1:
                 case 2:
                 case 3:
-                    color = chart.colors.blue;
+                    color = chart.colors.highlightPositive;
                     break;
                 case 4:
-                    color = chart.colors.pink;
+                    color = chart.colors.highlightNeutral;
                     break;
                 default:
-                    color = chart.colors.crimson;
+                    color = chart.colors.highlightNegative;
                     break;
             }
 
@@ -164,7 +164,7 @@ module.exports = async (db, log) => {
             }
 
             return result;
-        }, { '10+ PRs': [0, chart.colors.crimson, 11] }))
+        }, { '10+ PRs': [0, chart.colors.highlightNegative, 11] }))
             .map(data => {
                 return {
                     y: data[1][0],
@@ -190,7 +190,7 @@ module.exports = async (db, log) => {
     };
     totalUsersByPRsExtConfig.subtitles = [{
         text: `In total, ${number.commas(totalWinnerStateUsers)} users submitted 4+ eligible PRs, winning Hacktoberfest. The most eligible PRs submitted by a single user was ${number.commas(Math.max(...totalUsersByPRs.map(x => x._id)))}.`,
-        fontColor: chart.colors.blue,
+        fontColor: chart.colors.highlightPositive,
         fontFamily: '\'VT323\', monospace',
         fontSize: 40,
         padding: 100,
@@ -215,13 +215,13 @@ module.exports = async (db, log) => {
                 case 1:
                 case 2:
                 case 3:
-                    color = chart.colors.blue;
+                    color = chart.colors.highlightPositive;
                     break;
                 case 4:
-                    color = chart.colors.pink;
+                    color = chart.colors.highlightNeutral;
                     break;
                 default:
-                    color = chart.colors.crimson;
+                    color = chart.colors.highlightNegative;
                     break;
             }
 
@@ -232,7 +232,7 @@ module.exports = async (db, log) => {
             }
 
             return result;
-        }, { '5+ PRs': [0, chart.colors.crimson, 5] }))
+        }, { '5+ PRs': [0, chart.colors.highlightNegative, 5] }))
             .map(data => {
                 return {
                     y: data[1][0],

@@ -1,25 +1,29 @@
 const path = require('path');
 
 const { registerFont } = require('canvas');
-registerFont(path.join(__dirname, 'Inter-Regular.woff'), { family: 'Inter' });
-registerFont(path.join(__dirname, 'VT323-Regular.ttf'), { family: 'VT323' });
+registerFont(path.join(__dirname, 'Poppins-Regular.ttf'), { family: 'Poppins', weight: 400 });
+registerFont(path.join(__dirname, 'Poppins-Bold.ttf'), { family: 'Poppins', weight: 700 });
 
 const jsdom = require('jsdom');
 const { JSDOM } = jsdom;
 const Jimp = require('jimp');
 
 const colors = {
-    dark: '#072540', // mix(background, #000, 25%);
-    darkBackground: '#072540', // mix(background, #000, 75%);
-    background: '#072540',
-    darkBox: '#183D5D',
-    lightBox: '#183D5D',
-    light: '#183D5D', // mix(lightBox, text, 25%);
-    text: '#FFFFFF',
-    white: '#FFFFFF',
-    blue: '#93C2DB',
-    pink: '#FF8AE2',
-    crimson: '#9C4668',
+    dark: '#072540', // mix(background, #000, 25%); // TODO: update
+    darkBackground: '#072540', // mix(background, #000, 75%); // TODO: update
+    darkBox: '#183D5D', // TODO: update
+    lightBox: '#183D5D', // TODO: update
+    light: '#183D5D', // mix(lightBox, text, 25%); // TODO: update
+    white: '#FFFFFF', // TODO: update
+
+    background: '#f4f0e1',
+    backgroundBox: '#dbe8d9',
+    line: '#677662',
+    text: '#2B3531',
+    textBox: '#2B3531',
+    highlightPositive: '#91A88C',
+    highlightNeutral: '#A88771',
+    highlightNegative: '#B53A25',
 };
 
 const config = (width, height, data, opts) => {
@@ -34,31 +38,44 @@ const config = (width, height, data, opts) => {
     opts.padding.bottom = opts.padding.bottom || 0;
     opts.padding.left = opts.padding.left || 0;
 
+    for (const dataSeries of data) {
+        dataSeries.indexLabelFontColor = dataSeries.indexLabelFontColor || colors.text;
+        dataSeries.indexLabelFontWeight = dataSeries.indexLabelFontWeight || 'regular';
+        dataSeries.indexLabelFontFamily = dataSeries.indexLabelFontFamily || '\'Poppins\', sans-serif';
+    }
+
     const axis = {
-        gridColor: colors.lightBox,
-        lineColor: colors.lightBox,
-        tickColor: colors.lightBox,
+        gridColor: colors.line,
+        lineColor: colors.line,
+        tickColor: colors.line,
         labelFontColor: colors.text,
-        labelFontWeight: 'bold',
-        labelFontFamily: '\'VT323\', monospace',
+        labelFontWeight: 'regular',
+        labelFontFamily: '\'Poppins\', sans-serif',
         titleFontColor: colors.text,
         titleFontWeight: 'bold',
-        titleFontFamily: '\'VT323\', monospace',
+        titleFontFamily: '\'Poppins\', sans-serif',
     };
     return {
         width: width - opts.padding.left - opts.padding.right,
         height: height - opts.padding.top - opts.padding.bottom,
-        theme: 'dark2',
         backgroundColor: colors.background,
         axisX: axis,
         axisY: axis,
         legend: {
             fontColor: colors.text,
-            fontWeight: 'bold',
-            fontFamily: '\'Inter\', sans-serif',
+            fontWeight: 'regular',
+            fontFamily: '\'Poppins\', sans-serif',
             horizontalAlign: 'center',
             verticalAlign: 'bottom',
             maxWidth: (width - opts.padding.left - opts.padding.right) * .9,
+        },
+        title: {
+            fontColor: colors.text,
+            fontWeight: 'bold',
+            fontFamily: '\'Poppins\', sans-serif',
+            horizontalAlign: 'center',
+            verticalAlign: 'top',
+            maxWidth: (width - opts.padding.left - opts.padding.right),
         },
         data,
         renderOpts: opts,

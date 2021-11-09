@@ -1,13 +1,15 @@
 const statsGenerators = [
-    require('./readme'),
-    // require('./Users'),
-    // require('./Orgs'),
-    // require('./PRs'),
-    // require('./Repos'),
+    'readme',
+    'PRs',
+    // 'Users',
+    // 'Orgs',
+    // 'Repos',
 ];
 
 module.exports = async (data, log) => {
+    const results = {};
     for (const generator of statsGenerators) {
-        await generator(data, log);
+        results[generator] = await require(`./${generator}`)(data, log);
     }
+    return results;
 };
