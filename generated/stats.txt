@@ -1,4 +1,4 @@
-Started 11/9/2021, 9:50:43 PM
+Started 11/11/2021, 10:38:25 PM
 
 
 ----
@@ -94,4 +94,49 @@ Accepted PRs by language: 347 languages
   Nunjucks: 90 (0.04%)
   MATLAB: 88 (0.04%)
 
-Finished 11/9/2021, 9:50:48 PM
+Top days by accepted PRs:
+  October 1: 23,007 (10.06%)
+  October 2: 16,952 (7.41%)
+  October 3: 14,019 (6.13%)
+  October 4: 12,880 (5.63%)
+  October 5: 12,231 (5.35%)
+  October 6: 11,202 (4.90%)
+  October 7: 10,072 (4.41%)
+  October 8: 8,848 (3.87%)
+  October 12: 7,727 (3.38%)
+  October 11: 7,681 (3.36%)
+  October 9: 7,467 (3.27%)
+  October 19: 7,384 (3.23%)
+  October 18: 7,353 (3.22%)
+  September 30: 7,344 (3.21%)
+  October 13: 7,234 (3.16%)
+
+On average, an accepted PR had:
+  3 commits
+  12 modified files
+  1,532 additions
+  444 deletions
+
+
+----
+User Stats
+----
+
+Total Users: 141,802
+  Users that submitted 1+ accepted PRs: 49,695 (35.05%)
+  Users that submitted 4+ accepted PRs: 34,845 (24.57%)
+  Users that were disqualified: 401 (0.28%)
+
+Users by number of accepted PRs submitted:
+  1 PR: 7,727 (5.45%)
+  2 PRs: 4,244 (2.99%)
+  3 PRs: 3,114 (2.20%)
+  4 PRs: 16,956 (11.96%)
+  5 PRs: 7,611 (5.37%)
+  6 PRs: 3,697 (2.61%)
+  7 PRs: 2,125 (1.50%)
+  8 PRs: 1,311 (0.92%)
+  9 PRs: 785 (0.55%)
+  10+ PRs: 2,569 (1.81%)
+
+Finished 11/11/2021, 10:38:31 PM

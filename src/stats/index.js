@@ -1,7 +1,7 @@
 const statsGenerators = [
     'readme',
     'PRs',
-    // 'Users',
+    'Users',
     // 'Orgs',
     // 'Repos',
 ];

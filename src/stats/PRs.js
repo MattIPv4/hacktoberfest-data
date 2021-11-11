@@ -3,7 +3,7 @@ const number = require('../helpers/number');
 const chart = require('../helpers/chart');
 const linguist = require('../helpers/linguist');
 const color = require('../helpers/color');
-const { getDateArray, dateFromDay, formatDate } = require('../helpers/date');
+const { getDateArray, formatDate } = require('../helpers/date');
 
 module.exports = async (data, log) => {
     /***************
@@ -198,7 +198,7 @@ module.exports = async (data, log) => {
     // Breaking down accepted PRs by language, other tags
     results.totalAcceptedPRsByLanguage = Object.entries(data.pull_requests.languages.all.languages)
         .filter(([ lang ]) => lang && lang !== 'null')
-        .map(([ lang, data ]) => [ lang, data.states.accepted || 0 ])
+        .map(([ lang, langData ]) => [ lang, langData.states.accepted || 0 ])
         .sort((a, b) => a[1] < b[1] ? 1 : -1);
 
     log('');
@@ -264,51 +264,33 @@ module.exports = async (data, log) => {
         { width: 120, x: 500, y: 445 },
     );
 
-    return results;
+    // Breaking down PRs by day
+    results.totalPRsByDay = Object.entries(data.pull_requests.states.daily)
+        .map(([ day, dayData ]) => [ day, dayData.states.accepted || 0 ])
+        .sort((a, b) => a[1] < b[1] ? 1 : -1)
+        .slice(0, 15);
 
-    /*// Breaking down PRs by day
-    const totalPRsByDay = await db.collection('pull_requests').aggregate([
-        {
-            '$match': {
-                'app.state': 'eligible',
-            },
-        },
-        {
-            '$set': {
-                day: { '$dayOfYear': { '$dateFromString': { dateString: '$created_at' } } },
-            },
-        },
-        {
-            '$group': {
-                _id: '$day',
-                count: { '$sum': 1 },
-            },
-        },
-        { '$sort': { count: -1 } },
-        { '$limit': 15 },
-    ]).toArray();
     log('');
-    log('Top days by eligible PRs:');
-    totalPRsByDay.forEach(day => {
-        log(`  ${formatDate(dateFromDay(2020, day['_id']))} | ${number.commas(day.count)} (${(day.count / totalEligiblePRs * 100).toFixed(2)}%)`);
-    });
+    log('Top days by accepted PRs:');
+    for (const [ day, count ] of results.totalPRsByDay) {
+        log(`  ${formatDate(new Date(day))}: ${number.commas(count)} (${number.percentage(count / results.totalAcceptedPRs)})`);
+    }
+
     const totalPRsByDayConfig = chart.config(1000, 1000, [{
         type: 'bar',
         indexLabelPlacement: 'inside',
         indexLabelFontSize: 24,
-        indexLabelFontFamily: '\'Inter\', sans-serif',
-        indexLabelFontColor: chart.colors.white,
-        dataPoints: totalPRsByDay.limit(10).map((data, i) => {
+        dataPoints: results.totalPRsByDay.slice(0, 10).map(([ day, count ], i) => {
             const colors = [
                 chart.colors.highlightPositive, chart.colors.highlightNeutral, chart.colors.highlightNegative,
             ];
             const dataColor = colors[i % colors.length];
             return {
-                y: data.count,
-                label: formatDate(dateFromDay(2020, data['_id']), true),
+                y: count,
+                label: formatDate(new Date(day), true),
                 color: dataColor,
-                indexLabel: `${(data.count / totalEligiblePRs * 100).toFixed(2)}%`,
-                indexLabelFontColor: color.isBright(dataColor) ? chart.colors.background : chart.colors.white,
+                indexLabel: number.percentage(count / results.totalAcceptedPRs),
+                indexLabelFontColor: color.isBright(dataColor) ? chart.colors.background : chart.colors.text,
             };
         }).reverse(),
     }]);
@@ -321,15 +303,11 @@ module.exports = async (data, log) => {
         labelFontSize: 34,
     };
     totalPRsByDayConfig.title = {
-        text: 'Eligible PRs: Most Popular Days',
-        fontColor: chart.colors.text,
-        fontFamily: '\'VT323\', monospace',
-        fontWeight: 'bold',
-        fontSize: 72,
+        ...totalPRsByDayConfig.title,
+        text: 'Accepted PRs: Most Popular Days',
+        fontSize: 48,
         padding: 5,
-        margin: 10,
-        verticalAlign: 'top',
-        horizontalAlign: 'center',
+        margin: 15,
     };
     await chart.save(
         path.join(__dirname, '../../generated/prs_by_day_bar.png'),
@@ -338,131 +316,97 @@ module.exports = async (data, log) => {
     );
 
     // Breaking down PRs by day and by language
-    const totalPRsByDayByLanguage = await db.collection('pull_requests').aggregate([
-        {
-            '$match': {
-                'app.state': 'eligible',
-            },
-        },
-        {
-            '$lookup': {
-                from: 'repositories',
-                localField: 'base.repo.id',
-                foreignField: 'id',
-                as: 'repository',
-            },
-        },
-        {
-            '$set': {
-                repository: { '$arrayElemAt': [ '$repository', 0 ] },
-                day: { '$dayOfYear': { '$dateFromString': { dateString: '$created_at' } } },
-            },
-        },
-        {
-            '$group': {
-                _id: {
-                    language: '$repository.language',
-                    day: '$day',
-                },
-                count: { '$sum': 1 },
-            },
-        },
-        {
-            '$group': {
-                _id: '$_id.language',
-                data: { '$push': {count: '$count', day: '$_id.day'} },
-                count: { '$sum': '$count' },
-            },
-        },
-        { '$sort': { count: -1 } },
-        { '$limit': 10 },
-    ]).toArray();
-    const totalPRsByDayByLanguageConfig = chart.config(2500, 1000, totalPRsByDayByLanguage.map(data => {
-        const name = data['_id'] || 'Undetermined';
-        const dates = getDateArray(new Date('2020-09-30'), new Date('2020-11-01'));
-        const PRsByDate = data.data.reduce(function(result, item) {
-            result[dateFromDay(2020, item.day).toDateString()] = item.count;
-            return result;
-        }, {});
-        const PRData = dates.map(date => {
-            const dateString = date.toDateString();
-            return { x: date, y: dateString in PRsByDate ? PRsByDate[dateString] : 0 };
-        }).sort((a, b) => {
-            return b.x - a.x;
-        });
-        return {
-            type: 'spline',
-            name: name,
-            showInLegend: true,
-            dataPoints: PRData,
-            lineThickness: 3,
-            color: linguist.get(name) || chart.colors.light,
-        };
+    results.totalAcceptedPRsByLanguageByDay = results.totalAcceptedPRsByLanguage.slice(0, 10).map(([ language ]) => ({
+        language,
+        daily: getDateArray(new Date('2021-09-30'), new Date('2021-11-01'))
+            .map(date => ({
+                date,
+                count: data.pull_requests.languages.daily?.[date.toISOString().split('T')[0]]?.languages?.[language]?.states?.accepted || 0,
+            })),
     }));
-    totalPRsByDayByLanguageConfig.axisX = {
-        ...totalPRsByDayByLanguageConfig.axisX,
+    const totalPRsByLanguageByDayConfig = chart.config(2500, 1000, results.totalAcceptedPRsByLanguageByDay
+        .map(({ language, daily }) => ({
+            type: 'spline',
+            name: language,
+            showInLegend: true,
+            dataPoints: daily.map(({ date, count }) => ({
+                x: date,
+                y: count,
+            })),
+            lineThickness: 3,
+            color: linguist.get(language) || chart.colors.highlightNeutral,
+        })));
+    totalPRsByLanguageByDayConfig.axisX = {
+        ...totalPRsByLanguageByDayConfig.axisX,
+        labelFontSize: 34,
         interval: 1,
         intervalType: 'week',
     };
-    totalPRsByDayByLanguageConfig.title = {
-        text: 'Eligible PRs: Top 10 Languages',
-        fontColor: chart.colors.text,
-        fontFamily: '\'VT323\', monospace',
-        fontSize: 84,
-        padding: 5,
-        verticalAlign: 'top',
-        horizontalAlign: 'center',
+    totalPRsByLanguageByDayConfig.axisY = {
+        ...totalPRsByLanguageByDayConfig.axisY,
+        labelFontSize: 34,
+        interval: 500,
     };
-    totalPRsByDayByLanguageConfig.subtitles = [{
-        text: `On ${formatDate(dateFromDay(2020, totalPRsByDay[0]._id), false)}, over ${Math.floor(totalPRsByDay[0].count / totalEligiblePRs * 100)}% of the total eligible PRs for Hacktoberfest were submitted in just one day: ${number.commas(totalPRsByDay[0].count)} PRs.`,
-        fontColor: chart.colors.highlightPositive,
-        fontFamily: '\'VT323\', monospace',
-        fontSize: 40,
-        padding: 100,
-        verticalAlign: 'top',
-        horizontalAlign: 'right',
-        dockInsidePlotArea: true,
-        maxWidth: 700,
-        backgroundColor: chart.colors.darkBackground,
-    }];
-    totalPRsByDayByLanguageConfig.backgroundColor = chart.colors.dark;
+    totalPRsByLanguageByDayConfig.title = {
+        ...totalPRsByLanguageByDayConfig.title,
+        text: 'Accepted PRs: Top 10 Languages',
+        fontSize: 48,
+        padding: 5,
+        margin: 15,
+    };
+    totalPRsByLanguageByDayConfig.subtitles = [
+        // {
+        //     ...totalPRsByLanguageByDayConfig.title,
+        //     text: `On ${formatDate(new Date(results.totalPRsByDay[0][0]), false)}, ${number.percentage(results.totalPRsByDay[0][1] / results.totalAcceptedPRs)} of the total accepted PRs for Hacktoberfest were submitted in just one day: ${number.commas(results.totalPRsByDay[0][1])} PRs.`,
+        //     fontSize: 32,
+        //     padding: 20,
+        //     cornerRadius: 5,
+        //     verticalAlign: 'top',
+        //     horizontalAlign: 'right',
+        //     dockInsidePlotArea: true,
+        //     maxWidth: 700,
+        //     backgroundColor: chart.colors.backgroundBox,
+        //     fontColor: chart.colors.textBox,
+        // },
+        {
+            text: '_',
+            fontColor: chart.colors.text,
+            fontSize: 16,
+            verticalAlign: 'bottom',
+            horizontalAlign: 'center',
+        },
+    ];
+
+    totalPRsByLanguageByDayConfig.backgroundColor = chart.colors.text;
+    totalPRsByLanguageByDayConfig.title.fontColor = chart.colors.background;
+    totalPRsByLanguageByDayConfig.legend.fontColor = chart.colors.background;
+    totalPRsByLanguageByDayConfig.axisX.labelFontColor = chart.colors.background;
+    totalPRsByLanguageByDayConfig.axisX.lineColor = color.lighten(chart.colors.text, 10);
+    totalPRsByLanguageByDayConfig.axisX.gridColor = color.lighten(chart.colors.text, 10);
+    totalPRsByLanguageByDayConfig.axisX.tickColor = color.lighten(chart.colors.text, 10);
+    totalPRsByLanguageByDayConfig.axisY.labelFontColor = chart.colors.background;
+    totalPRsByLanguageByDayConfig.axisY.lineColor = color.lighten(chart.colors.text, 10);
+    totalPRsByLanguageByDayConfig.axisY.gridColor = color.lighten(chart.colors.text, 10);
+    totalPRsByLanguageByDayConfig.axisY.tickColor = color.lighten(chart.colors.text, 10);
+
     await chart.save(
         path.join(__dirname, '../../generated/prs_by_language_spline.png'),
-        await chart.render(totalPRsByDayByLanguageConfig),
+        await chart.render(totalPRsByLanguageByDayConfig),
         { width: 200, x: 1250, y: 220 },
     );
 
     // Averages of certain metrics
-    const averagesPRs = (await db.collection('pull_requests').aggregate([
-        {
-            '$match': {
-                'app.state': 'eligible',
-            },
-        },
-        {
-            '$group': {
-                _id: null,
-                additions: { '$avg': '$additions' },
-                assignees: { '$avg': { '$size': { '$ifNull': [ '$assignees', [] ] } } },
-                changed_files: { '$avg': '$changed_files' },
-                comments: { '$avg': '$comments' },
-                commits: { '$avg': '$commits' },
-                deletions: { '$avg': '$deletions' },
-                labels: { '$avg': { '$size': { '$ifNull': [ '$labels', [] ] } } },
-                requested_reviewers: { '$avg': { '$size': { '$ifNull': [ '$requested_reviewers', [] ] } } },
-                requested_teams: { '$avg': { '$size': { '$ifNull': [ '$requested_teams', [] ] } } },
-                review_comments: { '$avg': '$review_comments' },
-            },
-        },
-    ]).toArray())[0];
+    results.averageAcceptedPRCommits = data.pull_requests.commits.states.accepted / results.totalAcceptedPRs;
+    results.averageAcceptedPRFiles = data.pull_requests.files.states.accepted / results.totalAcceptedPRs;
+    results.averageAcceptedPRAdditions = data.pull_requests.additions.states.accepted / results.totalAcceptedPRs;
+    results.averageAcceptedPRDeletions = data.pull_requests.deletions.states.accepted / results.totalAcceptedPRs;
+
     log('');
-    log('On average, an eligible PR had:');
-    log(`  ${number.integer(averagesPRs.commits)} commits`);
-    log(`  ${number.integer(averagesPRs.changed_files)} modified files`);
-    log(`  ${number.integer(averagesPRs.additions)} additions, ${number.integer(averagesPRs.deletions)} deletions`);
-    log(`  ${number.integer(averagesPRs.comments)} comments`);
-    log(`  ${number.integer(averagesPRs.review_comments)} review comments`);
-    log(`  ${number.integer(averagesPRs.labels)} labels`);
-    log(`  ${number.integer(averagesPRs.assignees)} assigned users`);
-    log(`  ${number.integer(averagesPRs.requested_reviewers)} requested reviews, ${number.integer(averagesPRs.requested_teams)} requested team reviewers`);*/
+    log('On average, an accepted PR had:');
+    log(`  ${number.integer(results.averageAcceptedPRCommits)} commits`);
+    log(`  ${number.integer(results.averageAcceptedPRFiles)} modified files`);
+    log(`  ${number.integer(results.averageAcceptedPRAdditions)} additions`);
+    log(`  ${number.integer(results.averageAcceptedPRDeletions)} deletions`);
+
+    return results;
 };

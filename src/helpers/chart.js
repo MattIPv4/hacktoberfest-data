@@ -8,6 +8,8 @@ const jsdom = require('jsdom');
 const { JSDOM } = jsdom;
 const Jimp = require('jimp');
 
+const { darken } = require('./color');
+
 const colors = {
     dark: '#072540', // mix(background, #000, 25%); // TODO: update
     darkBackground: '#072540', // mix(background, #000, 75%); // TODO: update
@@ -18,7 +20,7 @@ const colors = {
 
     background: '#f4f0e1',
     backgroundBox: '#dbe8d9',
-    line: '#677662',
+    line: darken('#f4f0e1', 2.5),
     text: '#2B3531',
     textBox: '#2B3531',
     highlightPositive: '#91A88C',

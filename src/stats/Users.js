@@ -84,122 +84,75 @@ const usersTopCountriesChart = async (userData, totalUsers, title, file, interva
     );
 };
 
-module.exports = async (db, log) => {
+const cappedAcceptedUserPRs = (data, max) => Object.entries(data.users.pull_requests.accepted.all.counts)
+    .reduce((arr, [ prs, users ]) => {
+        arr[Math.min(Number(prs), max) - 1][1] += users;
+        return arr;
+    }, Array(max).fill(null).map((_, i) => [ i + 1, 0 ]));
+
+module.exports = async (data, log) => {
     /***************
      * User Stats
      ***************/
     log('\n\n----\nUser Stats\n----');
+    const results = {};
 
     // Total users
-    const totalUsers = await db.collection('users').find({}).count();
-    const totalRegisteredUsers = await db.collection('users').find({ 'app.state': { '$nin': ['new'] } }).count();
-    const totalUsersByPRs = await db.collection('pull_requests').aggregate([
-        {
-            '$match': {
-                'app.state': 'eligible',
-            },
-        },
-        {
-            '$group': {
-                _id: '$user.id',
-                count: { '$sum': 1 },
-            },
-        },
-        {
-            '$group': {
-                _id: '$count',
-                count: { '$sum': 1 },
-            },
-        },
-    ], { allowDiskUse: true }).toArray();
-    const totalUsersWithPRs = totalUsersByPRs.map(score => score['_id'] > 0 ? score.count : 0).sum();
-    const totalWinnerUsers = totalUsersByPRs.map(score => score['_id'] >= 4 ? score.count : 0).sum();
-    const totalWinnerStateUsers = await db.collection('users').find({ 'app.state': { '$in': ['completed', 'won_shirt', 'won_sticker'] } }).count();
+    results.totalUsers = data.users.states.all.count;
+    results.totalUsersEngaged = ['waiting', 'welcome', 'contributor'].reduce((sum, state) => sum + (data.users.states.all.states?.[state] || 0), 0);
+    results.totalUsersCompleted = data.users.states.all.states.contributor;
+    results.totalUsersDisqualified = data.users.states.all.states.disqualified;
     log('');
-    log(`Total Users: ${number.commas(totalUsers)}`);
-    log(`  Users that completed registration: ${number.commas(totalRegisteredUsers)} (${(totalRegisteredUsers / totalUsers * 100).toFixed(2)}%)`);
-    log(`  Users that submitted 1+ eligible PR: ${number.commas(totalUsersWithPRs)} (${(totalUsersWithPRs / totalUsers * 100).toFixed(2)}%)`);
-    log(`  Users that won (4+ eligible PRs): ${number.commas(totalWinnerUsers)} (${(totalWinnerUsers / totalUsers * 100).toFixed(2)}%)`);
-    log(`  Users that won (winning state): ${number.commas(totalWinnerStateUsers)} (${(totalWinnerStateUsers / totalUsers * 100).toFixed(2)}%)`);
-    log('    (This number may be slightly higher that the 4+ eligible PRs number if PRs submitted by some users are no longer publicly available.)');
-    log('    (It may still be lower than the published number of winners, as this report does not consider users who no longer can be found on GitHub.)');
+    log(`Total Users: ${number.commas(results.totalUsers)}`);
+    log(`  Users that submitted 1+ accepted PRs: ${number.commas(results.totalUsersEngaged)} (${number.percentage(results.totalUsersEngaged / results.totalUsers)})`);
+    log(`  Users that submitted 4+ accepted PRs: ${number.commas(results.totalUsersCompleted)} (${number.percentage(results.totalUsersCompleted / results.totalUsers)})`);
+    log(`  Users that were disqualified: ${number.commas(results.totalUsersDisqualified)} (${number.percentage(results.totalUsersDisqualified / results.totalUsers)})`);
 
-    // Users by PRs
+
+    // Users by accepted PRs
+    results.totalUsersByAcceptedPRs = cappedAcceptedUserPRs(data, 10);
+
     log('');
-    log('Users by number of eligible PRs submitted:');
-    Object.entries(totalUsersByPRs.reduce(function (result, item) {
-        if (item['_id'] > 10) {
-            result['10+ PRs'][0] += item.count;
-        } else {
-            result[`${item['_id']} PR${item['_id'] === 1 ? '' : 's'}`] = [item.count, item['_id']];
-        }
-        return result;
-    }, { '10+ PRs': [0, 11] })).sort((a, b) => a[1][1] - b[1][1]).forEach(item => {
-        log(`  ${item[0]}: ${number.commas(item[1][0])} (${(item[1][0] / totalUsers * 100).toFixed(2)}%)`);
-    });
+    log('Users by number of accepted PRs submitted:');
+    for (const [ prs, users ] of results.totalUsersByAcceptedPRs) {
+        log(`  ${prs}${prs === 10 ? '+' : ''} PR${prs === 1 ? '' : 's'}: ${number.commas(users)} (${number.percentage(users / results.totalUsers)})`);
+    }
 
     const totalUsersByPRsExtConfig = chart.config(2500, 1000, [{
         type: 'column',
-        dataPoints: Object.entries(totalUsersByPRs.reduce(function (result, item) {
-            let color;
-            switch (item['_id']) {
-                case 0:
-                case 1:
-                case 2:
-                case 3:
-                    color = chart.colors.highlightPositive;
-                    break;
-                case 4:
-                    color = chart.colors.highlightNeutral;
-                    break;
-                default:
-                    color = chart.colors.highlightNegative;
-                    break;
-            }
-
-            if (item['_id'] > 10) {
-                result['10+ PRs'][0] += item.count;
-            } else {
-                result[`${item['_id']} PR${item['_id'] === 1 ? '' : 's'}`] = [item.count, color, item['_id']];
-            }
-
-            return result;
-        }, { '10+ PRs': [0, chart.colors.highlightNegative, 11] }))
-            .map(data => {
-                return {
-                    y: data[1][0],
-                    color: data[1][1],
-                    order: data[1][2], // Ordering
-                    label: data[0], // Display
-                };
-            })
-            .sort((a, b) => a.order - b.order),
+        dataPoints: results.totalUsersByAcceptedPRs.map(([ prs, users ]) => ({
+            y: users,
+            color: Number.parseInt(prs) > 4 ? chart.colors.highlightNeutral : Number.parseInt(prs) === 4 ? chart.colors.highlightPositive : chart.colors.highlightNegative,
+            label: `${prs}${prs === 10 ? '+' : ''} PR${prs === 1 ? '' : 's'}`,
+        })),
     }]);
     totalUsersByPRsExtConfig.axisX = {
         ...totalUsersByPRsExtConfig.axisX,
-        labelFontSize: 38,
+        labelFontSize: 36,
+    };
+    totalUsersByPRsExtConfig.axisY = {
+        ...totalUsersByPRsExtConfig.axisY,
+        labelFontSize: 24,
     };
     totalUsersByPRsExtConfig.title = {
-        text: 'Users: Eligible Pull Requests',
-        fontColor: chart.colors.text,
-        fontFamily: '\'VT323\', monospace',
-        fontSize: 84,
+        ...totalUsersByPRsExtConfig.title,
+        text: 'Users: Accepted Pull Requests',
+        fontSize: 48,
         padding: 5,
-        verticalAlign: 'top',
-        horizontalAlign: 'center',
+        margin: 40,
     };
-    totalUsersByPRsExtConfig.subtitles = [{
-        text: `In total, ${number.commas(totalWinnerStateUsers)} users submitted 4+ eligible PRs, winning Hacktoberfest. The most eligible PRs submitted by a single user was ${number.commas(Math.max(...totalUsersByPRs.map(x => x._id)))}.`,
-        fontColor: chart.colors.highlightPositive,
-        fontFamily: '\'VT323\', monospace',
-        fontSize: 40,
-        padding: 100,
-        verticalAlign: 'top',
-        horizontalAlign: 'right',
-        dockInsidePlotArea: true,
-        maxWidth: 800,
-        backgroundColor: chart.colors.darkBackground,
-    }];
+    // totalUsersByPRsExtConfig.subtitles = [{
+    //     text: `In total, ${number.commas(totalWinnerStateUsers)} users submitted 4+ eligible PRs, winning Hacktoberfest. The most eligible PRs submitted by a single user was ${number.commas(Math.max(...totalUsersByPRs.map(x => x._id)))}.`,
+    //     fontColor: chart.colors.highlightPositive,
+    //     fontFamily: '\'VT323\', monospace',
+    //     fontSize: 40,
+    //     padding: 100,
+    //     verticalAlign: 'top',
+    //     horizontalAlign: 'right',
+    //     dockInsidePlotArea: true,
+    //     maxWidth: 800,
+    //     backgroundColor: chart.colors.darkBackground,
+    // }];
     await chart.save(
         path.join(__dirname, '../../generated/users_by_prs_extended_column.png'),
         await chart.render(totalUsersByPRsExtConfig),
@@ -208,55 +161,26 @@ module.exports = async (db, log) => {
 
     const totalUsersByPRsConfig = chart.config(1000, 1000, [{
         type: 'column',
-        dataPoints: Object.entries(totalUsersByPRs.reduce(function (result, item) {
-            let color;
-            switch (item['_id']) {
-                case 0:
-                case 1:
-                case 2:
-                case 3:
-                    color = chart.colors.highlightPositive;
-                    break;
-                case 4:
-                    color = chart.colors.highlightNeutral;
-                    break;
-                default:
-                    color = chart.colors.highlightNegative;
-                    break;
-            }
-
-            if (item['_id'] > 4) {
-                result['5+ PRs'][0] += item.count;
-            } else {
-                result[`${item['_id']} PR${item['_id'] === 1 ? '' : 's'}`] = [item.count, color, item['_id']];
-            }
-
-            return result;
-        }, { '5+ PRs': [0, chart.colors.highlightNegative, 5] }))
-            .map(data => {
-                return {
-                    y: data[1][0],
-                    color: data[1][1],
-                    order: data[1][2], // Ordering
-                    label: data[0], // Display
-                };
-            })
-            .sort((a, b) => a.order - b.order),
+        dataPoints: cappedAcceptedUserPRs(data, 5).map(([ prs, users ]) => ({
+            y: users,
+            color: Number.parseInt(prs) > 4 ? chart.colors.highlightNeutral : Number.parseInt(prs) === 4 ? chart.colors.highlightPositive : chart.colors.highlightNegative,
+            label: `${prs}${prs === 5 ? '+' : ''} PR${prs === 1 ? '' : 's'}`,
+        })),
     }]);
     totalUsersByPRsConfig.axisX = {
         ...totalUsersByPRsConfig.axisX,
-        labelFontSize: 38,
+        labelFontSize: 36,
+    };
+    totalUsersByPRsConfig.axisY = {
+        ...totalUsersByPRsConfig.axisY,
+        labelFontSize: 24,
     };
     totalUsersByPRsConfig.title = {
-        text: 'Users: Eligible Pull Requests',
-        fontColor: chart.colors.text,
-        fontFamily: '\'VT323\', monospace',
-        fontWeight: 'bold',
-        fontSize: 72,
+        ...totalUsersByPRsConfig.title,
+        text: 'Users: Accepted Pull Requests',
+        fontSize: 48,
         padding: 5,
-        margin: 20,
-        verticalAlign: 'top',
-        horizontalAlign: 'center',
+        margin: 40,
     };
     await chart.save(
         path.join(__dirname, '../../generated/users_by_prs_column.png'),
@@ -265,7 +189,7 @@ module.exports = async (db, log) => {
     );
 
     // Registrations by country
-    const totalRegistrationsByCountry = await db.collection('users').aggregate([
+    /*const totalRegistrationsByCountry = await db.collection('users').aggregate([
         {
             '$match': {
                 'app.state': {
@@ -319,10 +243,10 @@ module.exports = async (db, log) => {
         1000,
         registrationsCaption,
         `Graphic does not include the United States (${(totalRegistrationsByCountry.find(x => x._id === 'US').count / totalRegisteredUsers * 100).toFixed(2)}%), India (${(totalRegistrationsByCountry.find(x => x._id === 'IN').count / totalRegisteredUsers * 100).toFixed(2)}%) and users that did not specify their country (${(totalRegistrationsByCountry.find(x => x._id === null).count / totalRegisteredUsers * 100).toFixed(2)}%).`,
-    );
+    );*/
 
     // Completions by country
-    const totalCompletionsByCountry = await db.collection('users').aggregate([
+    /*const totalCompletionsByCountry = await db.collection('users').aggregate([
         {
             '$match': {
                 'app.state': {
@@ -376,5 +300,7 @@ module.exports = async (db, log) => {
         1000,
         completionsCaption,
         `Graphic does not include the United States (${(totalCompletionsByCountry.find(x => x._id === 'US').count / totalWinnerStateUsers * 100).toFixed(2)}%), India (${(totalCompletionsByCountry.find(x => x._id === 'IN').count / totalWinnerStateUsers * 100).toFixed(2)}%) and users that did not specify their country (${(totalCompletionsByCountry.find(x => x._id === null).count / totalWinnerStateUsers * 100).toFixed(2)}%).`,
-    );
+    );*/
+
+    return results;
 };
