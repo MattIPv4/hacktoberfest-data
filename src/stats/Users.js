@@ -1,31 +1,29 @@
 const path = require('path');
 const number = require('../helpers/number');
-const country = require('../helpers/country');
 const chart = require('../helpers/chart');
-const color = require('../helpers/color');
 
 const usersTopCountriesChart = async (userData, totalUsers, title, file, interval, mainSubtitle = null, smallSubtitle = null) => {
     const config = chart.config(1000, 1000, [{
         type: 'bar',
         indexLabelFontSize: 24,
-        indexLabelFontFamily: '\'Inter\', sans-serif',
-        dataPoints: userData.limit(10).map((data, i) => {
+        dataPoints: userData.slice(0, 10).map(([ country, count ], i) => {
             const colors = [
                 chart.colors.highlightPositive, chart.colors.highlightNeutral, chart.colors.highlightNegative,
             ];
             const dataColor = colors[i % colors.length];
+            const percentWidth = count / userData[0][1];
             return {
-                y: data.count,
+                y: count,
                 color: dataColor,
-                indexLabelPlacement: i === 0 ? 'inside' : 'outside',
-                indexLabel: `${country.getCountryName(data._id)} (${(data.count / totalUsers * 100).toFixed(2)}%)`,
-                indexLabelFontColor: i === 0 ? (color.isBright(dataColor) ? chart.colors.background : chart.colors.white) : chart.colors.white,
+                indexLabelPlacement: percentWidth > 0.4 ? 'inside' : 'outside',
+                indexLabel: `${country || 'Not Given'} (${number.percentage(count / totalUsers)})`,
+                indexLabelFontColor: chart.colors.text,
             };
         }).reverse(),
     }]);
     config.axisY = {
         ...config.axisY,
-        labelFontSize: 34,
+        labelFontSize: 24,
         interval,
     };
     config.axisX = {
@@ -36,51 +34,49 @@ const usersTopCountriesChart = async (userData, totalUsers, title, file, interva
         },
     };
     config.title = {
+        ...config.title,
         text: title,
-        fontColor: chart.colors.text,
-        fontFamily: '\'VT323\', monospace',
-        fontWeight: 'bold',
-        fontSize: 64,
-        padding: mainSubtitle ? 10 : 5,
-        margin: mainSubtitle ? 5 : 10,
-        verticalAlign: 'top',
-        horizontalAlign: mainSubtitle ? 'left' : 'center',
-        maxWidth: mainSubtitle ? 600 : 900,
+        fontSize: 48,
+        padding: 10,
+        margin: 10,
     };
     if (mainSubtitle) {
         config.subtitles = [{
+            ...config.title,
             text: mainSubtitle,
-            fontColor: chart.colors.highlightPositive,
-            fontFamily: '\'VT323\', monospace',
-            fontSize: 36,
-            padding: 15,
+            fontColor: chart.colors.textBox,
+            fontSize: 28,
+            padding: 20,
+            margin: 0,
+            cornerRadius: 5,
             verticalAlign: 'bottom',
-            horizontalAlign: 'right',
-            dockInsidePlotArea: true,
-            maxWidth: 450,
-            backgroundColor: chart.colors.darkBackground,
+            horizontalAlign: 'center',
+            backgroundColor: chart.colors.backgroundBox,
         }];
 
         if (smallSubtitle) {
             config.subtitles.unshift({
+                ...config.title,
                 text: smallSubtitle,
-                fontColor: chart.colors.highlightPositive,
-                fontFamily: '\'VT323\', monospace',
-                fontSize: 22,
+                fontColor: chart.colors.textBox,
+                fontSize: 16,
                 padding: 15,
+                margin: 10,
+                cornerRadius: 5,
                 verticalAlign: 'bottom',
-                horizontalAlign: 'right',
-                dockInsidePlotArea: true,
-                maxWidth: 350,
-                backgroundColor: chart.colors.darkBackground,
+                horizontalAlign: 'center',
+                backgroundColor: chart.colors.backgroundBox,
             });
         }
     }
     await chart.save(
         path.join(__dirname, `../../generated/${file}.png`),
         await chart.render(config),
-        mainSubtitle ? { width: 150, x: 890, y: 80 }
-                 : { width: 200, x: 880, y: 820 },
+        mainSubtitle
+            ? smallSubtitle
+                ? { width: 200, x: 880, y: 680 }
+                : { width: 200, x: 880, y: 740 }
+            : { width: 200, x: 880, y: 820 },
     );
 };
 
@@ -100,6 +96,7 @@ module.exports = async (data, log) => {
     // Total users
     results.totalUsers = data.users.states.all.count;
     results.totalUsersEngaged = ['waiting', 'welcome', 'contributor'].reduce((sum, state) => sum + (data.users.states.all.states?.[state] || 0), 0);
+    results.totalUsersNotEngaged = results.totalUsers - results.totalUsersEngaged;
     results.totalUsersCompleted = data.users.states.all.states.contributor;
     results.totalUsersDisqualified = data.users.states.all.states.disqualified;
     log('');
@@ -141,18 +138,31 @@ module.exports = async (data, log) => {
         padding: 5,
         margin: 40,
     };
-    // totalUsersByPRsExtConfig.subtitles = [{
-    //     text: `In total, ${number.commas(totalWinnerStateUsers)} users submitted 4+ eligible PRs, winning Hacktoberfest. The most eligible PRs submitted by a single user was ${number.commas(Math.max(...totalUsersByPRs.map(x => x._id)))}.`,
-    //     fontColor: chart.colors.highlightPositive,
-    //     fontFamily: '\'VT323\', monospace',
-    //     fontSize: 40,
-    //     padding: 100,
-    //     verticalAlign: 'top',
-    //     horizontalAlign: 'right',
-    //     dockInsidePlotArea: true,
-    //     maxWidth: 800,
-    //     backgroundColor: chart.colors.darkBackground,
-    // }];
+    totalUsersByPRsExtConfig.subtitles = [{
+        ...totalUsersByPRsExtConfig.title,
+        text: `In total, ${number.commas(results.totalUsersCompleted)} users (${number.percentage(results.totalUsersCompleted / results.totalUsers)}) submitted 4 or more accepted PRs, winning Hacktoberfest.`,
+        fontColor: chart.colors.textBox,
+        fontSize: 32,
+        padding: 15,
+        margin: 0,
+        cornerRadius: 5,
+        verticalAlign: 'top',
+        horizontalAlign: 'right',
+        dockInsidePlotArea: true,
+        maxWidth: 800,
+        backgroundColor: chart.colors.backgroundBox,
+    }, {
+        ...totalUsersByPRsExtConfig.title,
+        text: `Graphic does not include users that submitted no accepted PRs (${number.commas(results.totalUsersNotEngaged)} (${number.percentage(results.totalUsersNotEngaged / results.totalUsers)})).`,
+        fontColor: chart.colors.textBox,
+        fontSize: 16,
+        padding: 15,
+        margin: 0,
+        cornerRadius: 5,
+        verticalAlign: 'bottom',
+        horizontalAlign: 'center',
+        backgroundColor: chart.colors.backgroundBox,
+    }];
     await chart.save(
         path.join(__dirname, '../../generated/users_by_prs_extended_column.png'),
         await chart.render(totalUsersByPRsExtConfig),
@@ -182,6 +192,18 @@ module.exports = async (data, log) => {
         padding: 5,
         margin: 40,
     };
+    totalUsersByPRsConfig.subtitles = [{
+        ...totalUsersByPRsConfig.title,
+        text: `Graphic does not include users that submitted no accepted PRs (${number.commas(results.totalUsersNotEngaged)} (${number.percentage(results.totalUsersNotEngaged / results.totalUsers)})).`,
+        fontColor: chart.colors.textBox,
+        fontSize: 16,
+        padding: 15,
+        margin: 0,
+        cornerRadius: 5,
+        verticalAlign: 'bottom',
+        horizontalAlign: 'center',
+        backgroundColor: chart.colors.backgroundBox,
+    }];
     await chart.save(
         path.join(__dirname, '../../generated/users_by_prs_column.png'),
         await chart.render(totalUsersByPRsConfig),
@@ -189,118 +211,73 @@ module.exports = async (data, log) => {
     );
 
     // Registrations by country
-    /*const totalRegistrationsByCountry = await db.collection('users').aggregate([
-        {
-            '$match': {
-                'app.state': {
-                    '$nin': ['new'],
-                },
-            },
-        },
-        {
-            '$project': {
-                country: {
-                    '$cond': {
-                        if: {
-                            '$in': [
-                                '$app.country',
-                                [null, ''],
-                            ],
-                        },
-                        then: null,
-                        else: '$app.country',
-                    },
-                },
-            },
-        },
-        {
-            '$group': {
-                _id: '$country',
-                count: { '$sum': 1 },
-            },
-        },
-        { '$sort': { count: -1 } },
-    ]).toArray();
+    results.totalUsersByCountry = Object.entries(data.users.metadata.country.all.values)
+        .sort((a, b) => a[1] < b[1] ? 1 : -1);
+
     log('');
-    log(`Top countries by registrations: ${number.commas(totalRegistrationsByCountry.length)} countries`);
-    totalRegistrationsByCountry.limit(15).forEach(data => {
-        log(`  [${data._id || '--'}] ${country.getCountryName(data._id)} | ${number.commas(data.count)} (${(data.count / totalRegisteredUsers * 100).toFixed(2)}%)`);
-    });
-    const registrationsCaption = `In total, at least ${number.commas(totalRegistrationsByCountry.filter(x => x._id !== null).length)} countries were represented by users who registered to participate in Hacktoberfest.`;
+    log(`Top countries by registrations: ${number.commas(results.totalUsersByCountry.length)} countries`);
+    for (const [ country, count ] of results.totalUsersByCountry.slice(0, 25)) {
+        log(`  ${country || 'Not Given'}: ${number.commas(count)} (${number.percentage(count / results.totalUsers)})`);
+    }
+
+    const registrationsCaption = `In total, at least ${number.commas(results.totalUsersByCountry.filter(([ country ]) => country !== '').length)} countries were represented by users who registered to participate in Hacktoberfest.`;
     await usersTopCountriesChart(
-        totalRegistrationsByCountry,
-        totalRegisteredUsers,
-        'Users (registered): Top Countries',
+        results.totalUsersByCountry,
+        results.totalUsers,
+        'Registered Users: Top Countries',
         'users_registrations_top_countries_bar',
         10000,
         registrationsCaption,
     );
     await usersTopCountriesChart(
-        totalRegistrationsByCountry.filter(x => ![null, 'US', 'IN'].includes(x._id)),
-        totalRegisteredUsers,
-        'Users (registered): Top Countries',
+        results.totalUsersByCountry.filter(([ country ]) => !['', 'United States', 'India'].includes(country)),
+        results.totalUsers,
+        'Registered Users: Top Countries',
         'users_registrations_top_countries_bar_excl',
         1000,
         registrationsCaption,
-        `Graphic does not include the United States (${(totalRegistrationsByCountry.find(x => x._id === 'US').count / totalRegisteredUsers * 100).toFixed(2)}%), India (${(totalRegistrationsByCountry.find(x => x._id === 'IN').count / totalRegisteredUsers * 100).toFixed(2)}%) and users that did not specify their country (${(totalRegistrationsByCountry.find(x => x._id === null).count / totalRegisteredUsers * 100).toFixed(2)}%).`,
-    );*/
+        `Graphic does not include India (${number.percentage(results.totalUsersByCountry.find(([ country ]) => country === 'India')[1] / results.totalUsers)}), the United States (${number.percentage(results.totalUsersByCountry.find(([ country ]) => country === 'United States')[1] / results.totalUsers)}), and users that did not specify their country (${number.percentage(results.totalUsersByCountry.find(([ country ]) => country === '')[1] / results.totalUsers)}).`,
+    );
 
     // Completions by country
-    /*const totalCompletionsByCountry = await db.collection('users').aggregate([
-        {
-            '$match': {
-                'app.state': {
-                    '$in': ['completed', 'won_shirt', 'won_sticker'],
-                },
-            },
-        },
-        {
-            '$project': {
-                country: {
-                    '$cond': {
-                        if: {
-                            '$in': [
-                                '$app.country',
-                                [null, ''],
-                            ],
-                        },
-                        then: null,
-                        else: '$app.country',
-                    },
-                },
-            },
-        },
-        {
-            '$group': {
-                _id: '$country',
-                count: { '$sum': 1 },
-            },
-        },
-        { '$sort': { count: -1 } },
-    ]).toArray();
+    results.totalUsersCompletedByCountry = Object.entries(data.users.metadata.country.states.contributor.values)
+        .sort((a, b) => a[1] < b[1] ? 1 : -1);
+
     log('');
-    log(`Top countries by completions: ${number.commas(totalCompletionsByCountry.length)} countries`);
-    totalCompletionsByCountry.limit(15).forEach(data => {
-        log(`  [${data._id || '--'}] ${country.getCountryName(data._id)} | ${number.commas(data.count)} (${(data.count / totalWinnerStateUsers * 100).toFixed(2)}%)`);
-    });
-    const completionsCaption = `In total, at least ${number.commas(totalCompletionsByCountry.filter(x => x._id !== null).length)} countries were represented by users who completed and won Hacktoberfest.`;
+    log(`Top countries by completions: ${number.commas(results.totalUsersCompletedByCountry.length)} countries`);
+    for (const [ country, count ] of results.totalUsersCompletedByCountry.slice(0, 25)) {
+        log(`  ${country || 'Not Given'}: ${number.commas(count)} (${number.percentage(count / results.totalUsersCompleted)})`);
+    }
+
+    const completionsCaption = `In total, at least ${number.commas(results.totalUsersCompletedByCountry.filter(([ country ]) => country !== '').length)} countries were represented by users who completed and won Hacktoberfest.`;
     await usersTopCountriesChart(
-        totalCompletionsByCountry,
-        totalWinnerStateUsers,
-        'Users (completions): Top Countries',
+        results.totalUsersCompletedByCountry,
+        results.totalUsersCompleted,
+        'Completed Users: Top Countries',
         'users_completions_top_countries_bar',
-        10000,
+        2500,
         completionsCaption,
     );
     await usersTopCountriesChart(
-        totalCompletionsByCountry.filter(x => ![null, 'US', 'IN'].includes(x._id)),
-        totalWinnerStateUsers,
-        'Users (completions): Top Countries',
+        results.totalUsersCompletedByCountry.filter(([ country ]) => !['', 'United States', 'India'].includes(country)),
+        results.totalUsersCompleted,
+        'Completed Users: Top Countries',
         'users_completions_top_countries_bar_excl',
-        1000,
+        250,
         completionsCaption,
-        `Graphic does not include the United States (${(totalCompletionsByCountry.find(x => x._id === 'US').count / totalWinnerStateUsers * 100).toFixed(2)}%), India (${(totalCompletionsByCountry.find(x => x._id === 'IN').count / totalWinnerStateUsers * 100).toFixed(2)}%) and users that did not specify their country (${(totalCompletionsByCountry.find(x => x._id === null).count / totalWinnerStateUsers * 100).toFixed(2)}%).`,
-    );*/
+        `Graphic does not include India (${number.percentage(results.totalUsersCompletedByCountry.find(([ country ]) => country === 'India')[1] / results.totalUsersCompleted)}), the United States (${number.percentage(results.totalUsersCompletedByCountry.find(([ country ]) => country === 'United States')[1] / results.totalUsersCompleted)}), and users that did not specify their country (${number.percentage(results.totalUsersCompletedByCountry.find(([ country ]) => country === '')[1] / results.totalUsersCompleted)}).`,
+    );
+
+    // Completions percentage by country
+    results.totalUsersCompletedPercentageByCountry = Object.entries(data.users.metadata.country.states.contributor.values)
+        .map(([ country, count ]) => [ country, count, count / data.users.metadata.country.all.values[country] ])
+        .sort((a, b) => a[2] < b[2] ? 1 : -1);
+
+    log('');
+    log(`Top countries by completions percentage: ${number.commas(results.totalUsersCompletedPercentageByCountry.length)} countries`);
+    for (const [ country, count, percentage ] of results.totalUsersCompletedPercentageByCountry.slice(0, 25)) {
+        log(`  ${country || 'Not Given'}: ${number.percentage(percentage)} (${number.commas(count)})`);
+    }
 
     return results;
 };
