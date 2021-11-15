@@ -76,7 +76,7 @@ module.exports = async (data, log) => {
             color: 'transparent',
             showInLegend: false,
         }]).flat(1),
-    }], { padding: { top: 10, left: 5, right: 5, bottom: 20 }});
+    }], { padding: { top: 10, left: 5, right: 5, bottom: 5 }});
     totalPRsByStateConfig.title = {
         ...totalPRsByStateConfig.title,
         text: 'All PRs: Breakdown by State',
@@ -89,6 +89,15 @@ module.exports = async (data, log) => {
         fontSize: 36,
         markerMargin: 32,
     };
+    totalPRsByStateConfig.subtitles = [
+        {
+            text: '_',
+            fontColor: chart.colors.background,
+            fontSize: 16,
+            verticalAlign: 'bottom',
+            horizontalAlign: 'center',
+        },
+    ];
     await chart.save(
         path.join(__dirname, '../../generated/prs_by_state_doughnut.png'),
         await chart.render(totalPRsByStateConfig),
@@ -204,8 +213,7 @@ module.exports = async (data, log) => {
     log('');
     log(`Accepted PRs by language: ${number.commas(results.totalAcceptedPRsByLanguage.length)} languages`);
     for (const [ lang, count ] of results.totalAcceptedPRsByLanguage.slice(0, 50)) {
-        const name = lang || 'Unknown';
-        log(`  ${name}: ${number.commas(count)} (${number.percentage(count / results.totalAcceptedPRs)})`);
+        log(`  ${lang}: ${number.commas(count)} (${number.percentage(count / results.totalAcceptedPRs)})`);
     }
 
     let doughnutTotal = 0;
@@ -318,7 +326,7 @@ module.exports = async (data, log) => {
     // Breaking down PRs by day and by language
     results.totalAcceptedPRsByLanguageByDay = results.totalAcceptedPRsByLanguage.slice(0, 10).map(([ language ]) => ({
         language,
-        daily: getDateArray(new Date('2021-09-30'), new Date('2021-11-01'))
+        daily: getDateArray(new Date('2021-09-29'), new Date('2021-11-02'))
             .map(date => ({
                 date,
                 count: data.pull_requests.languages.daily?.[date.toISOString().split('T')[0]]?.languages?.[language]?.states?.accepted || 0,
@@ -341,6 +349,9 @@ module.exports = async (data, log) => {
         labelFontSize: 34,
         interval: 1,
         intervalType: 'week',
+        title: 'PR Created At',
+        titleFontSize: 24,
+        titleFontWeight: 400,
     };
     totalPRsByLanguageByDayConfig.axisY = {
         ...totalPRsByLanguageByDayConfig.axisY,
@@ -355,19 +366,6 @@ module.exports = async (data, log) => {
         margin: 15,
     };
     totalPRsByLanguageByDayConfig.subtitles = [
-        // {
-        //     ...totalPRsByLanguageByDayConfig.title,
-        //     text: `On ${formatDate(new Date(results.totalPRsByDay[0][0]), false)}, ${number.percentage(results.totalPRsByDay[0][1] / results.totalAcceptedPRs)} of the total accepted PRs for Hacktoberfest were submitted in just one day: ${number.commas(results.totalPRsByDay[0][1])} PRs.`,
-        //     fontSize: 32,
-        //     padding: 20,
-        //     cornerRadius: 5,
-        //     verticalAlign: 'top',
-        //     horizontalAlign: 'right',
-        //     dockInsidePlotArea: true,
-        //     maxWidth: 700,
-        //     backgroundColor: chart.colors.backgroundBox,
-        //     fontColor: chart.colors.textBox,
-        // },
         {
             text: '_',
             fontColor: chart.colors.text,
@@ -381,10 +379,12 @@ module.exports = async (data, log) => {
     totalPRsByLanguageByDayConfig.title.fontColor = chart.colors.background;
     totalPRsByLanguageByDayConfig.legend.fontColor = chart.colors.background;
     totalPRsByLanguageByDayConfig.axisX.labelFontColor = chart.colors.background;
+    totalPRsByLanguageByDayConfig.axisX.titleFontColor = chart.colors.background;
     totalPRsByLanguageByDayConfig.axisX.lineColor = color.lighten(chart.colors.text, 10);
     totalPRsByLanguageByDayConfig.axisX.gridColor = color.lighten(chart.colors.text, 10);
     totalPRsByLanguageByDayConfig.axisX.tickColor = color.lighten(chart.colors.text, 10);
     totalPRsByLanguageByDayConfig.axisY.labelFontColor = chart.colors.background;
+    totalPRsByLanguageByDayConfig.axisY.titleFontColor = chart.colors.background;
     totalPRsByLanguageByDayConfig.axisY.lineColor = color.lighten(chart.colors.text, 10);
     totalPRsByLanguageByDayConfig.axisY.gridColor = color.lighten(chart.colors.text, 10);
     totalPRsByLanguageByDayConfig.axisY.tickColor = color.lighten(chart.colors.text, 10);
@@ -392,6 +392,77 @@ module.exports = async (data, log) => {
     await chart.save(
         path.join(__dirname, '../../generated/prs_by_language_spline.png'),
         await chart.render(totalPRsByLanguageByDayConfig),
+        { width: 200, x: 1250, y: 220 },
+    );
+
+    // Breaking down PRs by day and by state
+    results.totalPRsByStateByDay = Object.keys(data.pull_requests.states.all.states)
+        .map(state => ({
+            state,
+            daily: getDateArray(new Date('2021-09-29'), new Date('2021-11-02'))
+                .map(date => ({
+                    date,
+                    count: data.pull_requests.states.daily?.[date.toISOString().split('T')[0]]?.states?.[state] || 0,
+                })),
+        }));
+
+    const totalPRsByStateByDayOrder = ['accepted', 'not-participating', 'not-accepted', 'excluded', 'spam'];
+    const totalPRsByStateByDayColors = {
+        spam: color.darken(chart.colors.highlightNegative, 20),
+        excluded: chart.colors.highlightNegative,
+        'not-accepted': color.darken(chart.colors.highlightNeutral, 20),
+        'not-participating': chart.colors.highlightNeutral,
+        accepted: chart.colors.highlightPositive,
+    };
+
+    const totalPRsByStateByDayConfig = chart.config(2500, 1000, results.totalPRsByStateByDay
+        .filter(({ state }) => totalPRsByStateByDayOrder.includes(state))
+        .sort((a, b) => totalPRsByStateByDayOrder.indexOf(b.state) - totalPRsByStateByDayOrder.indexOf(a.state))
+        .map(({ state, daily }) => ({
+            type: 'stackedArea',
+            name: state,
+            showInLegend: true,
+            dataPoints: daily.map(({ date, count }) => ({
+                x: date,
+                y: count,
+            })),
+            lineThickness: 3,
+            color: totalPRsByStateByDayColors[state] || chart.colors.highlightNeutral,
+        })));
+    totalPRsByStateByDayConfig.axisX = {
+        ...totalPRsByStateByDayConfig.axisX,
+        labelFontSize: 34,
+        interval: 1,
+        intervalType: 'week',
+        title: 'PR Created At',
+        titleFontSize: 24,
+        titleFontWeight: 400,
+    };
+    totalPRsByStateByDayConfig.axisY = {
+        ...totalPRsByStateByDayConfig.axisY,
+        labelFontSize: 34,
+        interval: 2500,
+    };
+    totalPRsByStateByDayConfig.title = {
+        ...totalPRsByStateByDayConfig.title,
+        text: 'All PRs: Breakdown by State',
+        fontSize: 48,
+        padding: 5,
+        margin: 15,
+    };
+    totalPRsByStateByDayConfig.subtitles = [
+        {
+            text: '_',
+            fontColor: chart.colors.text,
+            fontSize: 16,
+            verticalAlign: 'bottom',
+            horizontalAlign: 'center',
+        },
+    ];
+
+    await chart.save(
+        path.join(__dirname, '../../generated/prs_by_state_stacked.png'),
+        await chart.render(totalPRsByStateByDayConfig),
         { width: 200, x: 1250, y: 220 },
     );
 

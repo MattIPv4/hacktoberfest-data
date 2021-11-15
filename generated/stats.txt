@@ -1,4 +1,4 @@
-Started 11/12/2021, 6:46:22 PM
+Started 11/15/2021, 10:13:08 PM
 
 
 ----
@@ -123,7 +123,8 @@ User Stats
 ----
 
 Total Users: 141,802
-  Users that submitted 1+ accepted PRs: 49,695 (35.05%)
+  Users that submitted no accepted PRs: 91,700 (64.67%)
+  Users that submitted 1-3 accepted PRs: 7,078 (4.99%)
   Users that submitted 4+ accepted PRs: 34,845 (24.57%)
   Users that were disqualified: 401 (0.28%)
 
@@ -220,4 +221,110 @@ Top countries by completions percentage: 135 countries
   Hong Kong: 26.73% (27)
   Austria: 26.33% (104)
 
-Finished 11/12/2021, 6:46:29 PM
+
+----
+Repo Stats
+----
+
+Total active repos: 228,635
+(A repository was considered active if it received a PR from a Hacktoberfest participant that was considered accepted)
+
+Total tracked repos: 561,243
+(A repository was considered tracked if it received a PR from a Hacktoberfest participant, whether the repository was participating or not)
+
+Tracked repos by language: 347 languages
+  JavaScript: 107,707 (19.19%)
+  Python: 69,935 (12.46%)
+  HTML: 50,416 (8.98%)
+  Java: 37,481 (6.68%)
+  TypeScript: 27,351 (4.87%)
+  PHP: 25,344 (4.52%)
+  C++: 25,265 (4.50%)
+  CSS: 17,909 (3.19%)
+  Ruby: 17,613 (3.14%)
+  Go: 16,020 (2.85%)
+  C: 13,144 (2.34%)
+  C#: 11,610 (2.07%)
+  Jupyter Notebook: 11,391 (2.03%)
+  Shell: 11,141 (1.99%)
+  Dart: 7,172 (1.28%)
+  Rust: 6,223 (1.11%)
+  Kotlin: 5,587 (1.00%)
+  Vue: 4,582 (0.82%)
+  Swift: 4,028 (0.72%)
+  Dockerfile: 2,981 (0.53%)
+  SCSS: 2,341 (0.42%)
+  Elixir: 1,707 (0.30%)
+  Lua: 1,496 (0.27%)
+  HCL: 1,488 (0.27%)
+  Scala: 1,468 (0.26%)
+  Objective-C: 1,404 (0.25%)
+  Perl: 1,330 (0.24%)
+  Makefile: 1,312 (0.23%)
+  R: 1,263 (0.23%)
+  PowerShell: 1,238 (0.22%)
+  TeX: 1,190 (0.21%)
+  Haskell: 1,163 (0.21%)
+  Julia: 985 (0.18%)
+  Vim script: 973 (0.17%)
+  Clojure: 613 (0.11%)
+  CoffeeScript: 598 (0.11%)
+  EJS: 567 (0.10%)
+  Assembly: 479 (0.09%)
+  Emacs Lisp: 476 (0.08%)
+  Groovy: 456 (0.08%)
+  Jinja: 436 (0.08%)
+  Svelte: 432 (0.08%)
+  MATLAB: 357 (0.06%)
+  CMake: 332 (0.06%)
+  OCaml: 317 (0.06%)
+  Crystal: 310 (0.06%)
+  GDScript: 277 (0.05%)
+  Erlang: 277 (0.05%)
+  Batchfile: 271 (0.05%)
+  Nim: 271 (0.05%)
+Tracked repos without a detectable language: 53,177 (9.47%)
+
+Tracked repos by license: 39 licenses
+  MIT: 142,592 (25.41%)
+  NOASSERTION: 36,468 (6.50%)
+  Apache-2.0: 33,042 (5.89%)
+  GPL-3.0: 24,748 (4.41%)
+  BSD-3-Clause: 7,178 (1.28%)
+  AGPL-3.0: 5,058 (0.90%)
+  GPL-2.0: 4,834 (0.86%)
+  CC0-1.0: 2,884 (0.51%)
+  MPL-2.0: 2,432 (0.43%)
+  Unlicense: 2,017 (0.36%)
+  BSD-2-Clause: 1,798 (0.32%)
+  LGPL-3.0: 1,726 (0.31%)
+  ISC: 1,321 (0.24%)
+  LGPL-2.1: 882 (0.16%)
+  CC-BY-4.0: 609 (0.11%)
+  CC-BY-SA-4.0: 544 (0.10%)
+  WTFPL: 378 (0.07%)
+  0BSD: 338 (0.06%)
+  EPL-1.0: 264 (0.05%)
+  EPL-2.0: 245 (0.04%)
+  BSL-1.0: 142 (0.03%)
+  Artistic-2.0: 130 (0.02%)
+  Zlib: 114 (0.02%)
+  OSL-3.0: 110 (0.02%)
+  AFL-3.0: 84 (0.01%)
+  EUPL-1.2: 80 (0.01%)
+  MS-PL: 42 (0.01%)
+  OFL-1.1: 39 (0.01%)
+  BSD-3-Clause-Clear: 20 (0.00%)
+  LPPL-1.3c: 19 (0.00%)
+  UPL-1.0: 18 (0.00%)
+  ECL-2.0: 16 (0.00%)
+  BSD-4-Clause: 13 (0.00%)
+  MIT-0: 13 (0.00%)
+  EUPL-1.1: 12 (0.00%)
+  NCSA: 9 (0.00%)
+  PostgreSQL: 7 (0.00%)
+  ODbL-1.0: 3 (0.00%)
+  MS-RL: 2 (0.00%)
+Tracked repos without a detectable license: 291,012 (51.85%)
+
+Finished 11/15/2021, 10:13:19 PM

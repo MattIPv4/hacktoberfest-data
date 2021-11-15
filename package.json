@@ -28,7 +28,6 @@
     "jimp": "^0.16.1",
     "js-yaml": "^3.14.0",
     "jsdom": "^15.2.1",
-    "linear-least-squares": "^1.0.1",
     "node-fetch": "^2.6.7"
   }
 }

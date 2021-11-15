@@ -2,8 +2,7 @@ const statsGenerators = [
     'readme',
     'PRs',
     'Users',
-    // 'Orgs',
-    // 'Repos',
+    'Repos',
 ];
 
 module.exports = async (data, log) => {

@@ -1,6 +1,8 @@
 const path = require('path');
 const number = require('../helpers/number');
 const chart = require('../helpers/chart');
+const { getDateArray } = require("../helpers/date");
+const color = require("../helpers/color");
 
 const usersTopCountriesChart = async (userData, totalUsers, title, file, interval, mainSubtitle = null, smallSubtitle = null) => {
     const config = chart.config(1000, 1000, [{
@@ -29,9 +31,7 @@ const usersTopCountriesChart = async (userData, totalUsers, title, file, interva
     config.axisX = {
         ...config.axisX,
         tickThickness: 0,
-        labelFormatter: function () {
-            return '';
-        },
+        labelFormatter: () => '',
     };
     config.title = {
         ...config.title,
@@ -95,16 +95,83 @@ module.exports = async (data, log) => {
 
     // Total users
     results.totalUsers = data.users.states.all.count;
-    results.totalUsersEngaged = ['waiting', 'welcome', 'contributor'].reduce((sum, state) => sum + (data.users.states.all.states?.[state] || 0), 0);
-    results.totalUsersNotEngaged = results.totalUsers - results.totalUsersEngaged;
+    results.totalUsersNotEngaged = data.users.states.all.states.registered;
+    results.totalUsersEngaged = data.users.states.all.states.welcome;
     results.totalUsersCompleted = data.users.states.all.states.contributor;
     results.totalUsersDisqualified = data.users.states.all.states.disqualified;
+
     log('');
     log(`Total Users: ${number.commas(results.totalUsers)}`);
-    log(`  Users that submitted 1+ accepted PRs: ${number.commas(results.totalUsersEngaged)} (${number.percentage(results.totalUsersEngaged / results.totalUsers)})`);
+    log(`  Users that submitted no accepted PRs: ${number.commas(results.totalUsersNotEngaged)} (${number.percentage(results.totalUsersNotEngaged / results.totalUsers)})`);
+    log(`  Users that submitted 1-3 accepted PRs: ${number.commas(results.totalUsersEngaged)} (${number.percentage(results.totalUsersEngaged / results.totalUsers)})`);
     log(`  Users that submitted 4+ accepted PRs: ${number.commas(results.totalUsersCompleted)} (${number.percentage(results.totalUsersCompleted / results.totalUsers)})`);
     log(`  Users that were disqualified: ${number.commas(results.totalUsersDisqualified)} (${number.percentage(results.totalUsersDisqualified / results.totalUsers)})`);
 
+    const totalUsersByStateConfig = chart.config(1000, 1000, [{
+        type: 'doughnut',
+        startAngle: 160,
+        indexLabelPlacement: 'outside',
+        indexLabelFontSize: 22,
+        showInLegend: true,
+        dataPoints: [
+            {
+                y: results.totalUsersCompleted,
+                indexLabel: 'Completed',
+                legendText: `Completed: 4+ accepted PRs: ${number.commas(results.totalUsersCompleted)} (${number.percentage(results.totalUsersCompleted / results.totalUsers)})`,
+                color: chart.colors.highlightPositive,
+                indexLabelFontSize: 32,
+            },
+            {
+                y: results.totalUsersEngaged,
+                indexLabel: 'Engaged',
+                legendText: `Engaged: 1-3 accepted PRs: ${number.commas(results.totalUsersEngaged)} (${number.percentage(results.totalUsersEngaged / results.totalUsers)})`,
+                color: chart.colors.highlightNeutral,
+                indexLabelFontSize: 26,
+            },
+            {
+                y: results.totalUsersNotEngaged,
+                indexLabel: 'Registered',
+                legendText: `Registered: No accepted PRs: ${number.commas(results.totalUsersNotEngaged)} (${number.percentage(results.totalUsersNotEngaged / results.totalUsers)})`,
+                color: color.darken(chart.colors.highlightNeutral, 20),
+            },
+            {
+                y: results.totalUsersDisqualified,
+                indexLabel: 'Disqualified',
+                legendText: `Disqualified: Spammy behaviour: ${number.commas(results.totalUsersDisqualified)} (${number.percentage(results.totalUsersDisqualified / results.totalUsers)})`,
+                color: chart.colors.highlightNegative,
+            },
+        ].map(x => [x, {
+            y: results.totalUsers * 0.007,
+            color: 'transparent',
+            showInLegend: false,
+        }]).flat(1),
+    }], { padding: { top: 10, left: 5, right: 5, bottom: 5 }});
+    totalUsersByStateConfig.title = {
+        ...totalUsersByStateConfig.title,
+        text: 'All Users: Breakdown by State',
+        fontSize: 48,
+        padding: 5,
+        margin: 15,
+    };
+    totalUsersByStateConfig.legend = {
+        ...totalUsersByStateConfig.legend,
+        fontSize: 36,
+        markerMargin: 32,
+    };
+    totalUsersByStateConfig.subtitles = [
+        {
+            text: '_',
+            fontColor: chart.colors.background,
+            fontSize: 16,
+            verticalAlign: 'bottom',
+            horizontalAlign: 'center',
+        },
+    ];
+    await chart.save(
+        path.join(__dirname, '../../generated/users_by_state_doughnut.png'),
+        await chart.render(totalUsersByStateConfig),
+        { width: 170, x: 500, y: 440 },
+    );
 
     // Users by accepted PRs
     results.totalUsersByAcceptedPRs = cappedAcceptedUserPRs(data, 10);
@@ -278,6 +345,76 @@ module.exports = async (data, log) => {
     for (const [ country, count, percentage ] of results.totalUsersCompletedPercentageByCountry.slice(0, 25)) {
         log(`  ${country || 'Not Given'}: ${number.percentage(percentage)} (${number.commas(count)})`);
     }
+
+    // Breaking down users by day and by state
+    results.totalUsersByStateByDay = Object.keys(data.users.states.all.states)
+        .map(state => ({
+            state,
+            daily: getDateArray(new Date('2021-09-27'), new Date('2021-11-02'))
+                .map(date => ({
+                    date,
+                    count: data.users.states.daily?.[date.toISOString().split('T')[0]]?.states?.[state] || 0,
+                })),
+        }));
+
+    const totalUsersByStateByDayOrder = ['contributor', 'welcome', 'registered', 'disqualified'];
+    const totalUsersByStateByDayColors = {
+        disqualified: chart.colors.highlightNegative,
+        'registered': color.darken(chart.colors.highlightNeutral, 20),
+        'welcome': chart.colors.highlightNeutral,
+        contributor: chart.colors.highlightPositive,
+    };
+
+    const totalUsersByStateByDayConfig = chart.config(2500, 1000, results.totalUsersByStateByDay
+        .filter(({ state }) => totalUsersByStateByDayOrder.includes(state))
+        .sort((a, b) => totalUsersByStateByDayOrder.indexOf(b.state) - totalUsersByStateByDayOrder.indexOf(a.state))
+        .map(({ state, daily }) => ({
+            type: 'stackedArea',
+            name: state,
+            showInLegend: true,
+            dataPoints: daily.map(({ date, count }) => ({
+                x: date,
+                y: count,
+            })),
+            lineThickness: 3,
+            color: totalUsersByStateByDayColors[state] || chart.colors.highlightNeutral,
+        })));
+    totalUsersByStateByDayConfig.axisX = {
+        ...totalUsersByStateByDayConfig.axisX,
+        labelFontSize: 34,
+        interval: 1,
+        intervalType: 'week',
+        title: 'User Registered At',
+        titleFontSize: 24,
+        titleFontWeight: 400,
+    };
+    totalUsersByStateByDayConfig.axisY = {
+        ...totalUsersByStateByDayConfig.axisY,
+        labelFontSize: 34,
+        interval: 2000,
+    };
+    totalUsersByStateByDayConfig.title = {
+        ...totalUsersByStateByDayConfig.title,
+        text: 'All Users: Breakdown by State',
+        fontSize: 48,
+        padding: 5,
+        margin: 15,
+    };
+    totalUsersByStateByDayConfig.subtitles = [
+        {
+            text: '_',
+            fontColor: chart.colors.text,
+            fontSize: 16,
+            verticalAlign: 'bottom',
+            horizontalAlign: 'center',
+        },
+    ];
+
+    await chart.save(
+        path.join(__dirname, '../../generated/users_by_state_stacked.png'),
+        await chart.render(totalUsersByStateByDayConfig),
+        { width: 200, x: 1250, y: 220 },
+    );
 
     return results;
 };
