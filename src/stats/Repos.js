@@ -14,22 +14,22 @@ module.exports = async (data, log) => {
     // Total: Repos
     results.totalReposActive = data.repositories.pull_requests.accepted.count;
     results.totalReposTracked = Object.values(data.repositories.languages.languages).reduce((acc, count) => acc + count, 0);
-    // results.totalReposReported = data.excluded_repositories.count;
-    // results.totalReposExcluded = data.excluded_repositories.active.true.count;
-    // results.totalReposPermitted = data.excluded_repositories.active.false.has_note.true.count;
-    // results.totalReposUnreviewed = data.excluded_repositories.active.false.has_note.false.count;
+    results.totalReposReported = data.excluded_repositories.count;
+    results.totalReposExcluded = data.excluded_repositories.active.true.count;
+    results.totalReposPermitted = data.excluded_repositories.active.false.has_note.true.count;
+    results.totalReposUnreviewed = data.excluded_repositories.active.false.has_note.false.count;
     log('');
     log(`Total active repos: ${number.commas(results.totalReposActive)}`);
-    log('(A repository was considered active if it received a PR from a Hacktoberfest participant that was considered accepted)');
+    log('(A repository was considered active if it received a PR/MR from a Hacktoberfest participant that was considered accepted)');
     log('');
     log(`Total tracked repos: ${number.commas(results.totalReposTracked)}`);
-    log('(A repository was considered tracked if it received a PR from a Hacktoberfest participant, whether the repository was participating or not)');
-    // log('');
-    // log(`Reported repositories: ${number.commas(results.totalReposReported)}`);
-    // log('(The Hacktoberfest community was able to report repositories that they did not feel followed our values for internal view)');
-    // log(`  Excluded repositories: ${number.commas(results.totalReposExcluded)} (${number.percentage(results.totalReposExcluded / results.totalReposReported)})`);
-    // log(`  Permitted repositories: ${number.commas(results.totalReposPermitted)} (${number.percentage(results.totalReposPermitted / results.totalReposReported)})`);
-    // log(`  Unreviewed repositories: ${number.commas(results.totalReposUnreviewed)} (${number.percentage(results.totalReposUnreviewed / results.totalReposReported)})`);
+    log('(A repository was considered tracked if it received a PR/MR from a Hacktoberfest participant, whether the repository was participating in Hacktoberfest or not)');
+    log('');
+    log(`Reported repositories: ${number.commas(results.totalReposReported)}`);
+    log('(The Hacktoberfest community was able to report repositories that they did not feel followed our values for internal view)');
+    log(`  Excluded repositories: ${number.commas(results.totalReposExcluded)} (${number.percentage(results.totalReposExcluded / results.totalReposReported)})`);
+    log(`  Permitted repositories: ${number.commas(results.totalReposPermitted)} (${number.percentage(results.totalReposPermitted / results.totalReposReported)})`);
+    log(`  Unreviewed repositories: ${number.commas(results.totalReposUnreviewed)} (${number.percentage(results.totalReposUnreviewed / results.totalReposReported)})`);
 
     // TODO: Doughnut of excluded repo reports
 
@@ -86,7 +86,7 @@ module.exports = async (data, log) => {
     };
     totalReposByLanguageConfig.subtitles = [{
         ...totalReposByLanguageConfig.title,
-        text: 'A repository was considered tracked if it received a PR from a Hacktoberfest participant, whether the repository was participating or not',
+        text: 'A repository was considered tracked if it received a PR/MR from a Hacktoberfest participant, whether the repository was participating in Hacktoberfest or not',
         fontSize: 16,
         padding: 10,
         margin: 5,
@@ -173,7 +173,7 @@ module.exports = async (data, log) => {
     };
     topRepoLicensesConfig.subtitles = [{
         ...totalReposByLanguageConfig.title,
-        text: 'A repository was considered tracked if it received a PR from a Hacktoberfest participant, whether the repository was participating or not',
+        text: 'A repository was considered tracked if it received a PR/MR from a Hacktoberfest participant, whether the repository was participating in Hacktoberfest or not',
         fontSize: 16,
         padding: 10,
         margin: 0,

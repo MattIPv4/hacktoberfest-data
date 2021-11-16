@@ -104,9 +104,9 @@ module.exports = async (data, log) => {
 
     log('');
     log(`Total Users: ${number.commas(results.totalUsers)}`);
-    log(`  Users that submitted no accepted PRs: ${number.commas(results.totalUsersNotEngaged)} (${number.percentage(results.totalUsersNotEngaged / results.totalUsers)})`);
-    log(`  Users that submitted 1-3 accepted PRs: ${number.commas(results.totalUsersEngaged)} (${number.percentage(results.totalUsersEngaged / results.totalUsers)})`);
-    log(`  Users that submitted 4+ accepted PRs: ${number.commas(results.totalUsersCompleted)} (${number.percentage(results.totalUsersCompleted / results.totalUsers)})`);
+    log(`  Users that submitted no accepted PRs/MRs: ${number.commas(results.totalUsersNotEngaged)} (${number.percentage(results.totalUsersNotEngaged / results.totalUsers)})`);
+    log(`  Users that submitted 1-3 accepted PRs/MRs: ${number.commas(results.totalUsersEngaged)} (${number.percentage(results.totalUsersEngaged / results.totalUsers)})`);
+    log(`  Users that submitted 4+ accepted PRs/MRs: ${number.commas(results.totalUsersCompleted)} (${number.percentage(results.totalUsersCompleted / results.totalUsers)})`);
     log(`  Users that were disqualified: ${number.commas(results.totalUsersDisqualified)} (${number.percentage(results.totalUsersDisqualified / results.totalUsers)})`);
 
     const totalUsersByStateConfig = chart.config(1000, 1000, [{
@@ -119,21 +119,21 @@ module.exports = async (data, log) => {
             {
                 y: results.totalUsersCompleted,
                 indexLabel: 'Completed',
-                legendText: `Completed: 4+ accepted PRs: ${number.commas(results.totalUsersCompleted)} (${number.percentage(results.totalUsersCompleted / results.totalUsers)})`,
+                legendText: `Completed: 4+ accepted PRs/MRs: ${number.commas(results.totalUsersCompleted)} (${number.percentage(results.totalUsersCompleted / results.totalUsers)})`,
                 color: chart.colors.highlightPositive,
                 indexLabelFontSize: 32,
             },
             {
                 y: results.totalUsersEngaged,
                 indexLabel: 'Engaged',
-                legendText: `Engaged: 1-3 accepted PRs: ${number.commas(results.totalUsersEngaged)} (${number.percentage(results.totalUsersEngaged / results.totalUsers)})`,
+                legendText: `Engaged: 1-3 accepted PRs/MRs: ${number.commas(results.totalUsersEngaged)} (${number.percentage(results.totalUsersEngaged / results.totalUsers)})`,
                 color: chart.colors.highlightNeutral,
                 indexLabelFontSize: 26,
             },
             {
                 y: results.totalUsersNotEngaged,
                 indexLabel: 'Registered',
-                legendText: `Registered: No accepted PRs: ${number.commas(results.totalUsersNotEngaged)} (${number.percentage(results.totalUsersNotEngaged / results.totalUsers)})`,
+                legendText: `Registered: No accepted PRs/MRs: ${number.commas(results.totalUsersNotEngaged)} (${number.percentage(results.totalUsersNotEngaged / results.totalUsers)})`,
                 color: color.darken(chart.colors.highlightNeutral, 20),
             },
             {
@@ -157,7 +157,7 @@ module.exports = async (data, log) => {
     };
     totalUsersByStateConfig.legend = {
         ...totalUsersByStateConfig.legend,
-        fontSize: 36,
+        fontSize: 32,
         markerMargin: 32,
     };
     totalUsersByStateConfig.subtitles = [
@@ -179,9 +179,9 @@ module.exports = async (data, log) => {
     results.totalUsersByAcceptedPRs = cappedAcceptedUserPRs(data, 10);
 
     log('');
-    log('Users by number of accepted PRs submitted:');
+    log('Users by number of accepted PRs/MR submitted:');
     for (const [ prs, users ] of results.totalUsersByAcceptedPRs) {
-        log(`  ${prs}${prs === 10 ? '+' : ''} PR${prs === 1 ? '' : 's'}: ${number.commas(users)} (${number.percentage(users / results.totalUsers)})`);
+        log(`  ${prs}${prs === 10 ? '+' : ''} PR${prs === 1 ? '' : 's'}/MR${prs === 1 ? '' : 's'}: ${number.commas(users)} (${number.percentage(users / results.totalUsers)})`);
     }
 
     const totalUsersByPRsExtConfig = chart.config(2500, 1000, [{
@@ -189,12 +189,12 @@ module.exports = async (data, log) => {
         dataPoints: results.totalUsersByAcceptedPRs.map(([ prs, users ]) => ({
             y: users,
             color: Number.parseInt(prs) > 4 ? chart.colors.highlightNeutral : Number.parseInt(prs) === 4 ? chart.colors.highlightPositive : chart.colors.highlightNegative,
-            label: `${prs}${prs === 10 ? '+' : ''} PR${prs === 1 ? '' : 's'}`,
+            label: `${prs}${prs === 10 ? '+' : ''} PR${prs === 1 ? '' : 's'}/MR${prs === 1 ? '' : 's'}`,
         })),
     }]);
     totalUsersByPRsExtConfig.axisX = {
         ...totalUsersByPRsExtConfig.axisX,
-        labelFontSize: 36,
+        labelFontSize: 24,
     };
     totalUsersByPRsExtConfig.axisY = {
         ...totalUsersByPRsExtConfig.axisY,
@@ -202,14 +202,14 @@ module.exports = async (data, log) => {
     };
     totalUsersByPRsExtConfig.title = {
         ...totalUsersByPRsExtConfig.title,
-        text: 'Users: Accepted Pull Requests',
+        text: 'Users: Accepted Pull/Merge Requests',
         fontSize: 48,
         padding: 5,
         margin: 40,
     };
     totalUsersByPRsExtConfig.subtitles = [{
         ...totalUsersByPRsExtConfig.title,
-        text: `Over the month, ${number.commas(results.totalUsersCompleted)} users (${number.percentage(results.totalUsersCompleted / results.totalUsers)}) submitted 4 or more accepted PRs, completing Hacktoberfest.`,
+        text: `Over the month, ${number.commas(results.totalUsersCompleted)} participants (${number.percentage(results.totalUsersCompleted / results.totalUsers)}) submitted 4 or more accepted PRs/MRs, completing Hacktoberfest.`,
         fontColor: chart.colors.textBox,
         fontSize: 32,
         padding: 15,
@@ -222,7 +222,7 @@ module.exports = async (data, log) => {
         backgroundColor: chart.colors.backgroundBox,
     }, {
         ...totalUsersByPRsExtConfig.title,
-        text: `Graphic does not include users that submitted no accepted PRs (${number.commas(results.totalUsersNotEngaged)} (${number.percentage(results.totalUsersNotEngaged / results.totalUsers)})).`,
+        text: `Graphic does not include participants that submitted no accepted PRs/MRs (${number.commas(results.totalUsersNotEngaged)} (${number.percentage(results.totalUsersNotEngaged / results.totalUsers)})).`,
         fontColor: chart.colors.textBox,
         fontSize: 16,
         padding: 15,
@@ -243,12 +243,12 @@ module.exports = async (data, log) => {
         dataPoints: cappedAcceptedUserPRs(data, 5).map(([ prs, users ]) => ({
             y: users,
             color: Number.parseInt(prs) > 4 ? chart.colors.highlightNeutral : Number.parseInt(prs) === 4 ? chart.colors.highlightPositive : chart.colors.highlightNegative,
-            label: `${prs}${prs === 5 ? '+' : ''} PR${prs === 1 ? '' : 's'}`,
+            label: `${prs}${prs === 5 ? '+' : ''} PR${prs === 1 ? '' : 's'}/MR${prs === 1 ? '' : 's'}`,
         })),
     }]);
     totalUsersByPRsConfig.axisX = {
         ...totalUsersByPRsConfig.axisX,
-        labelFontSize: 36,
+        labelFontSize: 24,
     };
     totalUsersByPRsConfig.axisY = {
         ...totalUsersByPRsConfig.axisY,
@@ -256,14 +256,14 @@ module.exports = async (data, log) => {
     };
     totalUsersByPRsConfig.title = {
         ...totalUsersByPRsConfig.title,
-        text: 'Users: Accepted Pull Requests',
+        text: 'Users: Accepted Pull/Merge Requests',
         fontSize: 48,
         padding: 5,
         margin: 40,
     };
     totalUsersByPRsConfig.subtitles = [{
         ...totalUsersByPRsConfig.title,
-        text: `Graphic does not include users that submitted no accepted PRs (${number.commas(results.totalUsersNotEngaged)} (${number.percentage(results.totalUsersNotEngaged / results.totalUsers)})).`,
+        text: `Graphic does not include participants that submitted no accepted PRs/MRs (${number.commas(results.totalUsersNotEngaged)} (${number.percentage(results.totalUsersNotEngaged / results.totalUsers)})).`,
         fontColor: chart.colors.textBox,
         fontSize: 16,
         padding: 15,

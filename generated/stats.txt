@@ -1,4 +1,4 @@
-Started 11/16/2021, 8:59:34 PM
+Started 11/16/2021, 9:19:00 PM
 
 
 ----
@@ -7,12 +7,12 @@ Readme Stats
 
 Registered users: 141,802
 Completed users: 46,676
-Accepted PRs: 294,451
-Active repositories (1+ accepted PRs): 56,501
+Accepted PRs/MRs: 294,451
+Active repositories (1+ accepted PRs/MRs): 56,501
 Countries represented by registered users: 195
 Countries represented by completed users: 147
-Day with most accepted PRs submitted: 2021-10-01 (7.88%)
-Most common repository language in accepted PRs: C++ (14.30%)
+Day with most accepted PRs/MRs submitted: 2021-10-01 (7.88%)
+Most common repository language in accepted PRs/MRs: C++ (14.30%)
 
 Region-specific:
   Registered users in the US: 12,946
@@ -25,24 +25,24 @@ Region-specific:
 PR Stats
 ----
 
-Total PRs: 519,987
-  Accepted PRs: 294,451 (56.63%)
-  Unaccepted PRs: 160,669 (30.90%)
+Total PRs/MRs: 519,987
+  Accepted PRs/MRs: 294,451 (56.63%)
+  Unaccepted PRs/MRs: 160,669 (30.90%)
     of which were not in a participating repo: 121,951 (75.90%)
     of which were not accepted by a maintainer: 38,718 (24.10%)
-  Invalid PRs: 64,867 (12.47%)
+  Invalid PRs/MRs: 64,867 (12.47%)
     of which were in an excluded repo: 62,710 (96.67%)
     of which were labeled as spam/invalid: 2,157 (3.33%)
 
-Accepted PRs by merge status:
+Accepted PRs/MRs by merge status:
   Merged: 283,943 (96.43%)
   Open: 10,508 (3.57%)
 
-Accepted PRs by approval:
+Accepted PRs/MRs by approval:
   Approved: 61,895 (21.02%)
   Pending: 232,556 (78.98%)
 
-Accepted PRs by language: 348 languages
+Accepted PRs/MRs by language: 348 languages
   C++: 42,093 (14.30%)
   Python: 39,676 (13.47%)
   JavaScript: 37,863 (12.86%)
@@ -94,7 +94,7 @@ Accepted PRs by language: 348 languages
   Lean: 122 (0.04%)
   Brainfuck: 119 (0.04%)
 
-Top days by accepted PRs:
+Top days by accepted PRs/MRs:
   October 1: 23,215 (7.88%)
   October 2: 17,079 (5.80%)
   October 3: 14,162 (4.81%)
@@ -111,7 +111,7 @@ Top days by accepted PRs:
   October 19: 7,831 (2.66%)
   October 18: 7,662 (2.60%)
 
-On average, an accepted PR had:
+On average, an accepted PR/MR had:
   3 commits
   12 modified files
   1,644 additions
@@ -123,22 +123,22 @@ User Stats
 ----
 
 Total Users: 141,802
-  Users that submitted no accepted PRs: 82,584 (58.24%)
-  Users that submitted 1-3 accepted PRs: 12,139 (8.56%)
-  Users that submitted 4+ accepted PRs: 46,676 (32.92%)
+  Users that submitted no accepted PRs/MRs: 82,584 (58.24%)
+  Users that submitted 1-3 accepted PRs/MRs: 12,139 (8.56%)
+  Users that submitted 4+ accepted PRs/MRs: 46,676 (32.92%)
   Users that were disqualified: 403 (0.28%)
 
-Users by number of accepted PRs submitted:
-  1 PR: 7,039 (4.96%)
-  2 PRs: 3,271 (2.31%)
-  3 PRs: 1,887 (1.33%)
-  4 PRs: 22,682 (16.00%)
-  5 PRs: 10,399 (7.33%)
-  6 PRs: 4,904 (3.46%)
-  7 PRs: 2,729 (1.92%)
-  8 PRs: 1,741 (1.23%)
-  9 PRs: 1,065 (0.75%)
-  10+ PRs: 3,422 (2.41%)
+Users by number of accepted PRs/MR submitted:
+  1 PR/MR: 7,039 (4.96%)
+  2 PRs/MRs: 3,271 (2.31%)
+  3 PRs/MRs: 1,887 (1.33%)
+  4 PRs/MRs: 22,682 (16.00%)
+  5 PRs/MRs: 10,399 (7.33%)
+  6 PRs/MRs: 4,904 (3.46%)
+  7 PRs/MRs: 2,729 (1.92%)
+  8 PRs/MRs: 1,741 (1.23%)
+  9 PRs/MRs: 1,065 (0.75%)
+  10+ PRs/MRs: 3,422 (2.41%)
 
 Top countries by registrations: 195 countries
   India: 71,081 (50.13%)
@@ -237,10 +237,16 @@ Repo Stats
 ----
 
 Total active repos: 56,501
-(A repository was considered active if it received a PR from a Hacktoberfest participant that was considered accepted)
+(A repository was considered active if it received a PR/MR from a Hacktoberfest participant that was considered accepted)
 
 Total tracked repos: 564,930
-(A repository was considered tracked if it received a PR from a Hacktoberfest participant, whether the repository was participating or not)
+(A repository was considered tracked if it received a PR/MR from a Hacktoberfest participant, whether the repository was participating in Hacktoberfest or not)
+
+Reported repositories: 3,018
+(The Hacktoberfest community was able to report repositories that they did not feel followed our values for internal view)
+  Excluded repositories: 1,071 (35.49%)
+  Permitted repositories: 47 (1.56%)
+  Unreviewed repositories: 1,900 (62.96%)
 
 Tracked repos by language: 348 languages
   JavaScript: 108,425 (19.19%)
@@ -337,4 +343,4 @@ Tracked repos by license: 39 licenses
   MS-RL: 2 (0.00%)
 Tracked repos without a detectable license: 292,830 (51.83%)
 
-Finished 11/16/2021, 8:59:48 PM
+Finished 11/16/2021, 9:19:14 PM

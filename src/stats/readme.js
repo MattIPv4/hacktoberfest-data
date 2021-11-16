@@ -25,12 +25,12 @@ module.exports = async (data, log) => {
     log('');
     log(`Registered users: ${number.commas(results.registeredUsers)}`);
     log(`Completed users: ${number.commas(results.completedUsers)}`);
-    log(`Accepted PRs: ${number.commas(results.acceptedPRs)}`);
-    log(`Active repositories (1+ accepted PRs): ${number.commas(results.participatingRepos)}`);
+    log(`Accepted PRs/MRs: ${number.commas(results.acceptedPRs)}`);
+    log(`Active repositories (1+ accepted PRs/MRs): ${number.commas(results.participatingRepos)}`);
     log(`Countries represented by registered users: ${number.commas(results.countriesRegistered)}`);
     log(`Countries represented by completed users: ${number.commas(results.countriesCompleted)}`);
-    log(`Day with most accepted PRs submitted: ${results.mostPRsDay} (${number.percentage(results.mostPRsDayPercentage)})`);
-    log(`Most common repository language in accepted PRs: ${results.mostCommonLanguageInPRs} (${number.percentage(results.mostCommonLanguageInPRsPercentage)})`);
+    log(`Day with most accepted PRs/MRs submitted: ${results.mostPRsDay} (${number.percentage(results.mostPRsDayPercentage)})`);
+    log(`Most common repository language in accepted PRs/MRs: ${results.mostCommonLanguageInPRs} (${number.percentage(results.mostCommonLanguageInPRsPercentage)})`);
 
     results.americaRegisteredUsers = data.users.metadata.country.all.values['United States'];
     results.americaCompletedUsers = data.users.metadata.country.states.contributor.values['United States'];

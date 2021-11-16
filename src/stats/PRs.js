@@ -24,12 +24,12 @@ module.exports = async (data, log) => {
     const totalInvalidPRs = results.totalSpamPRs + results.totalExcludedPRs;
     const totalUnacceptedPRs = results.totalNotAcceptedPRs + results.totalNotParticipatingPRs;
     log('');
-    log(`Total PRs: ${number.commas(results.totalPRs)}`);
-    log(`  Accepted PRs: ${number.commas(results.totalAcceptedPRs)} (${number.percentage(results.totalAcceptedPRs / results.totalPRs)})`);
-    log(`  Unaccepted PRs: ${number.commas(totalUnacceptedPRs)} (${number.percentage(totalUnacceptedPRs / results.totalPRs)})`);
+    log(`Total PRs/MRs: ${number.commas(results.totalPRs)}`);
+    log(`  Accepted PRs/MRs: ${number.commas(results.totalAcceptedPRs)} (${number.percentage(results.totalAcceptedPRs / results.totalPRs)})`);
+    log(`  Unaccepted PRs/MRs: ${number.commas(totalUnacceptedPRs)} (${number.percentage(totalUnacceptedPRs / results.totalPRs)})`);
     log(`    of which were not in a participating repo: ${number.commas(results.totalNotParticipatingPRs)} (${number.percentage(results.totalNotParticipatingPRs / totalUnacceptedPRs)})`);
     log(`    of which were not accepted by a maintainer: ${number.commas(results.totalNotAcceptedPRs)} (${number.percentage(results.totalNotAcceptedPRs / totalUnacceptedPRs)})`);
-    log(`  Invalid PRs: ${number.commas(totalInvalidPRs)} (${number.percentage(totalInvalidPRs / results.totalPRs)})`);
+    log(`  Invalid PRs/MRs: ${number.commas(totalInvalidPRs)} (${number.percentage(totalInvalidPRs / results.totalPRs)})`);
     log(`    of which were in an excluded repo: ${number.commas(results.totalExcludedPRs)} (${number.percentage(results.totalExcludedPRs / totalInvalidPRs)})`);
     log(`    of which were labeled as spam/invalid: ${number.commas(results.totalSpamPRs)} (${number.percentage(results.totalSpamPRs / totalInvalidPRs)})`);
 
@@ -79,7 +79,7 @@ module.exports = async (data, log) => {
     }], { padding: { top: 10, left: 5, right: 5, bottom: 5 }});
     totalPRsByStateConfig.title = {
         ...totalPRsByStateConfig.title,
-        text: 'All PRs: Breakdown by State',
+        text: 'All PRs/MRs: Breakdown by State',
         fontSize: 48,
         padding: 5,
         margin: 15,
@@ -109,7 +109,7 @@ module.exports = async (data, log) => {
     results.totalAcceptedPRsNotMerged = data.pull_requests.merged.false.states.accepted;
 
     log('');
-    log('Accepted PRs by merge status:');
+    log('Accepted PRs/MRs by merge status:');
     log(`  Merged: ${number.commas(results.totalAcceptedPRsMerged)} (${number.percentage(results.totalAcceptedPRsMerged / results.totalAcceptedPRs)})`);
     log(`  Open: ${number.commas(results.totalAcceptedPRsNotMerged)} (${number.percentage(results.totalAcceptedPRsNotMerged / results.totalAcceptedPRs)})`);
 
@@ -143,10 +143,10 @@ module.exports = async (data, log) => {
     };
     totalAcceptedPRsMergedConfig.title = {
         ...totalAcceptedPRsMergedConfig.title,
-        text: 'Accepted PRs: Changes Merged',
+        text: 'Accepted PRs/MRs:\nChanges Merged',
         fontSize: 48,
         padding: 5,
-        margin: 40,
+        margin: 100,
     };
     await chart.save(
         path.join(__dirname, '../../generated/prs_accepted_by_merged_bar.png'),
@@ -159,7 +159,7 @@ module.exports = async (data, log) => {
     results.totalAcceptedPRsNotApproved = data.pull_requests.approved.false.states.accepted;
 
     log('');
-    log('Accepted PRs by approval:');
+    log('Accepted PRs/MRs by approval:');
     log(`  Approved: ${number.commas(results.totalAcceptedPRsApproved)} (${number.percentage(results.totalAcceptedPRsApproved / results.totalAcceptedPRs)})`);
     log(`  Pending: ${number.commas(results.totalAcceptedPRsNotApproved)} (${number.percentage(results.totalAcceptedPRsNotApproved / results.totalAcceptedPRs)})`);
 
@@ -193,10 +193,10 @@ module.exports = async (data, log) => {
     };
     totalAcceptedPRsApprovedConfig.title = {
         ...totalAcceptedPRsApprovedConfig.title,
-        text: 'Accepted PRs: Maintainer Approval',
+        text: 'Accepted PRs/MRs:\nMaintainer Approval',
         fontSize: 48,
         padding: 5,
-        margin: 40,
+        margin: 100,
     };
     await chart.save(
         path.join(__dirname, '../../generated/prs_accepted_by_approval_bar.png'),
@@ -211,7 +211,7 @@ module.exports = async (data, log) => {
         .sort((a, b) => a[1] < b[1] ? 1 : -1);
 
     log('');
-    log(`Accepted PRs by language: ${number.commas(results.totalAcceptedPRsByLanguage.length)} languages`);
+    log(`Accepted PRs/MRs by language: ${number.commas(results.totalAcceptedPRsByLanguage.length)} languages`);
     for (const [ lang, count ] of results.totalAcceptedPRsByLanguage.slice(0, 50)) {
         log(`  ${lang}: ${number.commas(count)} (${number.percentage(count / results.totalAcceptedPRs)})`);
     }
@@ -249,14 +249,14 @@ module.exports = async (data, log) => {
     }]).flat(1);
     totalPRsByLanguageConfig.title = {
         ...totalPRsByLanguageConfig.title,
-        text: 'Accepted PRs: Top 10 Languages',
+        text: 'Accepted PRs/MRs: Top 10 Languages',
         fontSize: 48,
         padding: 5,
         margin: 15,
     };
     totalPRsByLanguageConfig.subtitles = [{
         ...totalPRsByLanguageConfig.title,
-        text: `Hacktoberfest saw ${number.commas(results.totalAcceptedPRsByLanguage.length)} different programming languages represented across the ${number.commas(results.totalAcceptedPRs)} accepted PRs submitted by users.`,
+        text: `Hacktoberfest saw ${number.commas(results.totalAcceptedPRsByLanguage.length)} different programming languages represented across the ${number.commas(results.totalAcceptedPRs)} accepted PRs/MRs submitted by participants.`,
         fontSize: 32,
         padding: 20,
         cornerRadius: 5,
@@ -279,7 +279,7 @@ module.exports = async (data, log) => {
         .slice(0, 15);
 
     log('');
-    log('Top days by accepted PRs:');
+    log('Top days by accepted PRs/MRs:');
     for (const [ day, count ] of results.totalPRsByDay) {
         log(`  ${formatDate(new Date(day))}: ${number.commas(count)} (${number.percentage(count / results.totalAcceptedPRs)})`);
     }
@@ -312,7 +312,7 @@ module.exports = async (data, log) => {
     };
     totalPRsByDayConfig.title = {
         ...totalPRsByDayConfig.title,
-        text: 'Accepted PRs: Most Popular Days',
+        text: 'Accepted PRs/MRs: Most Popular Days',
         fontSize: 48,
         padding: 5,
         margin: 15,
@@ -349,7 +349,7 @@ module.exports = async (data, log) => {
         labelFontSize: 34,
         interval: 1,
         intervalType: 'week',
-        title: 'PR Created At',
+        title: 'PR/MR Created At',
         titleFontSize: 24,
         titleFontWeight: 400,
     };
@@ -360,7 +360,7 @@ module.exports = async (data, log) => {
     };
     totalPRsByLanguageByDayConfig.title = {
         ...totalPRsByLanguageByDayConfig.title,
-        text: 'Accepted PRs: Top 10 Languages',
+        text: 'Accepted PRs/MRs: Top 10 Languages',
         fontSize: 48,
         padding: 5,
         margin: 15,
@@ -445,7 +445,7 @@ module.exports = async (data, log) => {
     };
     totalPRsByStateByDayConfig.title = {
         ...totalPRsByStateByDayConfig.title,
-        text: 'All PRs: Breakdown by State',
+        text: 'All PRs/MRs: Breakdown by State',
         fontSize: 48,
         padding: 5,
         margin: 15,
@@ -473,11 +473,13 @@ module.exports = async (data, log) => {
     results.averageAcceptedPRDeletions = data.pull_requests.deletions.states.accepted / results.totalAcceptedPRs;
 
     log('');
-    log('On average, an accepted PR had:');
+    log('On average, an accepted PR/MR had:');
     log(`  ${number.integer(results.averageAcceptedPRCommits)} commits`);
     log(`  ${number.integer(results.averageAcceptedPRFiles)} modified files`);
     log(`  ${number.integer(results.averageAcceptedPRAdditions)} additions`);
     log(`  ${number.integer(results.averageAcceptedPRDeletions)} deletions`);
+
+    // TODO: Bar of PRs by state by provider
 
     return results;
 };
