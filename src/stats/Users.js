@@ -172,7 +172,7 @@ module.exports = async (data, log) => {
     await chart.save(
         path.join(__dirname, '../../generated/users_by_state_doughnut.png'),
         await chart.render(totalUsersByStateConfig),
-        { width: 170, x: 500, y: 440 },
+        { width: 190, x: 500, y: 450 },
     );
 
     // Users by accepted PRs

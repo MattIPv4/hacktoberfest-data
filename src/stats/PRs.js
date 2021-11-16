@@ -479,7 +479,5 @@ module.exports = async (data, log) => {
     log(`  ${number.integer(results.averageAcceptedPRAdditions)} additions`);
     log(`  ${number.integer(results.averageAcceptedPRDeletions)} deletions`);
 
-    // TODO: Bar of PRs by state by provider
-
     return results;
 };
