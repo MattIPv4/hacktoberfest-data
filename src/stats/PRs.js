@@ -35,7 +35,7 @@ module.exports = async (data, log) => {
 
     const totalPRsByStateConfig = chart.config(1000, 1000, [{
         type: 'doughnut',
-        startAngle: 160,
+        startAngle: 150,
         indexLabelPlacement: 'outside',
         indexLabelFontSize: 22,
         showInLegend: true,
@@ -61,13 +61,13 @@ module.exports = async (data, log) => {
             },
             {
                 y: results.totalExcludedPRs,
-                indexLabel: 'Excluded repo',
+                indexLabel: 'Excluded',
                 legendText: `Excluded repository: ${number.commas(results.totalExcludedPRs)} (${number.percentage(results.totalExcludedPRs / results.totalPRs)})`,
                 color: chart.colors.highlightNegative,
             },
             {
                 y: results.totalSpamPRs,
-                indexLabel: 'Labeled invalid',
+                indexLabel: 'Invalid/spam',
                 legendText: `Labeled invalid or spam: ${number.commas(results.totalSpamPRs)} (${number.percentage(results.totalSpamPRs / results.totalPRs)})`,
                 color: chart.colors.highlightNegative,
             },
@@ -326,7 +326,7 @@ module.exports = async (data, log) => {
     // Breaking down PRs by day and by language
     results.totalAcceptedPRsByLanguageByDay = results.totalAcceptedPRsByLanguage.slice(0, 10).map(([ language ]) => ({
         language,
-        daily: getDateArray(new Date('2021-09-29'), new Date('2021-11-02'))
+        daily: getDateArray(new Date('2021-09-29'), new Date('2021-11-03'))
             .map(date => ({
                 date,
                 count: data.pull_requests.languages.daily?.[date.toISOString().split('T')[0]]?.languages?.[language]?.states?.accepted || 0,
@@ -399,7 +399,7 @@ module.exports = async (data, log) => {
     results.totalPRsByStateByDay = Object.keys(data.pull_requests.states.all.states)
         .map(state => ({
             state,
-            daily: getDateArray(new Date('2021-09-29'), new Date('2021-11-02'))
+            daily: getDateArray(new Date('2021-09-29'), new Date('2021-11-03'))
                 .map(date => ({
                     date,
                     count: data.pull_requests.states.daily?.[date.toISOString().split('T')[0]]?.states?.[state] || 0,

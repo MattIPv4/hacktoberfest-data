@@ -4,11 +4,11 @@ const chart = require('../helpers/chart');
 const { getDateArray } = require("../helpers/date");
 const color = require("../helpers/color");
 
-const usersTopCountriesChart = async (userData, totalUsers, title, file, interval, mainSubtitle = null, smallSubtitle = null) => {
+const usersTopChart = async (userData, totalUsers, title, file, interval, mainSubtitle = null, smallSubtitle = null) => {
     const config = chart.config(1000, 1000, [{
         type: 'bar',
         indexLabelFontSize: 24,
-        dataPoints: userData.slice(0, 10).map(([ country, count ], i) => {
+        dataPoints: userData.slice(0, 10).map(([ title, count ], i) => {
             const colors = [
                 chart.colors.highlightPositive, chart.colors.highlightNeutral, chart.colors.highlightNegative,
             ];
@@ -18,7 +18,7 @@ const usersTopCountriesChart = async (userData, totalUsers, title, file, interva
                 y: count,
                 color: dataColor,
                 indexLabelPlacement: percentWidth > 0.4 ? 'inside' : 'outside',
-                indexLabel: `${country || 'Not Given'} (${number.percentage(count / totalUsers)})`,
+                indexLabel: `${title || 'Not Given'} (${number.percentage(count / totalUsers)})`,
                 indexLabelFontColor: chart.colors.text,
             };
         }).reverse(),
@@ -59,12 +59,14 @@ const usersTopCountriesChart = async (userData, totalUsers, title, file, interva
                 ...config.title,
                 text: smallSubtitle,
                 fontColor: chart.colors.textBox,
-                fontSize: 16,
+                fontSize: 22,
                 padding: 15,
                 margin: 10,
                 cornerRadius: 5,
                 verticalAlign: 'bottom',
-                horizontalAlign: 'center',
+                horizontalAlign: 'right',
+                dockInsidePlotArea: true,
+                maxWidth: 400,
                 backgroundColor: chart.colors.backgroundBox,
             });
         }
@@ -74,7 +76,7 @@ const usersTopCountriesChart = async (userData, totalUsers, title, file, interva
         await chart.render(config),
         mainSubtitle
             ? smallSubtitle
-                ? { width: 200, x: 880, y: 680 }
+                ? { width: 200, x: 880, y: 620 }
                 : { width: 200, x: 880, y: 740 }
             : { width: 200, x: 880, y: 820 },
     );
@@ -207,7 +209,7 @@ module.exports = async (data, log) => {
     };
     totalUsersByPRsExtConfig.subtitles = [{
         ...totalUsersByPRsExtConfig.title,
-        text: `In total, ${number.commas(results.totalUsersCompleted)} users (${number.percentage(results.totalUsersCompleted / results.totalUsers)}) submitted 4 or more accepted PRs, winning Hacktoberfest.`,
+        text: `Over the month, ${number.commas(results.totalUsersCompleted)} users (${number.percentage(results.totalUsersCompleted / results.totalUsers)}) submitted 4 or more accepted PRs, completing Hacktoberfest.`,
         fontColor: chart.colors.textBox,
         fontSize: 32,
         padding: 15,
@@ -288,7 +290,7 @@ module.exports = async (data, log) => {
     }
 
     const registrationsCaption = `In total, at least ${number.commas(results.totalUsersByCountry.filter(([ country ]) => country !== '').length)} countries were represented by users who registered to participate in Hacktoberfest.`;
-    await usersTopCountriesChart(
+    await usersTopChart(
         results.totalUsersByCountry,
         results.totalUsers,
         'Registered Users: Top Countries',
@@ -296,7 +298,7 @@ module.exports = async (data, log) => {
         10000,
         registrationsCaption,
     );
-    await usersTopCountriesChart(
+    await usersTopChart(
         results.totalUsersByCountry.filter(([ country ]) => !['', 'United States', 'India'].includes(country)),
         results.totalUsers,
         'Registered Users: Top Countries',
@@ -317,7 +319,7 @@ module.exports = async (data, log) => {
     }
 
     const completionsCaption = `In total, at least ${number.commas(results.totalUsersCompletedByCountry.filter(([ country ]) => country !== '').length)} countries were represented by users who completed and won Hacktoberfest.`;
-    await usersTopCountriesChart(
+    await usersTopChart(
         results.totalUsersCompletedByCountry,
         results.totalUsersCompleted,
         'Completed Users: Top Countries',
@@ -325,7 +327,7 @@ module.exports = async (data, log) => {
         2500,
         completionsCaption,
     );
-    await usersTopCountriesChart(
+    await usersTopChart(
         results.totalUsersCompletedByCountry.filter(([ country ]) => !['', 'United States', 'India'].includes(country)),
         results.totalUsersCompleted,
         'Completed Users: Top Countries',
@@ -350,7 +352,7 @@ module.exports = async (data, log) => {
     results.totalUsersByStateByDay = Object.keys(data.users.states.all.states)
         .map(state => ({
             state,
-            daily: getDateArray(new Date('2021-09-27'), new Date('2021-11-02'))
+            daily: getDateArray(new Date('2021-09-27'), new Date('2021-11-03'))
                 .map(date => ({
                     date,
                     count: data.users.states.daily?.[date.toISOString().split('T')[0]]?.states?.[state] || 0,
@@ -414,6 +416,53 @@ module.exports = async (data, log) => {
         path.join(__dirname, '../../generated/users_by_state_stacked.png'),
         await chart.render(totalUsersByStateByDayConfig),
         { width: 200, x: 1250, y: 220 },
+    );
+
+    const providerMap = {
+        github: 'GitHub',
+        gitlab: 'GitLab',
+    };
+
+    // Provider accounts registered
+    results.totalUsersByProvider = Object.entries(data.users.providers).map(([ provider, { count } ]) => ([
+        providerMap[provider] || provider,
+        count,
+    ]));
+    log('');
+    log(`Registered users by provider:`);
+    log('(Users were able to link one, or both, of the supported providers to their Hacktoberfest account)');
+    for (const [ provider, count ] of results.totalUsersByProvider) {
+        log(`  ${provider}: ${number.commas(count)} (${number.percentage(count / results.totalUsers)})`);
+    }
+
+    await usersTopChart(
+        results.totalUsersByProvider,
+        results.totalUsers,
+        'Registered Users: Linked Providers',
+        'users_registrations_linked_providers_bar',
+        25000,
+        'Users were able to link one, or both, of the supported providers to their Hacktoberfest account.',
+    );
+
+    // Provider accounts completed
+    results.totalUsersCompletedByProvider = Object.entries(data.users.providers).map(([ provider, { states } ]) => ([
+        providerMap[provider] || provider,
+        states.contributor || 0,
+    ]));
+    log('');
+    log(`Completed users by provider:`);
+    log('(Users were able to link one, or both, of the supported providers to their Hacktoberfest account)');
+    for (const [ provider, count ] of results.totalUsersCompletedByProvider) {
+        log(`  ${provider}: ${number.commas(count)} (${number.percentage(count / results.totalUsersCompleted)})`);
+    }
+
+    await usersTopChart(
+        results.totalUsersCompletedByProvider,
+        results.totalUsersCompleted,
+        'Completed Users: Linked Providers',
+        'users_completions_linked_providers_bar',
+        10000,
+        'Users were able to link one, or both, of the supported providers to their Hacktoberfest account.',
     );
 
     return results;
