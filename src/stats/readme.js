@@ -10,7 +10,7 @@ module.exports = async (data, log) => {
     results.registeredUsers = data.users.states.all.count;
     results.completedUsers = data.users.states.all.states.contributor;
     results.acceptedPRs = data.pull_requests.states.all.states.accepted;
-    results.participatingRepos = data.repositories.pull_requests.accepted.count;
+    results.activeRepos = data.repositories.pull_requests.accepted.count;
     results.countriesRegistered = data.users.metadata.country.all.unique;
     results.countriesCompleted = data.users.metadata.country.states.contributor.unique;
 
@@ -26,7 +26,7 @@ module.exports = async (data, log) => {
     log(`Registered users: ${number.commas(results.registeredUsers)}`);
     log(`Completed users: ${number.commas(results.completedUsers)}`);
     log(`Accepted PRs/MRs: ${number.commas(results.acceptedPRs)}`);
-    log(`Active repositories (1+ accepted PRs/MRs): ${number.commas(results.participatingRepos)}`);
+    log(`Active repositories (1+ accepted PRs/MRs): ${number.commas(results.activeRepos)}`);
     log(`Countries represented by registered users: ${number.commas(results.countriesRegistered)}`);
     log(`Countries represented by completed users: ${number.commas(results.countriesCompleted)}`);
     log(`Day with most accepted PRs/MRs submitted: ${results.mostPRsDay} (${number.percentage(results.mostPRsDayPercentage)})`);

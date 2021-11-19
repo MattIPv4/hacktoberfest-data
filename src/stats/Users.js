@@ -444,13 +444,34 @@ module.exports = async (data, log) => {
         'Users were able to link one, or both, of the supported providers to their Hacktoberfest account.',
     );
 
+    // Provider accounts engaged
+    results.totalUsersEngagedByProvider = Object.entries(data.users.providers).map(([ provider, { states } ]) => ([
+        providerMap[provider] || provider,
+        states.welcome || 0,
+    ]));
+    log('');
+    log(`Engaged (1-3 PRs/MRs) users by provider:`);
+    log('(Users were able to link one, or both, of the supported providers to their Hacktoberfest account)');
+    for (const [ provider, count ] of results.totalUsersEngagedByProvider) {
+        log(`  ${provider}: ${number.commas(count)} (${number.percentage(count / results.totalUsersEngaged)})`);
+    }
+
+    await usersTopChart(
+        results.totalUsersEngagedByProvider,
+        results.totalUsersEngaged,
+        'Engaged Users: Linked Providers',
+        'users_engaged_linked_providers_bar',
+        5000,
+        'Users were able to link one, or both, of the supported providers to their Hacktoberfest account.',
+    );
+
     // Provider accounts completed
     results.totalUsersCompletedByProvider = Object.entries(data.users.providers).map(([ provider, { states } ]) => ([
         providerMap[provider] || provider,
         states.contributor || 0,
     ]));
     log('');
-    log(`Completed users by provider:`);
+    log(`Completed (4+ PRs/MRs) users by provider:`);
     log('(Users were able to link one, or both, of the supported providers to their Hacktoberfest account)');
     for (const [ provider, count ] of results.totalUsersCompletedByProvider) {
         log(`  ${provider}: ${number.commas(count)} (${number.percentage(count / results.totalUsersCompleted)})`);

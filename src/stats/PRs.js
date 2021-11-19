@@ -27,8 +27,8 @@ module.exports = async (data, log) => {
     log(`Total PRs/MRs: ${number.commas(results.totalPRs)}`);
     log(`  Accepted PRs/MRs: ${number.commas(results.totalAcceptedPRs)} (${number.percentage(results.totalAcceptedPRs / results.totalPRs)})`);
     log(`  Unaccepted PRs/MRs: ${number.commas(totalUnacceptedPRs)} (${number.percentage(totalUnacceptedPRs / results.totalPRs)})`);
-    log(`    of which were not in a participating repo: ${number.commas(results.totalNotParticipatingPRs)} (${number.percentage(results.totalNotParticipatingPRs / totalUnacceptedPRs)})`);
     log(`    of which were not accepted by a maintainer: ${number.commas(results.totalNotAcceptedPRs)} (${number.percentage(results.totalNotAcceptedPRs / totalUnacceptedPRs)})`);
+    log(`    of which were not in a participating repo: ${number.commas(results.totalNotParticipatingPRs)} (${number.percentage(results.totalNotParticipatingPRs / totalUnacceptedPRs)})`);
     log(`  Invalid PRs/MRs: ${number.commas(totalInvalidPRs)} (${number.percentage(totalInvalidPRs / results.totalPRs)})`);
     log(`    of which were in an excluded repo: ${number.commas(results.totalExcludedPRs)} (${number.percentage(results.totalExcludedPRs / totalInvalidPRs)})`);
     log(`    of which were labeled as spam/invalid: ${number.commas(results.totalSpamPRs)} (${number.percentage(results.totalSpamPRs / totalInvalidPRs)})`);
@@ -48,15 +48,15 @@ module.exports = async (data, log) => {
                 indexLabelFontSize: 32,
             },
             {
-                y: results.totalNotParticipatingPRs,
-                indexLabel: 'Not participating',
-                legendText: `Repo not participating: ${number.commas(results.totalNotParticipatingPRs)} (${number.percentage(results.totalNotParticipatingPRs / results.totalPRs)})`,
-                color: chart.colors.highlightNeutral,
-            },
-            {
                 y: results.totalNotAcceptedPRs,
                 indexLabel: 'Not accepted',
                 legendText: `Not accepted by maintainer: ${number.commas(results.totalNotAcceptedPRs)} (${number.percentage(results.totalNotAcceptedPRs / results.totalPRs)})`,
+                color: chart.colors.highlightNeutral,
+            },
+            {
+                y: results.totalNotParticipatingPRs,
+                indexLabel: 'Not participating',
+                legendText: `Repo not participating: ${number.commas(results.totalNotParticipatingPRs)} (${number.percentage(results.totalNotParticipatingPRs / results.totalPRs)})`,
                 color: chart.colors.highlightNeutral,
             },
             {
@@ -406,12 +406,12 @@ module.exports = async (data, log) => {
                 })),
         }));
 
-    const totalPRsByStateByDayOrder = ['accepted', 'not-participating', 'not-accepted', 'excluded', 'spam'];
+    const totalPRsByStateByDayOrder = ['accepted', 'not-accepted', 'not-participating', 'excluded', 'spam'];
     const totalPRsByStateByDayColors = {
         spam: color.darken(chart.colors.highlightNegative, 20),
         excluded: chart.colors.highlightNegative,
-        'not-accepted': color.darken(chart.colors.highlightNeutral, 20),
-        'not-participating': chart.colors.highlightNeutral,
+        'not-participating': color.darken(chart.colors.highlightNeutral, 20),
+        'not-accepted': chart.colors.highlightNeutral,
         accepted: chart.colors.highlightPositive,
     };
 
