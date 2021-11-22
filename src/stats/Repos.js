@@ -31,7 +31,65 @@ module.exports = async (data, log) => {
     log(`  Permitted repositories: ${number.commas(results.totalReposPermitted)} (${number.percentage(results.totalReposPermitted / results.totalReposReported)})`);
     log(`  Unreviewed repositories: ${number.commas(results.totalReposUnreviewed)} (${number.percentage(results.totalReposUnreviewed / results.totalReposReported)})`);
 
-    // TODO: Doughnut of excluded repo reports
+    const totalReposReportedConfig = chart.config(1000, 1000, [{
+        type: 'doughnut',
+        startAngle: 180,
+        indexLabelPlacement: 'outside',
+        indexLabelFontSize: 32,
+        showInLegend: true,
+        dataPoints: [
+            {
+                y: results.totalReposExcluded,
+                indexLabel: 'Excluded',
+                legendText: `Excluded: ${number.commas(results.totalReposExcluded)} (${number.percentage(results.totalReposExcluded / results.totalReposReported)})`,
+                color: chart.colors.highlightNegative,
+            },
+            {
+                y: results.totalReposPermitted,
+                indexLabel: 'Permitted',
+                legendText: `Permitted: ${number.commas(results.totalReposPermitted)} (${number.percentage(results.totalReposPermitted / results.totalReposReported)})`,
+                color: chart.colors.highlightPositive,
+            },
+            {
+                y: results.totalReposUnreviewed,
+                indexLabel: 'Unreviewed',
+                legendText: `Unreviewed: ${number.commas(results.totalReposUnreviewed)} (${number.percentage(results.totalReposUnreviewed / results.totalReposReported)})`,
+                color: chart.colors.highlightNeutral,
+            },
+        ].map(x => [x, {
+            y: results.totalReposReported * 0.007,
+            color: 'transparent',
+            showInLegend: false,
+        }]).flat(1),
+    }], { padding: { top: 10, left: 5, right: 5, bottom: 5 }});
+    totalReposReportedConfig.title = {
+        ...totalReposReportedConfig.title,
+        text: 'Reported Repositories',
+        fontSize: 48,
+        padding: 5,
+        margin: 25,
+    };
+    totalReposReportedConfig.legend = {
+        ...totalReposReportedConfig.legend,
+        fontSize: 36,
+        markerMargin: 32,
+        maxWidth: 750,
+        margin: 25,
+    };
+    totalReposReportedConfig.subtitles = [
+        {
+            text: '_',
+            fontColor: chart.colors.background,
+            fontSize: 16,
+            verticalAlign: 'bottom',
+            horizontalAlign: 'center',
+        },
+    ];
+    await chart.save(
+        path.join(__dirname, '../../generated/repos_reported_doughnut.png'),
+        await chart.render(totalReposReportedConfig),
+        { width: 200, x: 500, y: 480 },
+    );
 
     // Breaking down repos by language
     results.totalReposByLanguage = Object.entries(data.repositories.languages.languages)
