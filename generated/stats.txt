@@ -1,4 +1,4 @@
-Started 11/22/2021, 5:01:03 PM
+Started 11/22/2021, 8:35:19 PM
 
 
 ----
@@ -140,7 +140,7 @@ Users by number of accepted PRs/MR submitted:
   9 PRs/MRs: 1,065 (0.75%)
   10+ PRs/MRs: 3,422 (2.41%)
 
-Top countries by registrations: 195 countries
+Top countries by registrations: 194 countries
   India: 71,081 (50.13%)
   United States: 12,946 (9.13%)
   Brazil: 6,930 (4.89%)
@@ -167,7 +167,7 @@ Top countries by registrations: 195 countries
   Sweden: 606 (0.43%)
   Singapore: 602 (0.42%)
 
-Top countries by completions: 147 countries
+Top countries by completions: 146 countries
   India: 26,151 (56.03%)
   United States: 3,332 (7.14%)
   Indonesia: 1,942 (4.16%)
@@ -348,4 +348,4 @@ Tracked repos by license: 39 licenses
   MS-RL: 2 (0.00%)
 Tracked repos without a detectable license: 292,830 (51.83%)
 
-Finished 11/22/2021, 5:01:16 PM
+Finished 11/22/2021, 8:35:32 PM

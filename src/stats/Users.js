@@ -284,7 +284,7 @@ module.exports = async (data, log) => {
         .sort((a, b) => a[1] < b[1] ? 1 : -1);
 
     log('');
-    log(`Top countries by registrations: ${number.commas(results.totalUsersByCountry.length)} countries`);
+    log(`Top countries by registrations: ${number.commas(results.totalUsersByCountry.filter(([ country ]) => country !== '').length)} countries`);
     for (const [ country, count ] of results.totalUsersByCountry.slice(0, 25)) {
         log(`  ${country || 'Not Given'}: ${number.commas(count)} (${number.percentage(count / results.totalUsers)})`);
     }
@@ -313,7 +313,7 @@ module.exports = async (data, log) => {
         .sort((a, b) => a[1] < b[1] ? 1 : -1);
 
     log('');
-    log(`Top countries by completions: ${number.commas(results.totalUsersCompletedByCountry.length)} countries`);
+    log(`Top countries by completions: ${number.commas(results.totalUsersCompletedByCountry.filter(([ country ]) => country !== '').length)} countries`);
     for (const [ country, count ] of results.totalUsersCompletedByCountry.slice(0, 25)) {
         log(`  ${country || 'Not Given'}: ${number.commas(count)} (${number.percentage(count / results.totalUsersCompleted)})`);
     }
