@@ -281,13 +281,18 @@ module.exports = async (data, log) => {
 
     // Registrations by country
     results.totalUsersByCountry = Object.entries(data.users.metadata.country.all.values)
+        .filter(([ country ]) => country !== '')
         .sort((a, b) => a[1] < b[1] ? 1 : -1);
+    results.totalUsersNoCountry = data.users.metadata.country.all.values[''] || 0;
 
     log('');
-    log(`Top countries by registrations: ${number.commas(results.totalUsersByCountry.filter(([ country ]) => country !== '').length)} countries`);
-    for (const [ country, count ] of results.totalUsersByCountry.slice(0, 25)) {
-        log(`  ${country || 'Not Given'}: ${number.commas(count)} (${number.percentage(count / results.totalUsers)})`);
-    }
+    log(`Top countries by registrations: ${number.commas(results.totalUsersByCountry.length)} countries`);
+    results.totalUsersByCountry.slice(0, 25).forEach(([ country, count ], i) => {
+        log(`${i + 1}. ${country}: ${number.commas(count)} (${number.percentage(count / results.totalUsers)})`);
+    });
+    if (results.totalUsersByCountry.length > 25)
+        log(`+ ${number.commas(results.totalUsersByCountry.length - 25)} more...`);
+    log(`${number.commas(results.totalUsersNoCountry)} (${number.percentage(results.totalUsersNoCountry / results.totalUsers)}) users did not specify their country`);
 
     const registrationsCaption = `In total, at least ${number.commas(results.totalUsersByCountry.filter(([ country ]) => country !== '').length)} countries were represented by users who registered to participate in Hacktoberfest.`;
     await usersTopChart(
@@ -297,28 +302,35 @@ module.exports = async (data, log) => {
         'users_registrations_top_countries_bar',
         10000,
         registrationsCaption,
+        `Graphic does not include users that did not specify their country, ${number.commas(results.totalUsersNoCountry)} (${number.percentage(results.totalUsersNoCountry / results.totalUsers)}).`,
     );
     await usersTopChart(
-        results.totalUsersByCountry.filter(([ country ]) => !['', 'United States', 'India'].includes(country)),
+        results.totalUsersByCountry.filter(([ country ]) => !['United States', 'India'].includes(country)),
         results.totalUsers,
         'Registered Users: Top Countries',
         'users_registrations_top_countries_bar_excl',
         1000,
         registrationsCaption,
-        `Graphic does not include India (${number.percentage(results.totalUsersByCountry.find(([ country ]) => country === 'India')[1] / results.totalUsers)}), the United States (${number.percentage(results.totalUsersByCountry.find(([ country ]) => country === 'United States')[1] / results.totalUsers)}), and users that did not specify their country (${number.percentage(results.totalUsersByCountry.find(([ country ]) => country === '')[1] / results.totalUsers)}).`,
+        `Graphic does not include India (${number.percentage(results.totalUsersByCountry.find(([ country ]) => country === 'India')[1] / results.totalUsers)}), the United States (${number.percentage(results.totalUsersByCountry.find(([ country ]) => country === 'United States')[1] / results.totalUsers)}), and users that did not specify their country (${number.percentage(results.totalUsersNoCountry / results.totalUsers)}).`,
     );
 
     // Completions by country
     results.totalUsersCompletedByCountry = Object.entries(data.users.metadata.country.states.contributor.values)
+        .filter(([ country ]) => country !== '')
         .sort((a, b) => a[1] < b[1] ? 1 : -1);
+    results.totalUsersCompletedNoCountry = data.users.metadata.country.states.contributor.values[''] || 0;
 
     log('');
-    log(`Top countries by completions: ${number.commas(results.totalUsersCompletedByCountry.filter(([ country ]) => country !== '').length)} countries`);
-    for (const [ country, count ] of results.totalUsersCompletedByCountry.slice(0, 25)) {
-        log(`  ${country || 'Not Given'}: ${number.commas(count)} (${number.percentage(count / results.totalUsersCompleted)})`);
-    }
+    log(`Top countries by completions: ${number.commas(results.totalUsersCompletedByCountry.length)} countries`);
+    results.totalUsersCompletedByCountry.slice(0, 25).forEach(([ country, count ], i) => {
+        log(`${i + 1}. ${country}: ${number.commas(count)} (${number.percentage(count / results.totalUsersCompleted)})`);
+    });
+    if (results.totalUsersCompletedByCountry.length > 25)
+        log(`+ ${number.commas(results.totalUsersCompletedByCountry.length - 25)} more...`);
+    log(`${number.commas(results.totalUsersCompletedNoCountry)} (${number.percentage(results.totalUsersCompletedNoCountry / results.totalUsersCompleted)}) users did not specify their country`);
 
-    const completionsCaption = `In total, at least ${number.commas(results.totalUsersCompletedByCountry.filter(([ country ]) => country !== '').length)} countries were represented by users who completed and won Hacktoberfest.`;
+
+    const completionsCaption = `In total, at least ${number.commas(results.totalUsersCompletedByCountry.length)} countries were represented by users who completed and won Hacktoberfest.`;
     await usersTopChart(
         results.totalUsersCompletedByCountry,
         results.totalUsersCompleted,
@@ -326,27 +338,17 @@ module.exports = async (data, log) => {
         'users_completions_top_countries_bar',
         2500,
         completionsCaption,
+        `Graphic does not include users that did not specify their country, ${number.commas(results.totalUsersCompletedNoCountry)} (${number.percentage(results.totalUsersCompletedNoCountry / results.totalUsersCompleted)}).`,
     );
     await usersTopChart(
-        results.totalUsersCompletedByCountry.filter(([ country ]) => !['', 'United States', 'India'].includes(country)),
+        results.totalUsersCompletedByCountry.filter(([ country ]) => !['United States', 'India'].includes(country)),
         results.totalUsersCompleted,
         'Completed Users: Top Countries',
         'users_completions_top_countries_bar_excl',
         250,
         completionsCaption,
-        `Graphic does not include India (${number.percentage(results.totalUsersCompletedByCountry.find(([ country ]) => country === 'India')[1] / results.totalUsersCompleted)}), the United States (${number.percentage(results.totalUsersCompletedByCountry.find(([ country ]) => country === 'United States')[1] / results.totalUsersCompleted)}), and users that did not specify their country (${number.percentage(results.totalUsersCompletedByCountry.find(([ country ]) => country === '')[1] / results.totalUsersCompleted)}).`,
+        `Graphic does not include India (${number.percentage(results.totalUsersCompletedByCountry.find(([ country ]) => country === 'India')[1] / results.totalUsersCompleted)}), the United States (${number.percentage(results.totalUsersCompletedByCountry.find(([ country ]) => country === 'United States')[1] / results.totalUsersCompleted)}), and users that did not specify their country (${number.percentage(results.totalUsersCompletedNoCountry / results.totalUsersCompleted)}).`,
     );
-
-    // Completions percentage by country
-    results.totalUsersCompletedPercentageByCountry = Object.entries(data.users.metadata.country.states.contributor.values)
-        .map(([ country, count ]) => [ country, count, count / data.users.metadata.country.all.values[country] ])
-        .sort((a, b) => a[2] < b[2] ? 1 : -1);
-
-    log('');
-    log(`Top countries by completions percentage: ${number.commas(results.totalUsersCompletedPercentageByCountry.length)} countries`);
-    for (const [ country, count, percentage ] of results.totalUsersCompletedPercentageByCountry.slice(0, 25)) {
-        log(`  ${country || 'Not Given'}: ${number.percentage(percentage)} (${number.commas(count)})`);
-    }
 
     // Breaking down users by day and by state
     results.totalUsersByStateByDay = Object.keys(data.users.states.all.states)

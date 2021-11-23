@@ -34,31 +34,81 @@ and in the data used here.
 
 For users, there are four key states that you'll see:
 
-- Completed: A user that submitted four or more accepted PRs/MRs during Hacktoberfest.
-- Engaged: A user that submitted between one and three accepted PRs/MRs during Hacktoberfest.
-- Registered: A user that completed the registration flow for Hacktoberfest, but did not submit any
-  PRs/MRs that were accepted.
-- Disqualified: A user that was disqualified for submitting 2 or more spammy PRs/MRs, irrespective
-  of how many accepted PRs/MRs they may have also had.
+- **Completed**: A user that submitted four or more accepted PRs/MRs during Hacktoberfest.
+- **Engaged**: A user that submitted between one and three accepted PRs/MRs during Hacktoberfest.
+- **Registered**: A user that completed the registration flow for Hacktoberfest, but did not submit
+  any PRs/MRs that were accepted.
+- **Disqualified**: A user that was disqualified for submitting 2 or more spammy PRs/MRs,
+  irrespective of how many accepted PRs/MRs they may have also had.
 
 For pull/merge requests, there are five states used to process them that you'll see:
 
-- Accepted: A PR/MR that was accepted by a project maintainer, either by being merged or approved in
-  a participating repository, or by being given the `hacktoberfest-accepted` label.
-- Not accepted: Any PR/MR that was submitted to a participating repository (having the
+- **Accepted**: A PR/MR that was accepted by a project maintainer, either by being merged or
+  approved in a participating repository, or by being given the `hacktoberfest-accepted` label.
+- **Not accepted**: Any PR/MR that was submitted to a participating repository (having the
   `hacktoberfest` topic), but that was not actively accepted by a maintainer.
-- Not participating: Any PR/MR that was submitted by a participant to a repository that was not
+- **Not participating**: Any PR/MR that was submitted by a participant to a repository that was not
   participating in Hacktoberfest (i.e. having the `hacktoberfest` topic, or adding the
   `hacktoberfest-accepted` label to specific PRs).
-- Invalid/spam: Any PR/MR that was given a label by a maintainer containing the word 'invalid' or
-  'spam'. These are not counted toward winning, but do count toward a user being disqualified.
-- Excluded: Any PR/MR that was submitted to a repository that has been excluded from Hacktoberfest
-  for not following our values. These do not count toward winning, nor do they count toward a user
-  being disqualified.
+- **Invalid/spam**: Any PR/MR that was given a label by a maintainer containing the word 'invalid'
+  or 'spam'. These are not counted toward winning, but do count toward a user being disqualified.
+- **Excluded**: Any PR/MR that was submitted to a repository that has been excluded from
+  Hacktoberfest for not following our values. These do not count toward winning, nor do they count
+  toward a user being disqualified.
 
 ## Diving in: Users
 
-<!-- TODO -->
+This year, Hacktoberfest had **{{= c(data.Users.totalUsers) }}** folks who went through our
+registration flow for the event. Spam has been a huge focus for us throughout the event, and so
+during this flow folks were reminded about our rules and values for the event with clear and simple
+language, as well as agreeing to a new rule for this year that folks with two or more PRs identified
+as invalid or spam by maintainers would be disqualified. More on this later.
+
+During the registration flow folks can also choose to tell us which country they are from--this
+helps us better understand, and cater to, the global audience for the event--and
+**{{= p((data.Users.totalUsers - data.Users.totalUsersNoCountry) / data.Users.totalUsers) }}** of
+them did so.
+
+| - | - |
+|---|---|
+| ![Bar chart of the top countries for completed users](generated/users_completions_top_countries_bar.png) | ![Bar chart of the top countries for all registered users](generated/users_registrations_top_countries_bar.png) |
+
+The top country, by far, was once again {{= data.Users.totalUsersByCountry[0][0] }} with
+**{{= c(data.Users.totalUsersByCountry[0][1]) }}
+({{= p(data.Users.totalUsersByCountry[0][1] / data.Users.totalUsers) }})** registrants
+self-identifying as being from there, showing how much of a reach open-source, and tech in general,
+has there.
+
+We can see the true global reach of Hacktoberfest and open-source by looking more of the top
+countries based on registrations:
+
+{{~ data.Users.totalUsersByCountry.slice(0, 10) :item:i }}
+{{= i + 1 }}. {{= item[0] }}: {{= c(item[1]) }} ({{= p(item[1] / data.Users.totalUsers) }})
+{{~ }}
+
+In total, **{{= c(data.Users.totalUsersByCountry.length) }} countries** were represented by folks
+that registered for the 2021 event.
+
+Of course, there's more to Hacktoberfest than just registering for the event, folks actually submit
+PRs/MRs to open-source projects! This year, we had
+**{{= c(data.Users.totalUsersCompleted + data.Users.totalUsersEngaged) }}
+users
+({{= p((data.Users.totalUsersCompleted + data.Users.totalUsersEngaged) / data.Users.totalUsers) }}
+of total registrations)** that submitted one or more PRs/MRs that were accepted by maintainers.
+Of those, **{{= c(data.Users.totalUsersCompleted) }}
+({{= p(data.Users.totalUsersCompleted / (data.Users.totalUsersCompleted + data.Users.totalUsersEngaged)) }})
+({{= p(data.Users.totalUsersCompleted / data.Users.totalUsers) }} of total registrations)** went on
+to submit at least four accepted PRs/MRs to successfully complete Hacktoberfest.
+
+![Doughnut diagram of users by application state](generated/users_by_state_doughnut.png)
+
+Hacktoberfest supported multiple providers this year, GitHub & GitLab. Registrants could choose to
+link just one provider to their account, or multiple if they desired, with contributions from each
+provider combined into a single record for the user.
+
+<!-- TODO: Registration, engagement & completed split by provider -->
+
+<!-- TODO: Users by number of accepted PRs/MRs -->
 
 ## Diving in: Pull/Merge Requests
 
@@ -74,7 +124,9 @@ expected of them when contributing to open source as part of Hacktoberfest.
 
 **Our efforts to reduce spam can be seen in our data, with only {{= c(data.PRs.totalSpamPRs) }}
 ({{= p(data.PRs.totalSpamPRs / data.PRs.totalPRs) }}) of pull/merge requests being
-flagged as spam or invalid by maintainers.**
+flagged as spam or invalid by maintainers.** _(Of course, we can only report on what we see in our
+data here, and do acknowledge that folks may have received spam that wasn't flagged so won't be
+represented in our reporting)._
 
 We also took a stronger stance on excluding repositories reported by the community that did not
 align with our values, mostly repositories encouraging low effort contributions to allow folks to
