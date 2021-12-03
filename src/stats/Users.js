@@ -5,6 +5,7 @@ const { getDateArray } = require("../helpers/date");
 const color = require("../helpers/color");
 
 const usersTopChart = async (userData, totalUsers, title, file, interval, mainSubtitle = null, smallSubtitle = null) => {
+    const max = Math.max(...userData.map(([, count]) => count));
     const config = chart.config(1000, 1000, [{
         type: 'bar',
         indexLabelFontSize: 24,
@@ -13,7 +14,7 @@ const usersTopChart = async (userData, totalUsers, title, file, interval, mainSu
                 chart.colors.highlightPositive, chart.colors.highlightNeutral, chart.colors.highlightNegative,
             ];
             const dataColor = colors[i % colors.length];
-            const percentWidth = count / userData[0][1];
+            const percentWidth = count / max;
             return {
                 y: count,
                 color: dataColor,
@@ -238,9 +239,11 @@ module.exports = async (data, log) => {
         { width: 200, x: 1250, y: 220 },
     );
 
+    results.totalUsersByAcceptedPRsCapped = cappedAcceptedUserPRs(data, 5);
+
     const totalUsersByPRsConfig = chart.config(1000, 1000, [{
         type: 'column',
-        dataPoints: cappedAcceptedUserPRs(data, 5).map(([ prs, users ]) => ({
+        dataPoints: results.totalUsersByAcceptedPRsCapped.map(([ prs, users ]) => ({
             y: users,
             color: Number.parseInt(prs) > 4 ? chart.colors.highlightNeutral : Number.parseInt(prs) === 4 ? chart.colors.highlightPositive : chart.colors.highlightNegative,
             label: `${prs}${prs === 5 ? '+' : ''} PR${prs === 1 ? '' : 's'}/MR${prs === 1 ? '' : 's'}`,
@@ -426,10 +429,12 @@ module.exports = async (data, log) => {
     };
 
     // Provider accounts registered
-    results.totalUsersByProvider = Object.entries(data.users.providers).map(([ provider, { count } ]) => ([
-        providerMap[provider] || provider,
-        count,
-    ]));
+    results.totalUsersByProvider = Object.entries(data.users.providers)
+        .map(([ provider, { count } ]) => ([
+            providerMap[provider] || provider,
+            count,
+        ]))
+        .sort((a, b) => a[1] < b[1] ? 1 : -1);
     log('');
     log(`Registered users by provider:`);
     log('(Users were able to link one, or both, of the supported providers to their Hacktoberfest account)');
@@ -447,10 +452,12 @@ module.exports = async (data, log) => {
     );
 
     // Provider accounts engaged
-    results.totalUsersEngagedByProvider = Object.entries(data.users.providers).map(([ provider, { states } ]) => ([
-        providerMap[provider] || provider,
-        states.welcome || 0,
-    ]));
+    results.totalUsersEngagedByProvider = Object.entries(data.users.providers)
+        .map(([ provider, { states } ]) => ([
+            providerMap[provider] || provider,
+            states.welcome || 0,
+        ]))
+        .sort((a, b) => a[1] < b[1] ? 1 : -1);
     log('');
     log(`Engaged (1-3 PRs/MRs) users by provider:`);
     log('(Users were able to link one, or both, of the supported providers to their Hacktoberfest account)');
@@ -468,10 +475,12 @@ module.exports = async (data, log) => {
     );
 
     // Provider accounts completed
-    results.totalUsersCompletedByProvider = Object.entries(data.users.providers).map(([ provider, { states } ]) => ([
-        providerMap[provider] || provider,
-        states.contributor || 0,
-    ]));
+    results.totalUsersCompletedByProvider = Object.entries(data.users.providers)
+        .map(([ provider, { states } ]) => ([
+            providerMap[provider] || provider,
+            states.contributor || 0,
+        ]))
+        .sort((a, b) => a[1] < b[1] ? 1 : -1);
     log('');
     log(`Completed (4+ PRs/MRs) users by provider:`);
     log('(Users were able to link one, or both, of the supported providers to their Hacktoberfest account)');

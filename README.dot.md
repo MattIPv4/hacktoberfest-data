@@ -10,7 +10,7 @@ and community management. And, part of what I get to work on is helping out with
 including being the lead engineer for the backed that powers the event.
 
 Welcome to my deeper dive on the data and stats for Hacktoberfest 2021, expanding on what we already
-shared in our [recap blog post](TODO).
+shared in our [recap blog post](https://www.digitalocean.com/blog/hacktoberfest-2021-recap).
 
 ## At a glance
 
@@ -24,7 +24,7 @@ What did we accomplish together in October 2021? These are the highlights from H
 - Countries represented by completed users: **{{= c(data.readme.countriesCompleted) }}**
 
 > Take a read of our overall recap blog post for Hacktoberfest 2021 here:
-> [TODO](TODO)
+> [www.digitalocean.com/blog/hacktoberfest-2021-recap](https://www.digitalocean.com/blog/hacktoberfest-2021-recap)
 
 ## Application states
 
@@ -69,9 +69,10 @@ helps us better understand, and cater to, the global audience for the event--and
 **{{= p((data.Users.totalUsers - data.Users.totalUsersNoCountry) / data.Users.totalUsers) }}** of
 them did so.
 
-| - | - |
-|---|---|
-| ![Bar chart of the top countries for completed users](generated/users_completions_top_countries_bar.png) | ![Bar chart of the top countries for all registered users](generated/users_registrations_top_countries_bar.png) |
+<p style="display: flex; justify-content: space-evenly;">
+  <img src="generated/users_completions_top_countries_bar.png" width="40%" alt="Bar chart of the top countries for completed users" style="margin: 1em;" />
+  <img src="generated/users_registrations_top_countries_bar.png" width="40%" alt="Bar chart of the top countries for all registered users" style="margin: 1em;" />
+</p>
 
 The top country, by far, was once again {{= data.Users.totalUsersByCountry[0][0] }} with
 **{{= c(data.Users.totalUsersByCountry[0][1]) }}
@@ -79,7 +80,7 @@ The top country, by far, was once again {{= data.Users.totalUsersByCountry[0][0]
 self-identifying as being from there, showing how much of a reach open-source, and tech in general,
 has there.
 
-We can see the true global reach of Hacktoberfest and open-source by looking more of the top
+We can see the true global reach of Hacktoberfest and open-source by looking at more of the top
 countries based on registrations:
 
 {{~ data.Users.totalUsersByCountry.slice(0, 10) :item:i }}
@@ -88,6 +89,15 @@ countries based on registrations:
 
 In total, **{{= c(data.Users.totalUsersByCountry.length) }} countries** were represented by folks
 that registered for the 2021 event.
+
+We can also look at just the users that completed Hacktoberfest, and see how the countries are
+distributed for those users:
+
+{{~ data.Users.totalUsersCompletedByCountry.slice(0, 10) :item:i }}
+{{= i + 1 }}. {{= item[0] }}: {{= c(item[1]) }} ({{= p(item[1] / data.Users.totalUsersCompleted) }})
+{{~ }}
+
+<img src="generated/users_by_state_doughnut.png" width="40%" alt="Doughnut diagram of users by application state" align="right" style="margin: 1em;" />
 
 Of course, there's more to Hacktoberfest than just registering for the event, folks actually submit
 PRs/MRs to open-source projects! This year, we had
@@ -100,15 +110,74 @@ Of those, **{{= c(data.Users.totalUsersCompleted) }}
 ({{= p(data.Users.totalUsersCompleted / data.Users.totalUsers) }} of total registrations)** went on
 to submit at least four accepted PRs/MRs to successfully complete Hacktoberfest.
 
-![Doughnut diagram of users by application state](generated/users_by_state_doughnut.png)
+Impressively, we saw that **{{= c(data.Users.totalUsersByAcceptedPRsCapped[4][1]) }} users
+({{= p(data.Users.totalUsersByAcceptedPRsCapped[4][1] / data.Users.totalUsersCompleted) }} of total
+completed)** submitted more than 4 accepted PRs/MRs, going above and beyond to contribute to
+open-source outside the goal set for completing Hacktoberfest.
+
+Sadly, {{= c(data.Users.totalUsersDisqualified) }} users were disqualified this year
+({{= p(data.Users.totalUsersDisqualified / data.Users.totalUsers) }} of total registrations).
+Disqualification of users happen automatically if two or more of their PRs/MRs are actively
+identified as spam or invalid by project maintainers. We were very happy to see how low this number
+was though, indicating to us that our efforts to educate and remind contributors of the quality
+standards expected of them during Hacktoberfest are working. _(Of course, we can only report on
+what we see in our data here, and do acknowledge that folks may have received spam that wasn't
+flagged so won't be represented in our reporting)._
 
 Hacktoberfest supported multiple providers this year, GitHub & GitLab. Registrants could choose to
 link just one provider to their account, or multiple if they desired, with contributions from each
 provider combined into a single record for the user.
 
-<!-- TODO: Registration, engagement & completed split by provider -->
+Based on this we can take a look at the most popular providers for open-source based on some
+Hacktoberfest-specific metrics. First, we can see that based on registrations, **the most popular
+provider was {{= data.Users.totalUsersByProvider[0][0] }} with
+{{= c(data.Users.totalUsersByProvider[0][1]) }} registrants
+({{= p(data.Users.totalUsersByProvider[0][1] / data.Users.totalUsers) }}).**
 
-<!-- TODO: Users by number of accepted PRs/MRs -->
+{{~ data.Users.totalUsersByProvider :item:i }}
+{{= i + 1 }}. {{= item[0] }}: {{= c(item[1]) }}
+  ({{= p(item[1] / data.Users.totalUsers) }} of registered users)
+{{~ }}
+
+_Users were able to link one or more providers to their account, so the counts here may sum to more
+than the total number of users registered._
+
+We can also look at a breakdown of users that were engaged (1-3 accepted PRs/MRs) and users that
+completed Hacktoberfest (4+ PRs/MRs) by provider.
+
+Engaged users by provider:
+
+{{~ data.Users.totalUsersEngagedByProvider :item:i }}
+{{= i + 1 }}. {{= item[0] }}: {{= c(item[1]) }}
+  ({{= p(item[1] / data.Users.totalUsersEngaged) }} of engaged users)
+{{~ }}
+
+Completed users by provider:
+
+{{~ data.Users.totalUsersCompletedByProvider :item:i }}
+{{= i + 1 }}. {{= item[0] }}: {{= c(item[1]) }}
+  ({{= p(item[1] / data.Users.totalUsersCompleted) }} of completed users)
+{{~ }}
+
+This year for Hacktoberfest 2021, users had to submit PRs/MRs to participating projects during
+October that then had to be accepted by maintainers during October. If a user submitted four or
+more PRs/MRs, then they completed Hacktoberfest. However, not everyone hits the 4 PR/MR target, with
+some falling short, but many also going beyond the target and contributing further.
+
+We can see how many accepted PRs/MRs each user had and bucket them:
+
+{{~ data.Users.totalUsersByAcceptedPRs :item:i }}
+- {{= item[0] }}{{= (i === data.Users.totalUsersByAcceptedPRs.length - 1 ? '+' : '') }}
+  PR{{= (item[0] === 1 ? '': 's') }}/MR{{= (item[0] === 1 ? '': 's') }}: {{= c(item[1]) }}
+  ({{= p(item[1] / data.Users.totalUsersCompleted) }})
+{{~ }}
+
+Looking at this, we can see that quite a few users only managed to get 1 accepted PR/MR, but
+after that it quickly trailed off for 2 and 3 PRs/MRs. It seems like the target of 4 PRs/MRs
+encouraged many users to push through to getting all 4 PRs/MRs created/accepted if they got that
+first one completed.
+
+![Bar chart of users by accepted PRs/MRs](generated/users_by_prs_extended_column.png)
 
 ## Diving in: Pull/Merge Requests
 
