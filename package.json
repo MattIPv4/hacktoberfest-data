@@ -31,6 +31,6 @@
     "jsdom": "^15.2.1",
     "linear-least-squares": "^1.0.1",
     "mongodb": "^3.6.3",
-    "node-fetch": "^2.6.1"
+    "node-fetch": "^2.6.7"
   }
 }
