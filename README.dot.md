@@ -159,7 +159,7 @@ Completed users by provider:
   ({{= p(item[1] / data.Users.totalUsersCompleted) }} of completed users)
 {{~ }}
 
-This year for Hacktoberfest 2021, users had to submit PRs/MRs to participating projects during
+This year for Hacktoberfest, users had to submit PRs/MRs to participating projects during
 October that then had to be accepted by maintainers during October. If a user submitted four or
 more PRs/MRs, then they completed Hacktoberfest. However, not everyone hits the 4 PR/MR target, with
 some falling short, but many also going beyond the target and contributing further.
@@ -181,7 +181,35 @@ first one completed.
 
 ## Diving in: Pull/Merge Requests
 
-<!-- TODO -->
+<img src="generated/prs_by_state_doughnut.png" width="40%" alt="Doughnut diagram of PRs/MRs by application state" align="right" style="margin: 1em;" />
+
+Now on to what you've been waiting for, and the core of Hacktoberfest itself, the pull/merge
+requests. This year Hacktoberfest tracked **{{= c(data.PRs.totalPRs) }}** PRs/MRs that were within
+the bounds of the Hacktoberfest event, and **{{= c(data.PRs.totalAcceptedPRs) }}
+({{= p(data.PRs.totalAcceptedPRs / data.PRs.totalPRs) }})** of those went on to be accepted!
+
+Unfortunately, not every pull/merge request can be accepted though, for one reason or another, and
+this year we saw that there were **{{= c(data.PRs.totalNotAcceptedPRs )}}
+({{= p(data.PRs.totalNotAcceptedPRs / data.PRs.totalPRs) }})** PRs/MRs that were submitted to
+participating repositories but that were not accepted by maintainers, as well as
+**{{= c(data.PRs.totalNotParticipatingPRs )}}
+({{= p(data.PRs.totalNotParticipatingPRs / data.PRs.totalPRs) }})** PRs/MRs submitted by
+Hacktoberfest participants to repositories that were not participating in Hacktoberfest. As a
+reminder to folks, repositories opt-in to participating in Hacktoberfest by adding the
+`hacktoberfest` topic to their repository (or individual PRs/MRs can be opted-in with the
+`hacktoberfest-accepted` label)!
+
+Spam is also a big issue that we focus on reducing during Hacktoberfest, and we tracked the number
+of PRs/MRs that were identified by maintainers as spam, as well as those that were caught by
+automation we'd written to stop spammy users. We'll talk more about all-things-spam later on.
+
+<!-- TODO: Acceptance methods -->
+
+<!-- TODO: Averages -->
+
+<!-- TODO: Popular languages -->
+
+<!-- TODO: Popular days (creation) -->
 
 ## Diving in: Spam
 
