@@ -203,9 +203,27 @@ Spam is also a big issue that we focus on reducing during Hacktoberfest, and we 
 of PRs/MRs that were identified by maintainers as spam, as well as those that were caught by
 automation we'd written to stop spammy users. We'll talk more about all-things-spam later on.
 
-<!-- TODO: Acceptance methods -->
+PRs and MRs that are accepted by maintainers for Hacktoberfest aren't necessarily merged --
+Hacktoberfest supports multiple different ways for a maintainer to indicate that a PR/MR is
+legitimate and should be counted. PRs/MRs can be merged, or they can be given the
+`hacktoberfest-accepted` label, or maintainers can leave an overall approving review.
 
-<!-- TODO: Averages -->
+Of the accepted PRs/MRs, **{{= c(data.PRs.totalAcceptedPRsMerged) }}
+({{= p(data.PRs.totalAcceptedPRsMerged / data.PRs.totalAcceptedPRs) }})** were merged into the
+repository, and **{{= c(data.PRs.totalAcceptedPRsApproved) }}
+({{= p(data.PRs.totalAcceptedPRsApproved / data.PRs.totalAcceptedPRs) }})** were approved by a
+maintainer. Note that there may be overlap here, as a PR/MR may have been approved and then merged.
+Unfortunately, we don't have direct aggregated data for the `hacktoberfest-accepted` label.
+
+With this many accepted PRs, we can also take a look at some interesting averages determined from
+the accepted PRs/MRs. The average accepted PR/MR...
+
+- ...contained **{{= c(data.PRs.averageAcceptedPRCommits) }} commits**
+- ...added/edited/removed **{{= c(data.PRs.averageAcceptedPRFiles) }} files**
+- ...made a total of **{{= c(data.PRs.averageAcceptedPRAdditions) }} additions** _(lines)_
+- ...included **{{= c(data.PRs.averageAcceptedPRDeletions) }} deletions** _(lines)_
+
+_Note that lines containing edits will be counted as both an addition and a deletion._
 
 <!-- TODO: Popular languages -->
 
