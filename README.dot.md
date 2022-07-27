@@ -1,20 +1,21 @@
-# Hacktoberfest 2021 Stats
+# Hacktoberfest {{= data.year }} Stats
 
 Hi there, 👋
 
-I'm [Matt Cowley](https://mattcowley.co.uk/), Community Platform Manager at
+I'm [Matt Cowley](https://mattcowley.co.uk/), Senior Web Developer at
 [DigitalOcean](https://digitalocean.com/).
 
 I work on a bunch of things at DigitalOcean, with a great mix of engineering, developer relations
 and community management. And, part of what I get to work on is helping out with Hacktoberfest,
 including being the lead engineer for the backed that powers the event.
 
-Welcome to my deeper dive on the data and stats for Hacktoberfest 2021, expanding on what we already
-shared in our [recap blog post](https://www.digitalocean.com/blog/hacktoberfest-2021-recap).
+Welcome to my deeper dive on the data and stats for Hacktoberfest {{= data.year }}, expanding on
+what we already shared in our [recap blog post](https://{{= data.blog }}).
 
 ## At a glance
 
-What did we accomplish together in October 2021? These are the highlights from Hacktoberfest #8:
+What did we accomplish together in October {{= data.year }}?
+These are the highlights from Hacktoberfest #{{= data.year - 2013 }}:
 
 - Registered users: **{{= c(data.readme.registeredUsers) }}**
 - Completed users: **{{= c(data.readme.completedUsers) }}**
@@ -23,8 +24,8 @@ What did we accomplish together in October 2021? These are the highlights from H
 - Countries represented by registered users: **{{= c(data.readme.countriesRegistered) }}**
 - Countries represented by completed users: **{{= c(data.readme.countriesCompleted) }}**
 
-> Take a read of our overall recap blog post for Hacktoberfest 2021 here:
-> [www.digitalocean.com/blog/hacktoberfest-2021-recap](https://www.digitalocean.com/blog/hacktoberfest-2021-recap)
+> Take a read of our overall recap blog post for Hacktoberfest {{= data.year }} here:
+> [{{= data.blog }}](https://{{= data.blog }})
 
 ## Application states
 
@@ -88,7 +89,7 @@ countries based on registrations:
 {{~ }}
 
 In total, **{{= c(data.Users.totalUsersByCountry.length) }} countries** were represented by folks
-that registered for the 2021 event.
+that registered for the {{= data.year }} event.
 
 We can also look at just the users that completed Hacktoberfest, and see how the countries are
 distributed for those users:
@@ -259,10 +260,10 @@ PR/MR creation this year:
 ## Diving in: Spam
 
 After the issues Hacktoberfest faced at the start of the 2020 event, spam was top of mind for our
-whole team this year as we planned and launched Hacktoberfest 2021. We kept the rules the same as
-we'd landed on last year, with Hacktoberfest being an opt-in event for repositories, and we revised
-our standards on quality contributions to make it easier for participants to understand what is
-expected of them when contributing to open source as part of Hacktoberfest.
+whole team this year as we planned and launched Hacktoberfest {{= data.year }}. We kept the rules
+the same as we'd landed on last year, with Hacktoberfest being an opt-in event for repositories, and
+we revised our standards on quality contributions to make it easier for participants to understand
+what is expected of them when contributing to open source as part of Hacktoberfest.
 
 **Our efforts to reduce spam can be seen in our data, with only {{= c(data.PRs.totalSpamPRs) }}
 ({{= p(data.PRs.totalSpamPRs / data.PRs.totalPRs) }}) of pull/merge requests being
@@ -290,14 +291,14 @@ is ending soon:
 ![Stacked area plot of PRs/MRs by created at day and state](generated/prs_by_state_stacked.png)
 
 For transparency, we can also take a look at the excluded repositories we processed for
-Hacktoberfest 2021. A large part of this list was prior excluded repositories from Hacktoberfest
-2020 which were persisted across to this year. However, a form was available on the site for
-members of our community to report repositories that they felt did not follow our values, and our
-team would then process the top reported ones and decide if they should be excluded.
+Hacktoberfest {{= data.year }}. A large part of this list was prior excluded repositories from
+previous Hacktoberfest years which were persisted across to this year. However, a form was available
+on the site for members of our community to report repositories that they felt did not follow our
+values, and our team would then process the top reported ones and decide if they should be excluded.
 
-In total, Hacktoberfest 2021 had {{= c(data.Repos.totalReposExcluded) }} repositories that were
-actively excluded, {{= p(data.Repos.totalReposExcluded / data.Repos.totalReposReported) }} of the
-total repositories reported. Only {{= c(data.Repos.totalReposPermitted) }} repositories were
+In total, Hacktoberfest {{= data.year }} had {{= c(data.Repos.totalReposExcluded) }} repositories
+that were actively excluded, {{= p(data.Repos.totalReposExcluded / data.Repos.totalReposReported) }}
+of the total repositories reported. Only {{= c(data.Repos.totalReposPermitted) }} repositories were
 permitted after having been reported and subsequently reviewed by our team. Unfortunately,
 {{= c(data.Repos.totalReposUnreviewed) }}
 ({{= p(data.Repos.totalReposUnreviewed / data.Repos.totalReposReported) }}) of the repositories that
@@ -309,9 +310,10 @@ ensuring a more consistent high quality standard for Hacktoberfest participation
 
 ## Wrapping up
 
-Well, that's all the stats I've generated from the Hacktoberfest 2021 raw data -- you can find the
-raw output of the stats generation script in the [`generated/stats.txt`](generated/stats.txt) file,
-as well as all the graphics which are housed in [`generated`](generated) directory.
+Well, that's all the stats I've generated from the Hacktoberfest {{= data.year }} raw data -- you
+can find the raw output of the stats generation script in the
+[`generated/stats.txt`](generated/stats.txt) file, as well as all the graphics which are housed in
+[`generated`](generated) directory.
 
 If there is anything more you'd like to see/know, please feel free to reach out and ask, I'll be
 more than happy to generate it if possible.
@@ -319,7 +321,7 @@ more than happy to generate it if possible.
 All the scripts used to generate these stats & graphics are contained in this repository, in the
 [`src`](src) directory. I have some more information about this in the
 [CONTRIBUTING.md](CONTRIBUTING.md) file, including a schema for the input data, however, the
-Hacktoberfest 2021 raw data, like the 2019 & 2020 data, isn't public.
+Hacktoberfest {{= data.year }} raw data, much like previous years' data, isn't public.
 
-Author: [Matt Cowley](https://mattcowley.co.uk/) - If you notice any errors within this document,
-please let me know and I will endeavour to correct them. 💙
+Author: [Matt Cowley](https://mattcowley.co.uk/) - If you notice any errors within this document
+please let me know, and I will endeavour to correct them. 💙

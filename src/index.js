@@ -16,6 +16,9 @@ const main = async () => {
     log.log(`Finished ${new Date().toLocaleString()}`);
     log.save(path.join(__dirname, '../generated/stats.txt'));
 
+    results.year = 2021;
+    results.blog = 'www.digitalocean.com/blog/hacktoberfest-2021-recap';
+
     const template = fs.readFileSync(path.join(__dirname, '..', 'README.dot.md'), 'utf8');
     const result = dot.template(template, { argName: 'data, c, p', strip: false })(results, number.commas, number.percentage);
     fs.writeFileSync(path.join(__dirname, '..', 'README.2021.md'), result);
