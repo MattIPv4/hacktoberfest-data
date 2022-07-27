@@ -104,6 +104,25 @@ module.exports = async (data, log) => {
         { width: 170, x: 500, y: 440 },
     );
 
+    // PRs by provider
+    const providerMap = {
+        github: 'GitHub',
+        gitlab: 'GitLab',
+    };
+
+    // PRs by provider
+    results.totalPRsByProvider = Object.entries(data.pull_requests.providers.all.providers)
+        .map(([ provider, { count, states } ]) => ([
+            providerMap[provider] || provider,
+            count - states['out-of-bounds'],
+        ]))
+        .sort((a, b) => a[1] < b[1] ? 1 : -1);
+    log('');
+    log(`Total PRs/MRs by provider:`);
+    for (const [ provider, count ] of results.totalPRsByProvider) {
+        log(`  ${provider}: ${number.commas(count)} (${number.percentage(count / results.totalPRs)})`);
+    }
+
     // Accepted PRs by merge status
     results.totalAcceptedPRsMerged = data.pull_requests.merged.true.states.accepted;
     results.totalAcceptedPRsNotMerged = data.pull_requests.merged.false.states.accepted;

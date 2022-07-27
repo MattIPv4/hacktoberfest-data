@@ -203,6 +203,14 @@ Spam is also a big issue that we focus on reducing during Hacktoberfest, and we 
 of PRs/MRs that were identified by maintainers as spam, as well as those that were caught by
 automation we'd written to stop spammy users. We'll talk more about all-things-spam later on.
 
+This year, Hacktoberfest supported multiple providers that contributors could use to submit
+contributions to open-source projects. Let's take a look at the breakdown of PRs/MRs per provider:
+
+{{~ data.PRs.totalPRsByProvider :item:i }}
+{{= i + 1 }}. {{= item[0] }}: {{= c(item[1]) }}
+  ({{= p(item[1] / data.PRs.totalPRs) }} of total PRs/MRs)
+{{~ }}
+
 PRs and MRs that are accepted by maintainers for Hacktoberfest aren't necessarily merged --
 Hacktoberfest supports multiple different ways for a maintainer to indicate that a PR/MR is
 legitimate and should be counted. PRs/MRs can be merged, or they can be given the
@@ -225,9 +233,28 @@ the accepted PRs/MRs. The average accepted PR/MR...
 
 _Note that lines containing edits will be counted as both an addition and a deletion._
 
-<!-- TODO: Popular languages -->
+We can also take a look at all the different languages that we observed during Hacktoberfest. These
+are based on the primary language reported for the repository, and the number of accepted
+Hacktoberfest PRs that were submitted to that repository. Unfortunately, GitLab does not expose
+language information via their API, so this only considers GitHub PRs.
 
-<!-- TODO: Popular days (creation) -->
+{{~ data.PRs.totalAcceptedPRsByLanguage.slice(0, 10) :item:i }}
+{{= i + 1 }}. {{= item[0] }}: {{= c(item[1]) }}
+  ({{= p(item[1] / data.PRs.totalAcceptedPRs) }} of all accepted PRs)
+{{~ }}
+
+<img src="generated/prs_by_day_bar.png" width="40%" alt="Bar chart of accepted PRs/Mrs by most popular days" align="right" style="margin: 1em;" />
+
+Hacktoberfest happens throughout the month of October, with participants allowed to submit
+pull/merge requests at any point from October 1 - 31 in any timezone. However, there tends to be
+large spikes in submitted PRs/MRs towards the start and end of the month as folks are reminded to
+get them in to count! Let's take a look at the most popular days during Hacktoberfest by accepted
+PR/MR creation this year:
+
+{{~ data.PRs.totalPRsByDay :item:i }}
+{{= i + 1 }}. {{= item[0] }}: {{= c(item[1]) }}
+  ({{= p(item[1] / data.PRs.totalAcceptedPRs) }} of all accepted PRs)
+{{~ }}
 
 ## Diving in: Spam
 

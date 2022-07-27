@@ -1,4 +1,4 @@
-Started 12/3/2021, 9:14:27 PM
+Started 7/27/2022, 12:35:41 PM
 
 
 ----
@@ -33,6 +33,10 @@ Total PRs/MRs: 519,987
   Invalid PRs/MRs: 64,867 (12.47%)
     of which were in an excluded repo: 62,710 (96.67%)
     of which were labeled as spam/invalid: 2,157 (3.33%)
+
+Total PRs/MRs by provider:
+  GitHub: 517,619 (99.54%)
+  GitLab: 2,368 (0.46%)
 
 Accepted PRs/MRs by merge status:
   Merged: 283,943 (96.43%)
@@ -325,4 +329,4 @@ Tracked repos by license: 39 licenses
   MS-RL: 2 (0.00%)
 Tracked repos without a detectable license: 292,830 (51.83%)
 
-Finished 12/3/2021, 9:14:40 PM
+Finished 7/27/2022, 12:35:52 PM
