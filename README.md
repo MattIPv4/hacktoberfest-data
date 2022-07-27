@@ -1,297 +1,480 @@
-# Hacktoberfest 2020 Stats
+# Hacktoberfest 2021 Stats
 
 Hi there, 👋
 
-I'm [Matt Cowley](https://mattcowley.co.uk/), Community Platform Manager at [DigitalOcean](https://digitalocean.com/).\
-I work on some awesome things at DigitalOcean, such as our [Community website](https://digitalocean.com/community) and
- Hacktoberfest, where I help out with social and support engagement as well as the engineering behind the app itself.
+I'm [Matt Cowley](https://mattcowley.co.uk/), Senior Web Developer at
+[DigitalOcean](https://digitalocean.com/).
 
-Welcome to my stats breakdown from the [Hacktoberfest 2020](https://hacktoberfest.digitalocean.com/) raw GitHub and
- application data.
+I work on a bunch of things at DigitalOcean, with a great mix of engineering, developer relations
+and community management. And, part of what I get to work on is helping out with Hacktoberfest,
+including being the lead engineer for the backed that powers the event.
+
+Welcome to my deeper dive on the data and stats for Hacktoberfest 2021, expanding on
+what we already shared in our [recap blog post](https://www.digitalocean.com/blog/hacktoberfest-2021-recap).
 
 ## At a glance
 
-What did we accomplish together in October 2020? These are the highlights from Hacktoberfest #7:
+What did we accomplish together in October 2021?
+These are the highlights from Hacktoberfest #8:
 
-- Users who registered for Hacktoberfest 2020\*: **169,886 users**
-- Users who completed and won Hacktoberfest\*: **66,739 users**
-- Eligible pull requests from all participants: **387,052 PRs**
-- Participating repositories: **116,361 repos**
-- Represented countries in participants: **203 countries**
-- Day with the most PRs: 77,993 (20.15%) on October 1
-- Most used license\*\*: MIT in 37,626 repositories (21.37%)
-- Top language: Python with 60,285 eligible PRs (15.58%)
+- Registered users: **141,802**
+- Completed users: **46,676**
+- Accepted PRs/MRs: **294,451**
+- Active repositories (1+ accepted PRs/MRs): **56,501**
+- Countries represented by registered users: **195**
+- Countries represented by completed users: **147**
 
-\*_Exact number from the Hacktoberfest database as of 2020-11-26. May differ from other reported numbers._\
-\*\*_Over 50% of repositories (103,184 [58.61%]) in Hacktoberfest had no license that GitHub could detect._
+> Take a read of our overall recap blog post for Hacktoberfest 2021 here:
+> [www.digitalocean.com/blog/hacktoberfest-2021-recap](https://www.digitalocean.com/blog/hacktoberfest-2021-recap)
 
-> Take a read of our overall recap blog post for Hacktoberfest 2020 here:
-> [www.digitalocean.com/blog/hacktoberfest-recap2020](https://www.digitalocean.com/blog/hacktoberfest-recap2020/)
+## Application states
 
-<p align="center">
-    <img src="generated/prs_by_language_spline.png" width="100%" />
-    <br/>
-    <i>Pull requests each day for the top 10 languages during Hacktoberfest 2020</i>
-</p>
+Before jumping in and looking at the data in detail, we should first cover some important
+information about how we categorise users and pull/merge requests in the Hacktoberfest application
+and in the data used here.
 
-**Before we go any further, we should note that this stats report excludes any users that no longer existed on GitHub
- after Hacktoberfest, as well as excluding any PRs that were no longer publicly available, which may result in slightly
- different total numbers reported compared to other posts.**
+For users, there are four key states that you'll see:
 
-## Diving in: Pull Requests
+- **Completed**: A user that submitted four or more accepted PRs/MRs during Hacktoberfest.
+- **Engaged**: A user that submitted between one and three accepted PRs/MRs during Hacktoberfest.
+- **Registered**: A user that completed the registration flow for Hacktoberfest, but did not submit
+  any PRs/MRs that were accepted.
+- **Disqualified**: A user that was disqualified for submitting 2 or more spammy PRs/MRs,
+  irrespective of how many accepted PRs/MRs they may have also had.
 
-Taking a closer look at the pull requests of Hacktoberfest 2020, we can pull out some more interesting insights.
+For pull/merge requests, there are five states used to process them that you'll see:
 
-First of all, we need to take a look at the breakdown of pull requests that Hacktoberfest tracked this year, and how
- many were considered eligible for the competition. In case you missed it, Hacktoberfest became opt-in this year after
- the first few days, requiring a PR be submitted in a repository with the `hacktoberfest` topic and the PR then being
- merged or approved by a maintainer to count, or the PR could be given the `hacktoberfest-accepted` label in any repo to
- count. PRs submitted before the rules change did not need to be accepted, the same as last year.
-
-<img src="generated/prs_by_state_doughnut.png" align="right" width="40%" />
-
-In total, Hacktoberfest tracked **632,223** pull requests, with **387,052 (61.22%)** of those being eligible and
- counting toward a user winning Hacktoberfest! We can breakdown exactly how those PRs were accepted and considered
- eligible in just a second. Beyond the eligible PRs, there were also **207,194 (32.77%)** PRs that weren't accepted,
- with **172,599 (83.30%)** of those being submitted to repositories not participating in Hacktoberfest 2020 and
- **34,595 (16.70%)** not accepted by a maintainer in an otherwise participating repo.
-
-There were also **26,858 (4.25%)** PRs that were considered actively invalid by the Hacktoberfest app. This consists of
- two types of PRs, those that have been actively identified by a maintainer as spam, and those that were submitted to a
- repository we felt didn't follow the values of Hacktoberfest, and so were excluded from the competition. There were
- **17,260 (64.26%)** PRs submitted to excluded repositories, and **9,598 (35.74%)** PRs labelled as invalid or spam by
- maintainers (if a PR was merged in a participating repo but also labelled as spam/invalid, the label was ignored and
- the PR would be considered eligible).
-
-Thank you to all those in the community who helped us by reporting repositories that didn't follow the values of
- Hacktoberfest through the Hacktoberfest website and to the maintainers who opted-in to Hacktoberfest and spent their
- time reviewing pull requests, accepting legitimate contributions and identifying spammy or invalid PRs via labels.
-
-<img src="generated/prs_by_acceptance_doughnut.png" align="right" width="40%" />
-
-Now, let's take a closer look at those **387,052 (61.22%)** PRs that were eligible for Hacktoberfest, and by what
- criteria they became eligible. Prior to the opt-in rules coming into effect on October 3rd, **114,944 (29.70%)** PRs
- were created on public repositories and counted toward Hacktoberfest.
-
-Within the repositories that opted-in to Hacktoberfest 2020 with the `hacktoberfest` topic, there were a few ways for a
- PR to be considered eligible. **166,057 (42.90%)** PRs were merged by a maintainer, within an opted-in repository,
- counting toward Hacktoberfest. Just **1,043 (0.27%)** PRs were considered eligible for Hacktoberfest by having an
- overall approving review by maintainers within a participating repository, and **67,533 (17.45%)** PRs were accepted
- with the `hacktoberfest-accepted` label in a repo with the `hacktoberfest` topic.
-
-Outside of the participating repositories, any PR on a public GitHub repo could also be given the
- `hacktoberfest-accepted` label to count toward the competition, with **34,698 (8.96%)** PRs being considered eligible
- through this method. There were also **2,777 (0.72%)** PRs in the dataset for which we could not derive an acceptance
- method from the scraped GitHub data, but that had been accepted by the Hacktoberfest app during the competition.
-
-<img src="generated/prs_by_language_doughnut.png" align="right" width="40%" />
-
-From the data we've collected not only for PRs but also for repositories, we can tie each PR to a programming language,
- based on the primary language that GitHub attributes to each repository.
-
-Here's a breakdown of the top 15 languages in Hacktoberfest PRs (there were **225 programming languages** in total):
-
-- Python: 60,285 (15.58%)
-- JavaScript: 54,363 (14.05%)
-- HTML: 40,697 (10.51%)
-- C++: 40,444 (10.45%)
-- Undetermined: 37,293 (9.64%)
-- Java: 29,468 (7.61%)
-- TypeScript: 15,891 (4.11%)
-- Jupyter Notebook: 14,972 (3.87%)
-- C: 13,616 (3.52%)
-- PHP: 11,653 (3.01%)
-- CSS: 10,337 (2.67%)
-- Go: 8,542 (2.21%)
-- C#: 6,729 (1.74%)
-- Ruby: 5,253 (1.36%)
-- Dart: 4,815 (1.24%)
-
-<img src="generated/prs_by_day_bar.png" align="right" width="40%" />
-
-We can also take a look at when the most pull requests were submitted by day during Hacktoberfest. There was a massive
- initial splash on the first of October this year, when Hacktoberfest saw **20% of all eligible PRs submitted in
- just a single day**. This is likely in-part due to the spam issue that many users may be aware happened at the start of
- Hacktoberfest this year, and led to the opt-in change that we made.
-
-Here's a breakdown of the busiest 10 days during the competition based on when eligible PRs, those that counted toward
- winning Hacktoberfest, were created:
-
-- October 1 | 77,993 (20.15%)
-- October 2 | 43,138 (11.15%)
-- September 30 | 27,327 (7.06%)
-- October 3 | 20,474 (5.29%)
-- October 4 | 12,801 (3.31%)
-- October 5 | 12,360 (3.19%)
-- October 6 | 12,019 (3.11%)
-- October 17 | 9,933 (2.57%)
-- October 7 | 9,821 (2.54%)
-- October 31 | 9,527 (2.46%)
-
-You may also note that *September 30* is included in this list -- to allow Hacktoberfest to run from October 1st to 31st
- in all timezones, Hacktoberfest actually starts tracking PRs from Sept. 30 at 10:00am UTC all the way through to Nov. 1
- at 12:00pm UTC.
-
-## Diving in: Repositories
-
-Using the pull requests that we track during GitHub, we can also determine the set of repositories there were involved
- in Hacktoberfest and fetch data on those from GitHub.
-
-As mentioned before, Hacktoberfest switched to being an opt-in event, where repositories had to add the `hacktoberfest`
- topic to have PRs count toward winning Hacktoberfest (PRs could also be opted-in individually with the
- `hacktoberfest-accepted` label). During Hacktoberfest 2020, we tracked a total of **176,053 repos** involved in
- Hacktoberfest, with **116,361 (66.09%)** considered to be participating as they received one or more eligible PRs
- during the competition. Alongside that, **42,413 (24.09%) repos** out of all those that we tracked made use of the
- `hacktoberfest` topic to actively opt-in to the Hacktoberfest competition.  
-
-<img src="generated/repos_by_language_doughnut.png" align="right" width="40%" />
-
-Here's a breakdown of the top 15 languages across all the repositories:
-
-- JavaScript: 26,658 (15.14%)
-- Python: 26,150 (14.85%)
-- Undetermined: 23,481 (13.34%)
-- HTML: 19,050 (10.82%)
-- Java: 12,085 (6.86%)
-- C++: 9,889 (5.62%)
-- TypeScript: 7,100 (4.03%)
-- PHP: 6,117 (3.47%)
-- CSS: 5,412 (3.07%)
-- C: 5,095 (2.89%)
-- Jupyter Notebook: 4,521 (2.57%)
-- Go: 4,169 (2.37%)
-- C#: 3,292 (1.87%)
-- Ruby: 2,983 (1.69%)
-- Shell: 2,851 (1.62%)
-
-Unfortunately, in many cases, GitHub cannot identify the main language for a repository and so this is shown as
- "Undetermined" in the data we're presenting here. In total, we saw **249 programming languages** across all the
- repositories that we could fetch data for as part of Hacktoberfest this year.
-
-Much like with the Hacktoberfest PRs, we can directly take a look at how we dealt with spam in the form of repos.
-This year, we used the same system as in 2019 to allow the community to report repositories that they felt didn't follow
- our values, and we then reviewed and excluded those that we agreed didn't follow the shared values for the competition.
-
-This system worked well once again, as it allowed us to identify and exclude **124 (0.07%) repos** that the community
- felt didn't follow our shared values, of the **176,053 total repos** that were involved with Hacktoberfest.
-
-We can also pull out some interesting data on assorted averages for a participating repositories in Hacktoberfest, such
- as that the average number of stars a repository had was **244.55 stars**, with **65.92 forks** and **13.24 watchers**
- on average. We can also look at the average contributions to a repository, where we saw that a participating repository
- received **3.33 eligible PRs** on average, alongside **0.29 unaccepted PRs** and **0.06 identified invalid/spam PRs**.
-
-<img src="generated/repos_by_license_bar.png" align="right" width="40%" />
-
-Another interesting bit of analysis that we can do is to take a look at the different licenses that GitHub detects for
- each repository. Whilst doing this, it became very apparent that many repositories either don't use a license or a
- license in a format that GitHub cannot detect, as the data indicates that **over 50% of repositories had no detectable
- license**.
-
-We can also do a breakdown of these to see what licenses are the most popular in the open-source space:
-
-- No License | 103,184  (58.61%)
-- MIT | 37,626  (21.37%)
-- Apache-2.0 | 10,228  (5.81%)
-- Custom License | 8,753  (4.97%)
-- GPL-3.0 | 6,997  (3.97%)
-- BSD-3-Clause | 2,012  (1.14%)
-- AGPL-3.0 | 1,393  (0.79%)
-- GPL-2.0 | 1,294  (0.74%)
-- MPL-2.0 | 855  (0.49%)
-- CC0-1.0 | 722  (0.41%)
-- Unlicense | 574  (0.33%)
-- LGPL-3.0 | 428  (0.24%)
-- BSD-2-Clause | 426  (0.24%)
-- ISC | 302  (0.17%)
-- LGPL-2.1 | 220  (0.12%)
+- **Accepted**: A PR/MR that was accepted by a project maintainer, either by being merged or
+  approved in a participating repository, or by being given the `hacktoberfest-accepted` label.
+- **Not accepted**: Any PR/MR that was submitted to a participating repository (having the
+  `hacktoberfest` topic), but that was not actively accepted by a maintainer.
+- **Not participating**: Any PR/MR that was submitted by a participant to a repository that was not
+  participating in Hacktoberfest (i.e. having the `hacktoberfest` topic, or adding the
+  `hacktoberfest-accepted` label to specific PRs).
+- **Invalid/spam**: Any PR/MR that was given a label by a maintainer containing the word 'invalid'
+  or 'spam'. These are not counted toward winning, but do count toward a user being disqualified.
+- **Excluded**: Any PR/MR that was submitted to a repository that has been excluded from
+  Hacktoberfest for not following our values. These do not count toward winning, nor do they count
+  toward a user being disqualified.
 
 ## Diving in: Users
 
-With the user data we have as part of Hacktoberfest, we can take a look at the number of pull requests users submitted
- on average as well as the countries that the users of Hacktoberfest represent. In total **192,804 users** authenticated
- with the Hacktoberfest, with **167,991 (87.13%)** completing registration. 
+This year, Hacktoberfest had **141,802** folks who went through our
+registration flow for the event. Spam has been a huge focus for us throughout the event, and so
+during this flow folks were reminded about our rules and values for the event with clear and simple
+language, as well as agreeing to a new rule for this year that folks with two or more PRs identified
+as invalid or spam by maintainers would be disqualified. More on this later.
 
-Of those users, there were **84,238 (43.69%) users** who participated in Hacktoberfest by submitting one or more
- eligible PRs (80,334), with **65,859 (34.16%)** who won Hacktoberfest.
+During the registration flow folks can also choose to tell us which country they are from--this
+helps us better understand, and cater to, the global audience for the event--and
+**98.55%** of
+them did so.
 
-This number is based on the number of users in the stats report that were in a winning state within the application.
- This is lower than the number reported at the top of this stats report as the main body of this report does not include
- users who no longer exist on GitHub. We also have **864,839 (33.63%)** users in the report that met the 4+ eligible PRs
- criteria, which is also even lower as the stats report only considers PRs that are still publicly available, not any in
- repos that have been deleted or made private.
-
-Similarly, the number of total registrations differs in this section when compared to the number at the top, as again,
- this report only considers users that can still be found on GitHub whereas the number at the top of this report is raw
- from the Hacktoberfest database. From this, we can make a guess that approximately **1,895 users** were deleted from or
- suspended on GitHub during Hacktoberfest.
-
-<img src="generated/users_by_prs_column.png" align="right" width="40%" />
-
-From the data, we can see that a user in Hacktoberfest submitted an average of **3.28 PRs**, with **2.01 PRs** being
- considered eligible, **1.07 PRs** not being accepted and **0.14 PRs** being identified as spam on average. 
-
-Taking a look at the breakdown for the number of eligible PRs each user in Hacktoberfest submitted, it's awesome to see
- so many users who go above and beyond, submitting more than the 4 needed to win swag this year:
-
-- 1 PR: 10,614 (5.51%)
-- 2 PRs: 5,157 (2.67%)
-- 3 PRs: 3,628 (1.88%)
-- **4 PRs: 34,741 (18.02%)**
-- 5 PRs: 12,736 (6.61%)
-- 6 PRs: 6,086 (3.16%)
-- 7 PRs: 3,341 (1.73%)
-- 8 PRs: 2,344 (1.22%)
-- 9 PRs: 1,429 (0.74%)
-- 10 PRs: 1,010 (0.52%)
-- 10+ PRs: 3,152 (1.63%)
-
-This year Hacktoberfest users also had the option to specify which country they were from when they signed up to
-participate, which gives us some awesome insight into the global reach of Hacktoberfest and the open-source community!
-
-| - | - |
-|---|---|
-| ![](generated/users_completions_top_countries_bar.png) | ![](generated/users_registrations_top_countries_bar.png) |
-
-Although this field was completely optional, we can see from the data that at least **203 countries** were represented
- by users who registered to participate in Hacktoberfest 2020, and at least **161 countries** were represented by users
- who completed and won the competition. Out of all the users who registered, only **13,135 (7.82%)** opted to not
- provide their country during the registration process.
-
-Looking at the breakdown of registrations by country, we can see the massive reach that open-source has in India, with
- over **40%** of registrations being from India, as well as in the US where over **10%** of participants were located:
-
-- [IN] India | 71,884 (42.79%)
-- [US] United States | 17,516 (10.43%)
-- [--] Not given | 13,135 (7.82%)
-- [BR] Brazil | 8,756 (5.21%)
-- [ID] Indonesia | 5,330 (3.17%)
-- [DE] Germany | 4,843 (2.88%)
-- [GB] United Kingdom | 4,248 (2.53%)
-- [CA] Canada | 2,894 (1.72%)
-- [FR] France | 2,311 (1.38%)
-- [RU] Russian Federation | 2,082 (1.24%)
-- [ES] Spain | 1,730 (1.03%)
-- [LK] Sri Lanka | 1,665 (0.99%)
-- [AU] Australia | 1,487 (0.89%)
-- [NL] Netherlands | 1,430 (0.85%)
-- [PL] Poland | 1,428 (0.85%)
-
-Well, that's all the stats I've generated from the Hacktoberfest 2020 raw data -- you can find the raw output of the
- stats generation script in the [`generated/stats.txt`](generated/stats.txt) file, as well as all the graphics which are
- housed in [`generated`](generated) directory.
-
-If there is anything more you'd like to see/know, please feel free to reach out and ask, I'll be more than happy to
- generate it if possible.
-
-All the scripts used to generate these stats & graphics are contained in this repository, in the [`src`](src) directory.
-I have some more information about this in the [CONTRIBUTING.md](CONTRIBUTING.md) file, however, the Hacktoberfest 2020
- raw data, like the 2019 data, isn't public currently due to it containing PII about Hacktoberfest participants.
-
-<p align="center">
-    <img src="generated/users_by_prs_extended_column.png" width="100%" />
-    <br/>
-    <i>Number of pull requests submitted by each participant during Hacktoberfest 2020</i>
+<p style="display: flex; justify-content: space-evenly;">
+  <img src="generated/users_completions_top_countries_bar.png" width="40%" alt="Bar chart of the top countries for completed users" style="margin: 1em;" />
+  <img src="generated/users_registrations_top_countries_bar.png" width="40%" alt="Bar chart of the top countries for all registered users" style="margin: 1em;" />
 </p>
 
-Author: [Matt Cowley](https://mattcowley.co.uk/) - If you notice any errors within this document, please let me know and
- I will endeavour to correct them. 💙
+The top country, by far, was once again India with
+**71,081
+(50.13%)** registrants
+self-identifying as being from there, showing how much of a reach open-source, and tech in general,
+has there.
+
+We can see the true global reach of Hacktoberfest and open-source by looking at more of the top
+countries based on registrations:
+
+
+1. India: 71,081 (50.13%)
+
+2. United States: 12,946 (9.13%)
+
+3. Brazil: 6,930 (4.89%)
+
+4. Indonesia: 5,566 (3.93%)
+
+5. Germany: 4,148 (2.93%)
+
+6. United Kingdom: 3,016 (2.13%)
+
+7. Canada: 2,231 (1.57%)
+
+8. Sri Lanka: 2,051 (1.45%)
+
+9. France: 1,844 (1.30%)
+
+10. Spain: 1,491 (1.05%)
+
+
+In total, **194 countries** were represented by folks
+that registered for the 2021 event.
+
+We can also look at just the users that completed Hacktoberfest, and see how the countries are
+distributed for those users:
+
+
+1. India: 26,151 (56.03%)
+
+2. United States: 3,332 (7.14%)
+
+3. Indonesia: 1,942 (4.16%)
+
+4. Brazil: 1,890 (4.05%)
+
+5. Germany: 1,384 (2.97%)
+
+6. Sri Lanka: 917 (1.96%)
+
+7. United Kingdom: 882 (1.89%)
+
+8. Canada: 622 (1.33%)
+
+9. France: 605 (1.30%)
+
+10. Pakistan: 477 (1.02%)
+
+
+<img src="generated/users_by_state_doughnut.png" width="40%" alt="Doughnut diagram of users by application state" align="right" style="margin: 1em;" />
+
+Of course, there's more to Hacktoberfest than just registering for the event, folks actually submit
+PRs/MRs to open-source projects! This year, we had
+**58,815
+users
+(41.48%
+of total registrations)** that submitted one or more PRs/MRs that were accepted by maintainers.
+Of those, **46,676
+(79.36%)
+(32.92% of total registrations)** went on
+to submit at least four accepted PRs/MRs to successfully complete Hacktoberfest.
+
+Impressively, we saw that **24,260 users
+(51.98% of total
+completed)** submitted more than 4 accepted PRs/MRs, going above and beyond to contribute to
+open-source outside the goal set for completing Hacktoberfest.
+
+Sadly, 403 users were disqualified this year
+(0.28% of total registrations).
+Disqualification of users happen automatically if two or more of their PRs/MRs are actively
+identified as spam or invalid by project maintainers. We were very happy to see how low this number
+was though, indicating to us that our efforts to educate and remind contributors of the quality
+standards expected of them during Hacktoberfest are working. _(Of course, we can only report on
+what we see in our data here, and do acknowledge that folks may have received spam that wasn't
+flagged so won't be represented in our reporting)._
+
+Hacktoberfest supported multiple providers this year, GitHub & GitLab. Registrants could choose to
+link just one provider to their account, or multiple if they desired, with contributions from each
+provider combined into a single record for the user.
+
+Based on this we can take a look at the most popular providers for open-source based on some
+Hacktoberfest-specific metrics. First, we can see that based on registrations, **the most popular
+provider was GitHub with
+140,941 registrants
+(99.39%).**
+
+
+1. GitHub: 140,941
+  (99.39% of registered users)
+
+2. GitLab: 2,050
+  (1.45% of registered users)
+
+
+_Users were able to link one or more providers to their account, so the counts here may sum to more
+than the total number of users registered._
+
+We can also look at a breakdown of users that were engaged (1-3 accepted PRs/MRs) and users that
+completed Hacktoberfest (4+ PRs/MRs) by provider.
+
+Engaged users by provider:
+
+
+1. GitHub: 12,117
+  (99.82% of engaged users)
+
+2. GitLab: 183
+  (1.51% of engaged users)
+
+
+Completed users by provider:
+
+
+1. GitHub: 46,586
+  (99.81% of completed users)
+
+2. GitLab: 703
+  (1.51% of completed users)
+
+
+This year for Hacktoberfest, users had to submit PRs/MRs to participating projects during
+October that then had to be accepted by maintainers during October. If a user submitted four or
+more PRs/MRs, then they completed Hacktoberfest. However, not everyone hits the 4 PR/MR target, with
+some falling short, but many also going beyond the target and contributing further.
+
+We can see how many accepted PRs/MRs each user had and bucket them:
+
+
+- 1
+  PR/MR: 7,039
+  (15.08%)
+
+- 2
+  PRs/MRs: 3,271
+  (7.01%)
+
+- 3
+  PRs/MRs: 1,887
+  (4.04%)
+
+- 4
+  PRs/MRs: 22,682
+  (48.59%)
+
+- 5
+  PRs/MRs: 10,399
+  (22.28%)
+
+- 6
+  PRs/MRs: 4,904
+  (10.51%)
+
+- 7
+  PRs/MRs: 2,729
+  (5.85%)
+
+- 8
+  PRs/MRs: 1,741
+  (3.73%)
+
+- 9
+  PRs/MRs: 1,065
+  (2.28%)
+
+- 10+
+  PRs/MRs: 3,422
+  (7.33%)
+
+
+Looking at this, we can see that quite a few users only managed to get 1 accepted PR/MR, but
+after that it quickly trailed off for 2 and 3 PRs/MRs. It seems like the target of 4 PRs/MRs
+encouraged many users to push through to getting all 4 PRs/MRs created/accepted if they got that
+first one completed.
+
+![Bar chart of users by accepted PRs/MRs](generated/users_by_prs_extended_column.png)
+
+## Diving in: Pull/Merge Requests
+
+<img src="generated/prs_by_state_doughnut.png" width="40%" alt="Doughnut diagram of PRs/MRs by application state" align="right" style="margin: 1em;" />
+
+Now on to what you've been waiting for, and the core of Hacktoberfest itself, the pull/merge
+requests. This year Hacktoberfest tracked **519,987** PRs/MRs that were within
+the bounds of the Hacktoberfest event, and **294,451
+(56.63%)** of those went on to be accepted!
+
+Unfortunately, not every pull/merge request can be accepted though, for one reason or another, and
+this year we saw that there were **38,718
+(7.45%)** PRs/MRs that were submitted to
+participating repositories but that were not accepted by maintainers, as well as
+**121,951
+(23.45%)** PRs/MRs submitted by
+Hacktoberfest participants to repositories that were not participating in Hacktoberfest. As a
+reminder to folks, repositories opt-in to participating in Hacktoberfest by adding the
+`hacktoberfest` topic to their repository (or individual PRs/MRs can be opted-in with the
+`hacktoberfest-accepted` label)!
+
+Spam is also a big issue that we focus on reducing during Hacktoberfest, and we tracked the number
+of PRs/MRs that were identified by maintainers as spam, as well as those that were caught by
+automation we'd written to stop spammy users. We'll talk more about all-things-spam later on.
+
+This year, Hacktoberfest supported multiple providers that contributors could use to submit
+contributions to open-source projects. Let's take a look at the breakdown of PRs/MRs per provider:
+
+
+1. GitHub: 517,619
+  (99.54% of total PRs/MRs)
+
+2. GitLab: 2,368
+  (0.46% of total PRs/MRs)
+
+
+PRs and MRs that are accepted by maintainers for Hacktoberfest aren't necessarily merged --
+Hacktoberfest supports multiple different ways for a maintainer to indicate that a PR/MR is
+legitimate and should be counted. PRs/MRs can be merged, or they can be given the
+`hacktoberfest-accepted` label, or maintainers can leave an overall approving review.
+
+Of the accepted PRs/MRs, **283,943
+(96.43%)** were merged into the
+repository, and **61,895
+(21.02%)** were approved by a
+maintainer. Note that there may be overlap here, as a PR/MR may have been approved and then merged.
+Unfortunately, we don't have direct aggregated data for the `hacktoberfest-accepted` label.
+
+With this many accepted PRs, we can also take a look at some interesting averages determined from
+the accepted PRs/MRs. The average accepted PR/MR...
+
+- ...contained **2.76 commits**
+- ...added/edited/removed **12 files**
+- ...made a total of **1,643.55 additions** _(lines)_
+- ...included **455.2 deletions** _(lines)_
+
+_Note that lines containing edits will be counted as both an addition and a deletion._
+
+We can also take a look at all the different languages that we observed during Hacktoberfest. These
+are based on the primary language reported for the repository, and the number of accepted
+Hacktoberfest PRs that were submitted to that repository. Unfortunately, GitLab does not expose
+language information via their API, so this only considers GitHub PRs.
+
+
+1. C++: 42,093
+  (14.30% of all accepted PRs)
+
+2. Python: 39,676
+  (13.47% of all accepted PRs)
+
+3. JavaScript: 37,863
+  (12.86% of all accepted PRs)
+
+4. HTML: 30,049
+  (10.21% of all accepted PRs)
+
+5. Java: 21,183
+  (7.19% of all accepted PRs)
+
+6. TypeScript: 16,010
+  (5.44% of all accepted PRs)
+
+7. Jupyter Notebook: 12,391
+  (4.21% of all accepted PRs)
+
+8. C: 9,976
+  (3.39% of all accepted PRs)
+
+9. PHP: 9,453
+  (3.21% of all accepted PRs)
+
+10. CSS: 7,591
+  (2.58% of all accepted PRs)
+
+
+<img src="generated/prs_by_day_bar.png" width="40%" alt="Bar chart of accepted PRs/Mrs by most popular days" align="right" style="margin: 1em;" />
+
+Hacktoberfest happens throughout the month of October, with participants allowed to submit
+pull/merge requests at any point from October 1 - 31 in any timezone. However, there tends to be
+large spikes in submitted PRs/MRs towards the start and end of the month as folks are reminded to
+get them in to count! Let's take a look at the most popular days during Hacktoberfest by accepted
+PR/MR creation this year:
+
+
+1. 2021-10-01: 23,215
+  (7.88% of all accepted PRs)
+
+2. 2021-10-02: 17,079
+  (5.80% of all accepted PRs)
+
+3. 2021-10-03: 14,162
+  (4.81% of all accepted PRs)
+
+4. 2021-10-04: 13,071
+  (4.44% of all accepted PRs)
+
+5. 2021-10-31: 12,747
+  (4.33% of all accepted PRs)
+
+6. 2021-10-05: 12,406
+  (4.21% of all accepted PRs)
+
+7. 2021-10-06: 11,414
+  (3.88% of all accepted PRs)
+
+8. 2021-10-07: 10,289
+  (3.49% of all accepted PRs)
+
+9. 2021-10-08: 9,035
+  (3.07% of all accepted PRs)
+
+10. 2021-10-30: 8,746
+  (2.97% of all accepted PRs)
+
+11. 2021-10-29: 8,541
+  (2.90% of all accepted PRs)
+
+12. 2021-10-12: 7,941
+  (2.70% of all accepted PRs)
+
+13. 2021-10-11: 7,875
+  (2.67% of all accepted PRs)
+
+14. 2021-10-19: 7,831
+  (2.66% of all accepted PRs)
+
+15. 2021-10-18: 7,662
+  (2.60% of all accepted PRs)
+
+
+## Diving in: Spam
+
+After the issues Hacktoberfest faced at the start of the 2020 event, spam was top of mind for our
+whole team this year as we planned and launched Hacktoberfest 2021. We kept the rules
+the same as we'd landed on last year, with Hacktoberfest being an opt-in event for repositories, and
+we revised our standards on quality contributions to make it easier for participants to understand
+what is expected of them when contributing to open source as part of Hacktoberfest.
+
+**Our efforts to reduce spam can be seen in our data, with only 2,157
+(0.41%) of pull/merge requests being
+flagged as spam or invalid by maintainers.** _(Of course, we can only report on what we see in our
+data here, and do acknowledge that folks may have received spam that wasn't flagged so won't be
+represented in our reporting)._
+
+We also took a stronger stance on excluding repositories reported by the community that did not
+align with our values, mostly repositories encouraging low effort contributions to allow folks to
+quickly win Hacktoberfest. Pull/merge requests to a repository that was reviewed and excluded by our
+team, based on community reports, would not be counted for winning Hacktoberfest but also would not
+count against individual users.
+
+**Excluded repositories accounted for a much larger swathe of pull/merge requests during
+Hacktoberfest, with 62,710
+(12.06%) being discounted due to being submitted
+to an excluded repository.**
+
+If we plot all pull/merge requests during Hacktoberfest by day, broken down by state, the impact
+that excluded repositories had can be seen clearly, and also shows that there are significant spikes
+at the start and end of Hacktoberfest as folks trying to cheat the system tend to do so as
+Hacktoberfest launches and its on their mind, or when they get our reminder email that Hacktoberfest
+is ending soon:
+
+![Stacked area plot of PRs/MRs by created at day and state](generated/prs_by_state_stacked.png)
+
+For transparency, we can also take a look at the excluded repositories we processed for
+Hacktoberfest 2021. A large part of this list was prior excluded repositories from
+previous Hacktoberfest years which were persisted across to this year. However, a form was available
+on the site for members of our community to report repositories that they felt did not follow our
+values, and our team would then process the top reported ones and decide if they should be excluded.
+
+In total, Hacktoberfest 2021 had 1,071 repositories
+that were actively excluded, 35.49%
+of the total repositories reported. Only 47 repositories were
+permitted after having been reported and subsequently reviewed by our team. Unfortunately,
+1,900
+(62.96%) of the repositories that
+were reported by the community were never reviewed by our team, but we are aiming to improve this
+for Hacktoberfest 2022 with automation and a larger number of folks dedicated to reviewing these,
+ensuring a more consistent high quality standard for Hacktoberfest participation.
+
+![Doughnut diagram of reported repositories by review state](generated/repos_reported_doughnut.png)
+
+## Wrapping up
+
+Well, that's all the stats I've generated from the Hacktoberfest 2021 raw data -- you
+can find the raw output of the stats generation script in the
+[`generated/stats.txt`](generated/stats.txt) file, as well as all the graphics which are housed in
+[`generated`](generated) directory.
+
+If there is anything more you'd like to see/know, please feel free to reach out and ask, I'll be
+more than happy to generate it if possible.
+
+All the scripts used to generate these stats & graphics are contained in this repository, in the
+[`src`](src) directory. I have some more information about this in the
+[CONTRIBUTING.md](CONTRIBUTING.md) file, including a schema for the input data, however, the
+Hacktoberfest 2021 raw data, much like previous years' data, isn't public.
+
+Author: [Matt Cowley](https://mattcowley.co.uk/) - If you notice any errors within this document
+please let me know, and I will endeavour to correct them. 💙
