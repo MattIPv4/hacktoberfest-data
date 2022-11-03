@@ -119,7 +119,7 @@ const save = async (file, data, watermark_opts) => {
     const base64Data = data.replace(/^data:image\/png;base64,/, '');
 
     const chart = await Jimp.read(Buffer.from(base64Data, 'base64'));
-    const hf = await Jimp.read(path.join(__dirname, watermark_opts.full ? 'hf-full.png' : 'hf.png'));
+    const hf = await Jimp.read(path.join(__dirname, 'hf.png'));
     hf.resize(watermark_opts.width || Jimp.AUTO, watermark_opts.height || Jimp.AUTO);
     chart.blit(hf, watermark_opts.x - (hf.bitmap.width / 2), watermark_opts.y - (hf.bitmap.height / 2));
 
