@@ -8,24 +8,18 @@ const jsdom = require('jsdom');
 const { JSDOM } = jsdom;
 const Jimp = require('jimp');
 
-const { darken } = require('./color');
+const { darken, lighten } = require('./color');
 
 const colors = {
-    dark: '#072540', // mix(background, #000, 25%); // TODO: update
-    darkBackground: '#072540', // mix(background, #000, 75%); // TODO: update
-    darkBox: '#183D5D', // TODO: update
-    lightBox: '#183D5D', // TODO: update
-    light: '#183D5D', // mix(lightBox, text, 25%); // TODO: update
-    white: '#FFFFFF', // TODO: update
-
-    background: '#f4f0e1',
-    backgroundBox: '#dbe8d9',
-    line: darken('#f4f0e1', 2.5),
-    text: '#2B3531',
-    textBox: '#2B3531',
-    highlightPositive: '#91A88C',
-    highlightNeutral: '#A88771',
-    highlightNegative: '#B53A25',
+    background: '#170F1E',
+    backgroundBox: lighten('#170F1E', 1.5),
+    line: darken('#E5E1E6', 2.5),
+    text: '#E5E1E6',
+    textBox: '#E5E1E6',
+    highlightPositive: '#B4FF39',
+    highlightNeutral: '#40DDFF',
+    highlightNeutralAlt: '#7C7FFF',
+    highlightNegative: '#FFD74D',
 };
 
 const config = (width, height, data, opts) => {
