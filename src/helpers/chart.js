@@ -1,8 +1,8 @@
 const path = require('path');
 
 const { registerFont } = require('canvas');
-registerFont(path.join(__dirname, 'Poppins-Regular.ttf'), { family: 'Poppins', weight: 400 });
-registerFont(path.join(__dirname, 'Poppins-Bold.ttf'), { family: 'Poppins', weight: 700 });
+registerFont(path.join(path.dirname(require.resolve('@fontsource/jetbrains-mono')), 'files/jetbrains-mono-all-400-normal.woff'), { family: 'JetBrains Mono', weight: 400 });
+registerFont(path.join(path.dirname(require.resolve('@fontsource/jetbrains-mono')), 'files/jetbrains-mono-all-700-normal.woff'), { family: 'JetBrains Mono', weight: 700 });
 
 const jsdom = require('jsdom');
 const { JSDOM } = jsdom;
@@ -37,7 +37,7 @@ const config = (width, height, data, opts) => {
     for (const dataSeries of data) {
         dataSeries.indexLabelFontColor = dataSeries.indexLabelFontColor || colors.text;
         dataSeries.indexLabelFontWeight = dataSeries.indexLabelFontWeight || 'regular';
-        dataSeries.indexLabelFontFamily = dataSeries.indexLabelFontFamily || '\'Poppins\', sans-serif';
+        dataSeries.indexLabelFontFamily = dataSeries.indexLabelFontFamily || '\'JetBrains Mono\'';
     }
 
     const axis = {
@@ -46,10 +46,10 @@ const config = (width, height, data, opts) => {
         tickColor: colors.line,
         labelFontColor: colors.text,
         labelFontWeight: 'regular',
-        labelFontFamily: '\'Poppins\', sans-serif',
+        labelFontFamily: '\'JetBrains Mono\'',
         titleFontColor: colors.text,
         titleFontWeight: 'bold',
-        titleFontFamily: '\'Poppins\', sans-serif',
+        titleFontFamily: '\'JetBrains Mono\'',
     };
     return {
         width: width - opts.padding.left - opts.padding.right,
@@ -60,7 +60,7 @@ const config = (width, height, data, opts) => {
         legend: {
             fontColor: colors.text,
             fontWeight: 'regular',
-            fontFamily: '\'Poppins\', sans-serif',
+            fontFamily: '\'JetBrains Mono\'',
             horizontalAlign: 'center',
             verticalAlign: 'bottom',
             maxWidth: (width - opts.padding.left - opts.padding.right) * .9,
@@ -68,7 +68,7 @@ const config = (width, height, data, opts) => {
         title: {
             fontColor: colors.text,
             fontWeight: 'bold',
-            fontFamily: '\'Poppins\', sans-serif',
+            fontFamily: '\'JetBrains Mono\'',
             horizontalAlign: 'center',
             verticalAlign: 'top',
             maxWidth: (width - opts.padding.left - opts.padding.right),
