@@ -11,4 +11,11 @@ const percentage = num => {
     return `${(num * 100).toFixed(2)}%`;
 };
 
-module.exports = { commas, integer, percentage };
+const human = num => {
+    if (num >= 1000000000) return `${commas(num / 1000000000)}B`;
+    if (num >= 1000000) return `${commas(num / 1000000)}M`;
+    if (num >= 1000) return `${commas(num / 1000)}K`;
+    return commas(num);
+};
+
+module.exports = { commas, integer, percentage, human };

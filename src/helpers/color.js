@@ -23,4 +23,6 @@ const darken = (hex, percentage) => rgbToHex(hexToRgb(hex).map(x => Math.round(x
 
 const lighten = (hex, percentage) => darken(hex, -percentage);
 
-module.exports = { hexToRgb, rgbToHex, brightness, isBright, darken, lighten };
+const mix = (hex1, hex2, percentage) => rgbToHex(hexToRgb(hex1).map((x, i) => Math.round(x * (percentage / 100) + hexToRgb(hex2)[i] * (100 - percentage) / 100)));
+
+module.exports = { hexToRgb, rgbToHex, brightness, isBright, darken, lighten, mix };

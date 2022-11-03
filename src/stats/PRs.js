@@ -24,14 +24,14 @@ module.exports = async (data, log) => {
     const totalInvalidPRs = results.totalSpamPRs + results.totalExcludedPRs;
     const totalUnacceptedPRs = results.totalNotAcceptedPRs + results.totalNotParticipatingPRs;
     log('');
-    log(`Total PRs/MRs: ${number.commas(results.totalPRs)}`);
-    log(`  Accepted PRs/MRs: ${number.commas(results.totalAcceptedPRs)} (${number.percentage(results.totalAcceptedPRs / results.totalPRs)})`);
-    log(`  Unaccepted PRs/MRs: ${number.commas(totalUnacceptedPRs)} (${number.percentage(totalUnacceptedPRs / results.totalPRs)})`);
+    log(`Total PR/MRs: ${number.commas(results.totalPRs)}`);
+    log(`  Accepted PR/MRs: ${number.commas(results.totalAcceptedPRs)} (${number.percentage(results.totalAcceptedPRs / results.totalPRs)})`);
+    log(`  Unaccepted PR/MRs: ${number.commas(totalUnacceptedPRs)} (${number.percentage(totalUnacceptedPRs / results.totalPRs)})`);
     log(`    of which were not accepted by a maintainer: ${number.commas(results.totalNotAcceptedPRs)} (${number.percentage(results.totalNotAcceptedPRs / totalUnacceptedPRs)})`);
     log(`    of which were not in a participating repo: ${number.commas(results.totalNotParticipatingPRs)} (${number.percentage(results.totalNotParticipatingPRs / totalUnacceptedPRs)})`);
-    log(`  Invalid PRs/MRs: ${number.commas(totalInvalidPRs)} (${number.percentage(totalInvalidPRs / results.totalPRs)})`);
+    log(`  Invalid PR/MRs: ${number.commas(totalInvalidPRs)} (${number.percentage(totalInvalidPRs / results.totalPRs)})`);
     log(`    of which were in an excluded repo: ${number.commas(results.totalExcludedPRs)} (${number.percentage(results.totalExcludedPRs / totalInvalidPRs)})`);
-    log(`    of which were labeled as spam/invalid: ${number.commas(results.totalSpamPRs)} (${number.percentage(results.totalSpamPRs / totalInvalidPRs)})`);
+    log(`    of which were identified as spam: ${number.commas(results.totalSpamPRs)} (${number.percentage(results.totalSpamPRs / totalInvalidPRs)})`);
 
     const totalPRsByStateConfig = chart.config(1000, 1000, [{
         type: 'doughnut',
@@ -67,8 +67,8 @@ module.exports = async (data, log) => {
             },
             {
                 y: results.totalSpamPRs,
-                indexLabel: 'Invalid/spam',
-                legendText: `Labeled invalid or spam: ${number.commas(results.totalSpamPRs)} (${number.percentage(results.totalSpamPRs / results.totalPRs)})`,
+                indexLabel: 'Spam',
+                legendText: `Identified as spam: ${number.commas(results.totalSpamPRs)} (${number.percentage(results.totalSpamPRs / results.totalPRs)})`,
                 color: chart.colors.highlightNegative,
             },
         ].map(x => [x, {
@@ -79,14 +79,14 @@ module.exports = async (data, log) => {
     }], { padding: { top: 10, left: 5, right: 5, bottom: 5 }});
     totalPRsByStateConfig.title = {
         ...totalPRsByStateConfig.title,
-        text: 'All PRs/MRs: Breakdown by State',
+        text: 'All PR/MRs: Breakdown by State',
         fontSize: 48,
         padding: 5,
         margin: 15,
     };
     totalPRsByStateConfig.legend = {
         ...totalPRsByStateConfig.legend,
-        fontSize: 36,
+        fontSize: 32,
         markerMargin: 32,
     };
     totalPRsByStateConfig.subtitles = [
@@ -101,7 +101,7 @@ module.exports = async (data, log) => {
     await chart.save(
         path.join(__dirname, '../../generated/prs_by_state_doughnut.png'),
         await chart.render(totalPRsByStateConfig),
-        { width: 170, x: 500, y: 440 },
+        { width: 250, x: 500, y: 445 },
     );
 
     // PRs by provider
@@ -118,7 +118,7 @@ module.exports = async (data, log) => {
         ]))
         .sort((a, b) => a[1] < b[1] ? 1 : -1);
     log('');
-    log(`Total PRs/MRs by provider:`);
+    log(`Total PR/MRs by provider:`);
     for (const [ provider, count ] of results.totalPRsByProvider) {
         log(`  ${provider}: ${number.commas(count)} (${number.percentage(count / results.totalPRs)})`);
     }
@@ -128,9 +128,9 @@ module.exports = async (data, log) => {
     results.totalAcceptedPRsNotMerged = data.pull_requests.merged.false.states.accepted;
 
     log('');
-    log('Accepted PRs/MRs by merge status:');
+    log('Accepted PR/MRs by merge status:');
     log(`  Merged: ${number.commas(results.totalAcceptedPRsMerged)} (${number.percentage(results.totalAcceptedPRsMerged / results.totalAcceptedPRs)})`);
-    log(`  Open: ${number.commas(results.totalAcceptedPRsNotMerged)} (${number.percentage(results.totalAcceptedPRsNotMerged / results.totalAcceptedPRs)})`);
+    log(`  Not: ${number.commas(results.totalAcceptedPRsNotMerged)} (${number.percentage(results.totalAcceptedPRsNotMerged / results.totalAcceptedPRs)})`);
 
     const totalAcceptedPRsMergedConfig = chart.config(1000, 1000, [{
         type: 'bar',
@@ -142,6 +142,8 @@ module.exports = async (data, log) => {
                 color: chart.colors.highlightPositive,
                 indexLabelPlacement: results.totalAcceptedPRsMerged / results.totalAcceptedPRs > 0.2 ? 'inside' : 'outside',
                 indexLabel: number.percentage(results.totalAcceptedPRsMerged / results.totalAcceptedPRs),
+                indexLabelFontColor: (results.totalAcceptedPRsMerged / results.totalAcceptedPRs > 0.2
+                    && color.isBright(chart.colors.highlightPositive)) ? chart.colors.background : chart.colors.text,
             },
             {
                 y: results.totalAcceptedPRsNotMerged,
@@ -149,6 +151,8 @@ module.exports = async (data, log) => {
                 color: chart.colors.highlightNeutral,
                 indexLabelPlacement: results.totalAcceptedPRsNotMerged / results.totalAcceptedPRs > 0.2 ? 'inside' : 'outside',
                 indexLabel: number.percentage(results.totalAcceptedPRsNotMerged / results.totalAcceptedPRs),
+                indexLabelFontColor: (results.totalAcceptedPRsNotMerged / results.totalAcceptedPRs > 0.2
+                    && color.isBright(chart.colors.highlightNeutral)) ? chart.colors.background : chart.colors.text,
             },
         ].sort((a, b) => a.y > b.y ? 1 : -1),
     }]);
@@ -159,10 +163,12 @@ module.exports = async (data, log) => {
     totalAcceptedPRsMergedConfig.axisY = {
         ...totalAcceptedPRsMergedConfig.axisY,
         labelFontSize: 24,
+        labelFormatter: e => number.human(e.value),
+        interval: 40000,
     };
     totalAcceptedPRsMergedConfig.title = {
         ...totalAcceptedPRsMergedConfig.title,
-        text: 'Accepted PRs/MRs:\nChanges Merged',
+        text: 'Accepted PR/MRs:\nChanges Merged',
         fontSize: 48,
         padding: 5,
         margin: 100,
@@ -178,9 +184,9 @@ module.exports = async (data, log) => {
     results.totalAcceptedPRsNotApproved = data.pull_requests.approved.false.states.accepted;
 
     log('');
-    log('Accepted PRs/MRs by approval:');
+    log('Accepted PR/MRs by approving review:');
     log(`  Approved: ${number.commas(results.totalAcceptedPRsApproved)} (${number.percentage(results.totalAcceptedPRsApproved / results.totalAcceptedPRs)})`);
-    log(`  Pending: ${number.commas(results.totalAcceptedPRsNotApproved)} (${number.percentage(results.totalAcceptedPRsNotApproved / results.totalAcceptedPRs)})`);
+    log(`  Not: ${number.commas(results.totalAcceptedPRsNotApproved)} (${number.percentage(results.totalAcceptedPRsNotApproved / results.totalAcceptedPRs)})`);
 
     const totalAcceptedPRsApprovedConfig = chart.config(1000, 1000, [{
         type: 'bar',
@@ -192,6 +198,8 @@ module.exports = async (data, log) => {
                 color: chart.colors.highlightPositive,
                 indexLabelPlacement: results.totalAcceptedPRsApproved / results.totalAcceptedPRs > 0.2 ? 'inside' : 'outside',
                 indexLabel: number.percentage(results.totalAcceptedPRsApproved / results.totalAcceptedPRs),
+                indexLabelFontColor: (results.totalAcceptedPRsApproved / results.totalAcceptedPRs > 0.2
+                    && color.isBright(chart.colors.highlightPositive)) ? chart.colors.background : chart.colors.text,
             },
             {
                 y: results.totalAcceptedPRsNotApproved,
@@ -199,6 +207,8 @@ module.exports = async (data, log) => {
                 color: chart.colors.highlightNeutral,
                 indexLabelPlacement: results.totalAcceptedPRsNotApproved / results.totalAcceptedPRs > 0.2 ? 'inside' : 'outside',
                 indexLabel: number.percentage(results.totalAcceptedPRsNotApproved / results.totalAcceptedPRs),
+                indexLabelFontColor: (results.totalAcceptedPRsNotApproved / results.totalAcceptedPRs > 0.2
+                    && color.isBright(chart.colors.highlightNeutral)) ? chart.colors.background : chart.colors.text,
             },
         ].sort((a, b) => a.y > b.y ? 1 : -1),
     }]);
@@ -209,10 +219,12 @@ module.exports = async (data, log) => {
     totalAcceptedPRsApprovedConfig.axisY = {
         ...totalAcceptedPRsApprovedConfig.axisY,
         labelFontSize: 24,
+        labelFormatter: e => number.human(e.value),
+        interval: 40000,
     };
     totalAcceptedPRsApprovedConfig.title = {
         ...totalAcceptedPRsApprovedConfig.title,
-        text: 'Accepted PRs/MRs:\nMaintainer Approval',
+        text: 'Accepted PR/MRs:\nApproving Review',
         fontSize: 48,
         padding: 5,
         margin: 100,
@@ -230,7 +242,7 @@ module.exports = async (data, log) => {
         .sort((a, b) => a[1] < b[1] ? 1 : -1);
 
     log('');
-    log(`Accepted PRs/MRs by language: ${number.commas(results.totalAcceptedPRsByLanguage.length)} languages`);
+    log(`Accepted PR/MRs by language: ${number.commas(results.totalAcceptedPRsByLanguage.length)} languages`);
     for (const [ lang, count ] of results.totalAcceptedPRsByLanguage.slice(0, 50)) {
         log(`  ${lang}: ${number.commas(count)} (${number.percentage(count / results.totalAcceptedPRs)})`);
     }
@@ -246,7 +258,7 @@ module.exports = async (data, log) => {
             doughnutTotal += (count || 0);
             return {
                 y: count || 0,
-                indexLabel: `${lang.split(' ')[0]}: ${number.commas(count || 0)} (${number.percentage(percent)})`,
+                indexLabel: `${lang.split(' ')[0]}: ${number.percentage(percent)}`,
                 color: dataColor,
                 indexLabelFontSize: percent > 0.1 ? 24 : percent > 0.05 ? 22 : 20,
                 indexLabelMaxWidth: 500,
@@ -256,7 +268,7 @@ module.exports = async (data, log) => {
     if (results.totalAcceptedPRs > doughnutTotal) {
         totalPRsByLanguageConfig.data[0].dataPoints.push({
             y: results.totalAcceptedPRs - doughnutTotal,
-            indexLabel: `Others: ${number.commas(results.totalAcceptedPRs - doughnutTotal)} (${number.percentage((results.totalAcceptedPRs - doughnutTotal) / results.totalAcceptedPRs)})`,
+            indexLabel: `Others: ${number.percentage((results.totalAcceptedPRs - doughnutTotal) / results.totalAcceptedPRs)}`,
             color: chart.colors.highlightNeutral,
             indexLabelFontSize: 24,
         });
@@ -268,14 +280,14 @@ module.exports = async (data, log) => {
     }]).flat(1);
     totalPRsByLanguageConfig.title = {
         ...totalPRsByLanguageConfig.title,
-        text: 'Accepted PRs/MRs: Top 10 Languages',
+        text: 'Accepted PR/MRs: Top 10 Languages',
         fontSize: 48,
         padding: 5,
         margin: 15,
     };
     totalPRsByLanguageConfig.subtitles = [{
         ...totalPRsByLanguageConfig.title,
-        text: `Hacktoberfest saw ${number.commas(results.totalAcceptedPRsByLanguage.length)} different programming languages represented across the ${number.commas(results.totalAcceptedPRs)} accepted PRs/MRs submitted by participants.`,
+        text: `Hacktoberfest saw ${number.commas(results.totalAcceptedPRsByLanguage.length)} different programming languages represented across the ${number.commas(results.totalAcceptedPRs)} accepted PR/MRs submitted by participants.`,
         fontSize: 32,
         padding: 20,
         cornerRadius: 5,
@@ -288,7 +300,7 @@ module.exports = async (data, log) => {
     await chart.save(
         path.join(__dirname, '../../generated/prs_by_language_doughnut.png'),
         await chart.render(totalPRsByLanguageConfig),
-        { width: 120, x: 500, y: 445 },
+        { width: 250, x: 500, y: 430 },
     );
 
     // Breaking down PRs by day
@@ -298,7 +310,7 @@ module.exports = async (data, log) => {
         .slice(0, 15);
 
     log('');
-    log('Top days by accepted PRs/MRs:');
+    log('Top days by accepted PR/MRs:');
     for (const [ day, count ] of results.totalPRsByDay) {
         log(`  ${formatDate(new Date(day))}: ${number.commas(count)} (${number.percentage(count / results.totalAcceptedPRs)})`);
     }
@@ -309,7 +321,10 @@ module.exports = async (data, log) => {
         indexLabelFontSize: 24,
         dataPoints: results.totalPRsByDay.slice(0, 10).map(([ day, count ], i) => {
             const colors = [
-                chart.colors.highlightPositive, chart.colors.highlightNeutral, chart.colors.highlightNegative,
+                chart.colors.highlightPositive,
+                chart.colors.highlightNeutral,
+                chart.colors.highlightNeutralAlt,
+                chart.colors.highlightNegative,
             ];
             const dataColor = colors[i % colors.length];
             return {
@@ -327,11 +342,13 @@ module.exports = async (data, log) => {
     };
     totalPRsByDayConfig.axisY = {
         ...totalPRsByDayConfig.axisY,
-        labelFontSize: 34,
+        labelFontSize: 24,
+        labelFormatter: (e) => number.human(e.value),
+        interval: 2000,
     };
     totalPRsByDayConfig.title = {
         ...totalPRsByDayConfig.title,
-        text: 'Accepted PRs/MRs: Most Popular Days',
+        text: 'Accepted PR/MRs: Most Popular Days',
         fontSize: 48,
         padding: 5,
         margin: 15,
@@ -345,7 +362,8 @@ module.exports = async (data, log) => {
     // Breaking down PRs by day and by language
     results.totalAcceptedPRsByLanguageByDay = results.totalAcceptedPRsByLanguage.slice(0, 10).map(([ language ]) => ({
         language,
-        daily: getDateArray(new Date('2021-09-29'), new Date('2021-11-03'))
+        // One day before Hacktoberfest, two days after
+        daily: getDateArray(new Date('2022-09-29'), new Date('2022-11-03'))
             .map(date => ({
                 date,
                 count: data.pull_requests.languages.daily?.[date.toISOString().split('T')[0]]?.languages?.[language]?.states?.accepted || 0,
@@ -379,7 +397,7 @@ module.exports = async (data, log) => {
     };
     totalPRsByLanguageByDayConfig.title = {
         ...totalPRsByLanguageByDayConfig.title,
-        text: 'Accepted PRs/MRs: Top 10 Languages',
+        text: 'Accepted PR/MRs: Top 10 Languages',
         fontSize: 48,
         padding: 5,
         margin: 15,
@@ -394,31 +412,32 @@ module.exports = async (data, log) => {
         },
     ];
 
-    totalPRsByLanguageByDayConfig.backgroundColor = chart.colors.text;
-    totalPRsByLanguageByDayConfig.title.fontColor = chart.colors.background;
-    totalPRsByLanguageByDayConfig.legend.fontColor = chart.colors.background;
-    totalPRsByLanguageByDayConfig.axisX.labelFontColor = chart.colors.background;
-    totalPRsByLanguageByDayConfig.axisX.titleFontColor = chart.colors.background;
-    totalPRsByLanguageByDayConfig.axisX.lineColor = color.lighten(chart.colors.text, 10);
-    totalPRsByLanguageByDayConfig.axisX.gridColor = color.lighten(chart.colors.text, 10);
-    totalPRsByLanguageByDayConfig.axisX.tickColor = color.lighten(chart.colors.text, 10);
-    totalPRsByLanguageByDayConfig.axisY.labelFontColor = chart.colors.background;
-    totalPRsByLanguageByDayConfig.axisY.titleFontColor = chart.colors.background;
-    totalPRsByLanguageByDayConfig.axisY.lineColor = color.lighten(chart.colors.text, 10);
-    totalPRsByLanguageByDayConfig.axisY.gridColor = color.lighten(chart.colors.text, 10);
-    totalPRsByLanguageByDayConfig.axisY.tickColor = color.lighten(chart.colors.text, 10);
+    // totalPRsByLanguageByDayConfig.backgroundColor = chart.colors.text;
+    // totalPRsByLanguageByDayConfig.title.fontColor = chart.colors.background;
+    // totalPRsByLanguageByDayConfig.legend.fontColor = chart.colors.background;
+    // totalPRsByLanguageByDayConfig.axisX.labelFontColor = chart.colors.background;
+    // totalPRsByLanguageByDayConfig.axisX.titleFontColor = chart.colors.background;
+    // totalPRsByLanguageByDayConfig.axisX.lineColor = color.lighten(chart.colors.text, 10);
+    // totalPRsByLanguageByDayConfig.axisX.gridColor = color.lighten(chart.colors.text, 10);
+    // totalPRsByLanguageByDayConfig.axisX.tickColor = color.lighten(chart.colors.text, 10);
+    // totalPRsByLanguageByDayConfig.axisY.labelFontColor = chart.colors.background;
+    // totalPRsByLanguageByDayConfig.axisY.titleFontColor = chart.colors.background;
+    // totalPRsByLanguageByDayConfig.axisY.lineColor = color.lighten(chart.colors.text, 10);
+    // totalPRsByLanguageByDayConfig.axisY.gridColor = color.lighten(chart.colors.text, 10);
+    // totalPRsByLanguageByDayConfig.axisY.tickColor = color.lighten(chart.colors.text, 10);
 
     await chart.save(
         path.join(__dirname, '../../generated/prs_by_language_spline.png'),
         await chart.render(totalPRsByLanguageByDayConfig),
-        { width: 200, x: 1250, y: 220 },
+        { width: 200, x: 1250, y: 200 },
     );
 
     // Breaking down PRs by day and by state
     results.totalPRsByStateByDay = Object.keys(data.pull_requests.states.all.states)
         .map(state => ({
             state,
-            daily: getDateArray(new Date('2021-09-29'), new Date('2021-11-03'))
+            // One day before Hacktoberfest, two days after
+            daily: getDateArray(new Date('2022-09-29'), new Date('2022-11-03'))
                 .map(date => ({
                     date,
                     count: data.pull_requests.states.daily?.[date.toISOString().split('T')[0]]?.states?.[state] || 0,
@@ -427,9 +446,9 @@ module.exports = async (data, log) => {
 
     const totalPRsByStateByDayOrder = ['accepted', 'not-accepted', 'not-participating', 'excluded', 'spam'];
     const totalPRsByStateByDayColors = {
-        spam: color.darken(chart.colors.highlightNegative, 20),
+        spam: color.mix(chart.colors.highlightNegative, chart.colors.highlightNeutralAlt, 75),
         excluded: chart.colors.highlightNegative,
-        'not-participating': color.darken(chart.colors.highlightNeutral, 20),
+        'not-participating': color.mix(chart.colors.highlightNeutral, chart.colors.highlightNeutralAlt, 75),
         'not-accepted': chart.colors.highlightNeutral,
         accepted: chart.colors.highlightPositive,
     };
@@ -464,7 +483,7 @@ module.exports = async (data, log) => {
     };
     totalPRsByStateByDayConfig.title = {
         ...totalPRsByStateByDayConfig.title,
-        text: 'All PRs/MRs: Breakdown by State',
+        text: 'All PR/MRs: Breakdown by State',
         fontSize: 48,
         padding: 5,
         margin: 15,
@@ -482,7 +501,7 @@ module.exports = async (data, log) => {
     await chart.save(
         path.join(__dirname, '../../generated/prs_by_state_stacked.png'),
         await chart.render(totalPRsByStateByDayConfig),
-        { width: 200, x: 1250, y: 220 },
+        { width: 200, x: 1250, y: 200 },
     );
 
     // Averages of certain metrics

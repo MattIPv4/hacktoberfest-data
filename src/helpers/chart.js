@@ -8,12 +8,12 @@ const jsdom = require('jsdom');
 const { JSDOM } = jsdom;
 const Jimp = require('jimp');
 
-const { darken, lighten } = require('./color');
+const { mix } = require('./color');
 
 const colors = {
     background: '#170F1E',
-    backgroundBox: lighten('#170F1E', 1.5),
-    line: darken('#E5E1E6', 2.5),
+    backgroundBox: mix('#170F1E', '#E5E1E6', 75),
+    line: mix('#170F1E', '#E5E1E6', 50),
     text: '#E5E1E6',
     textBox: '#E5E1E6',
     highlightPositive: '#B4FF39',
