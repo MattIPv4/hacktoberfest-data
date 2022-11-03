@@ -25,17 +25,17 @@ module.exports = async (data, log) => {
     log('');
     log(`Registered users: ${number.commas(results.registeredUsers)}`);
     log(`Completed users: ${number.commas(results.completedUsers)}`);
-    log(`Accepted PRs/MRs: ${number.commas(results.acceptedPRs)}`);
-    log(`Active repositories (1+ accepted PRs/MRs): ${number.commas(results.activeRepos)}`);
+    log(`Accepted PR/MRs: ${number.commas(results.acceptedPRs)}`);
+    log(`Active repositories (1+ accepted PR/MRs): ${number.commas(results.activeRepos)}`);
     log(`Countries represented by registered users: ${number.commas(results.countriesRegistered)}`);
     log(`Countries represented by completed users: ${number.commas(results.countriesCompleted)}`);
-    log(`Day with most accepted PRs/MRs submitted: ${results.mostPRsDay} (${number.percentage(results.mostPRsDayPercentage)})`);
-    log(`Most common repository language in accepted PRs/MRs: ${results.mostCommonLanguageInPRs} (${number.percentage(results.mostCommonLanguageInPRsPercentage)})`);
+    log(`Day with most accepted PR/MRs submitted: ${results.mostPRsDay} (${number.percentage(results.mostPRsDayPercentage)})`);
+    log(`Most common repository language in accepted PR/MRs: ${results.mostCommonLanguageInPRs} (${number.percentage(results.mostCommonLanguageInPRsPercentage)})`);
 
-    results.americaRegisteredUsers = data.users.metadata.country.all.values['United States'];
-    results.americaCompletedUsers = data.users.metadata.country.states.contributor.values['United States'];
-    results.indiaRegisteredUsers = data.users.metadata.country.all.values['India'];
-    results.indiaCompletedUsers = data.users.metadata.country.states.contributor.values['India'];
+    results.americaRegisteredUsers = data.users.metadata.country.all.values['us'];
+    results.americaCompletedUsers = data.users.metadata.country.states.contributor.values['us'];
+    results.indiaRegisteredUsers = data.users.metadata.country.all.values['in'];
+    results.indiaCompletedUsers = data.users.metadata.country.states.contributor.values['in'];
 
     log('');
     log('Region-specific:');
