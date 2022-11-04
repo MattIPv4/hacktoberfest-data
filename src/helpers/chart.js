@@ -12,8 +12,8 @@ const { mix } = require('./color');
 
 const colors = {
     background: '#170F1E',
-    backgroundBox: mix('#170F1E', '#E5E1E6', 75),
-    line: mix('#170F1E', '#E5E1E6', 50),
+    backgroundBox: mix('#170F1E', '#E5E1E6', 85),
+    line: mix('#170F1E', '#E5E1E6', 85),
     text: '#E5E1E6',
     textBox: '#E5E1E6',
     highlightPositive: '#B4FF39',

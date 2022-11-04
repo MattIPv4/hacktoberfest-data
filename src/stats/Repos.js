@@ -2,6 +2,7 @@ const path = require('path');
 const number = require('../helpers/number');
 const chart = require('../helpers/chart');
 const linguist = require('../helpers/linguist');
+const color = require('../helpers/color');
 
 module.exports = async (data, log) => {
     /***************
@@ -26,7 +27,7 @@ module.exports = async (data, log) => {
     log('(A repository was considered tracked if it received a PR/MR from a Hacktoberfest participant, whether the repository was participating in Hacktoberfest or not)');
     log('');
     log(`Reported repositories: ${number.commas(results.totalReposReported)}`);
-    log('(The Hacktoberfest community was able to report repositories that they did not feel followed our values for internal view)');
+    log('(The Hacktoberfest community was able to report repositories that they did not feel followed our values)');
     log(`  Excluded repositories: ${number.commas(results.totalReposExcluded)} (${number.percentage(results.totalReposExcluded / results.totalReposReported)})`);
     log(`  Permitted repositories: ${number.commas(results.totalReposPermitted)} (${number.percentage(results.totalReposPermitted / results.totalReposReported)})`);
     log(`  Unreviewed repositories: ${number.commas(results.totalReposUnreviewed)} (${number.percentage(results.totalReposUnreviewed / results.totalReposReported)})`);
@@ -88,7 +89,7 @@ module.exports = async (data, log) => {
     await chart.save(
         path.join(__dirname, '../../generated/repos_reported_doughnut.png'),
         await chart.render(totalReposReportedConfig),
-        { width: 200, x: 500, y: 480 },
+        { width: 250, x: 500, y: 475 },
     );
 
     // Breaking down repos by language
@@ -170,7 +171,7 @@ module.exports = async (data, log) => {
     await chart.save(
         path.join(__dirname, '../../generated/repos_by_language_doughnut.png'),
         await chart.render(totalReposByLanguageConfig),
-        { width: 150, x: 500, y: 440 },
+        { width: 200, x: 500, y: 435 },
     );
 
     // Breakdown by license
@@ -191,7 +192,10 @@ module.exports = async (data, log) => {
         indexLabelFontSize: 24,
         dataPoints: results.totalReposByLicenses.slice(0, 10).map(([ license, count ], i) => {
             const colors = [
-                chart.colors.highlightPositive, chart.colors.highlightNeutral, chart.colors.highlightNegative,
+                chart.colors.highlightPositive,
+                chart.colors.highlightNeutral,
+                chart.colors.highlightNeutralAlt,
+                chart.colors.highlightNegative,
             ];
             const dataColor = colors[i % colors.length];
             const percentWidth = count / results.totalReposByLicenses[0][1];
@@ -201,7 +205,8 @@ module.exports = async (data, log) => {
                 indexLabelPlacement: percentWidth > 0.4 ? 'inside' : 'outside',
                 indexLabel: `${license}: ${number.commas(count)} (${number.percentage(count / results.totalReposTracked)})`,
                 color: dataColor,
-                indexLabelFontColor: chart.colors.text,
+                indexLabelFontColor: (percentWidth > 0.4 && color.isBright(chart.colors.highlightPositive))
+                    ? chart.colors.background : chart.colors.text,
             };
         }),
     }]);
@@ -258,7 +263,7 @@ module.exports = async (data, log) => {
     await chart.save(
         path.join(__dirname, '../../generated/repos_by_license_bar.png'),
         await chart.render(topRepoLicensesConfig),
-        { width: 200, x: 880, y: 300 },
+        { width: 200, x: 880, y: 325 },
     );
 
     return results;
