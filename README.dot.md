@@ -2,7 +2,7 @@
 
 Hi there, 👋
 
-I'm [Matt Cowley](https://mattcowley.co.uk/), Senior Web Developer at
+I'm [Matt Cowley](https://mattcowley.co.uk/), Senior Software Engineer I at
 [DigitalOcean](https://digitalocean.com/).
 
 I work on a bunch of things at DigitalOcean, with a great mix of engineering, developer relations
@@ -18,9 +18,10 @@ What did we accomplish together in October {{= data.year }}?
 These are the highlights from Hacktoberfest #{{= data.year - 2013 }}:
 
 - Registered users: **{{= c(data.readme.registeredUsers) }}**
-- Completed users: **{{= c(data.readme.completedUsers) }}**
-- Accepted PRs/MRs: **{{= c(data.readme.acceptedPRs) }}**
-- Active repositories (1+ accepted PRs/MRs): **{{= c(data.readme.activeRepos) }}**
+- Engaged users (1-3 accepted PR/MRs): **{{= c(data.readme.engagedUsers) }}**
+- Completed users (4+ accepted PR/MRs): **{{= c(data.readme.completedUsers) }}**
+- Accepted PR/MRs: **{{= c(data.readme.acceptedPRs) }}**
+- Active repositories (1+ accepted PR/MRs): **{{= c(data.readme.activeRepos) }}**
 - Countries represented by registered users: **{{= c(data.readme.countriesRegistered) }}**
 - Countries represented by completed users: **{{= c(data.readme.countriesCompleted) }}**
 
@@ -35,12 +36,12 @@ and in the data used here.
 
 For users, there are four key states that you'll see:
 
-- **Completed**: A user that submitted four or more accepted PRs/MRs during Hacktoberfest.
-- **Engaged**: A user that submitted between one and three accepted PRs/MRs during Hacktoberfest.
+- **Completed**: A user that submitted four or more accepted PR/MRs during Hacktoberfest.
+- **Engaged**: A user that submitted between one and three accepted PR/MRs during Hacktoberfest.
 - **Registered**: A user that completed the registration flow for Hacktoberfest, but did not submit
-  any PRs/MRs that were accepted.
-- **Disqualified**: A user that was disqualified for submitting 2 or more spammy PRs/MRs,
-  irrespective of how many accepted PRs/MRs they may have also had.
+  any PR/MRs that were accepted.
+- **Disqualified**: A user that was disqualified for submitting 2 or more spammy PR/MRs,
+  irrespective of how many accepted PR/MRs they may have also had.
 
 For pull/merge requests, there are five states used to process them that you'll see:
 
@@ -51,8 +52,9 @@ For pull/merge requests, there are five states used to process them that you'll 
 - **Not participating**: Any PR/MR that was submitted by a participant to a repository that was not
   participating in Hacktoberfest (i.e. having the `hacktoberfest` topic, or adding the
   `hacktoberfest-accepted` label to specific PRs).
-- **Invalid/spam**: Any PR/MR that was given a label by a maintainer containing the word 'invalid'
-  or 'spam'. These are not counted toward winning, but do count toward a user being disqualified.
+- **Spam**: Any PR/MR that was given a label by a maintainer containing the 'spam', or PR/MRs that 
+  our abuse logic detected as spam. These are not counted toward winning, but do count toward a user
+  being disqualified.
 - **Excluded**: Any PR/MR that was submitted to a repository that has been excluded from
   Hacktoberfest for not following our values. These do not count toward winning, nor do they count
   toward a user being disqualified.
@@ -101,24 +103,24 @@ distributed for those users:
 <img src="generated/users_by_state_doughnut.png" width="40%" alt="Doughnut diagram of users by application state" align="right" style="margin: 1em;" />
 
 Of course, there's more to Hacktoberfest than just registering for the event, folks actually submit
-PRs/MRs to open-source projects! This year, we had
+PR/MRs to open-source projects! This year, we had
 **{{= c(data.Users.totalUsersCompleted + data.Users.totalUsersEngaged) }}
 users
 ({{= p((data.Users.totalUsersCompleted + data.Users.totalUsersEngaged) / data.Users.totalUsers) }}
-of total registrations)** that submitted one or more PRs/MRs that were accepted by maintainers.
+of total registrations)** that submitted one or more PR/MRs that were accepted by maintainers.
 Of those, **{{= c(data.Users.totalUsersCompleted) }}
 ({{= p(data.Users.totalUsersCompleted / (data.Users.totalUsersCompleted + data.Users.totalUsersEngaged)) }})
 ({{= p(data.Users.totalUsersCompleted / data.Users.totalUsers) }} of total registrations)** went on
-to submit at least four accepted PRs/MRs to successfully complete Hacktoberfest.
+to submit at least four accepted PR/MRs to successfully complete Hacktoberfest.
 
 Impressively, we saw that **{{= c(data.Users.totalUsersByAcceptedPRsCapped[4][1]) }} users
 ({{= p(data.Users.totalUsersByAcceptedPRsCapped[4][1] / data.Users.totalUsersCompleted) }} of total
-completed)** submitted more than 4 accepted PRs/MRs, going above and beyond to contribute to
+completed)** submitted more than 4 accepted PR/MRs, going above and beyond to contribute to
 open-source outside the goal set for completing Hacktoberfest.
 
 Sadly, {{= c(data.Users.totalUsersDisqualified) }} users were disqualified this year
 ({{= p(data.Users.totalUsersDisqualified / data.Users.totalUsers) }} of total registrations).
-Disqualification of users happen automatically if two or more of their PRs/MRs are actively
+Disqualification of users happen automatically if two or more of their PR/MRs are actively
 identified as spam or invalid by project maintainers. We were very happy to see how low this number
 was though, indicating to us that our efforts to educate and remind contributors of the quality
 standards expected of them during Hacktoberfest are working. _(Of course, we can only report on
@@ -143,8 +145,8 @@ provider was {{= data.Users.totalUsersByProvider[0][0] }} with
 _Users were able to link one or more providers to their account, so the counts here may sum to more
 than the total number of users registered._
 
-We can also look at a breakdown of users that were engaged (1-3 accepted PRs/MRs) and users that
-completed Hacktoberfest (4+ PRs/MRs) by provider.
+We can also look at a breakdown of users that were engaged (1-3 accepted PR/MRs) and users that
+completed Hacktoberfest (4+ PR/MRs) by provider.
 
 Engaged users by provider:
 
@@ -160,12 +162,12 @@ Completed users by provider:
   ({{= p(item[1] / data.Users.totalUsersCompleted) }} of completed users)
 {{~ }}
 
-This year for Hacktoberfest, users had to submit PRs/MRs to participating projects during
+This year for Hacktoberfest, users had to submit PR/MRs to participating projects during
 October that then had to be accepted by maintainers during October. If a user submitted four or
-more PRs/MRs, then they completed Hacktoberfest. However, not everyone hits the 4 PR/MR target, with
+more PR/MRs, then they completed Hacktoberfest. However, not everyone hits the 4 PR/MR target, with
 some falling short, but many also going beyond the target and contributing further.
 
-We can see how many accepted PRs/MRs each user had and bucket them:
+We can see how many accepted PR/MRs each user had and bucket them:
 
 {{~ data.Users.totalUsersByAcceptedPRs :item:i }}
 - {{= item[0] }}{{= (i === data.Users.totalUsersByAcceptedPRs.length - 1 ? '+' : '') }}
@@ -174,50 +176,50 @@ We can see how many accepted PRs/MRs each user had and bucket them:
 {{~ }}
 
 Looking at this, we can see that quite a few users only managed to get 1 accepted PR/MR, but
-after that it quickly trailed off for 2 and 3 PRs/MRs. It seems like the target of 4 PRs/MRs
-encouraged many users to push through to getting all 4 PRs/MRs created/accepted if they got that
+after that it quickly trailed off for 2 and 3 PR/MRs. It seems like the target of 4 PR/MRs
+encouraged many users to push through to getting all 4 PR/MRs created/accepted if they got that
 first one completed.
 
-![Bar chart of users by accepted PRs/MRs](generated/users_by_prs_extended_column.png)
+![Bar chart of users by accepted PR/MRs](generated/users_by_prs_extended_column.png)
 
 ## Diving in: Pull/Merge Requests
 
-<img src="generated/prs_by_state_doughnut.png" width="40%" alt="Doughnut diagram of PRs/MRs by application state" align="right" style="margin: 1em;" />
+<img src="generated/prs_by_state_doughnut.png" width="40%" alt="Doughnut diagram of PR/MRs by application state" align="right" style="margin: 1em;" />
 
 Now on to what you've been waiting for, and the core of Hacktoberfest itself, the pull/merge
-requests. This year Hacktoberfest tracked **{{= c(data.PRs.totalPRs) }}** PRs/MRs that were within
+requests. This year Hacktoberfest tracked **{{= c(data.PRs.totalPRs) }}** PR/MRs that were within
 the bounds of the Hacktoberfest event, and **{{= c(data.PRs.totalAcceptedPRs) }}
 ({{= p(data.PRs.totalAcceptedPRs / data.PRs.totalPRs) }})** of those went on to be accepted!
 
 Unfortunately, not every pull/merge request can be accepted though, for one reason or another, and
 this year we saw that there were **{{= c(data.PRs.totalNotAcceptedPRs )}}
-({{= p(data.PRs.totalNotAcceptedPRs / data.PRs.totalPRs) }})** PRs/MRs that were submitted to
+({{= p(data.PRs.totalNotAcceptedPRs / data.PRs.totalPRs) }})** PR/MRs that were submitted to
 participating repositories but that were not accepted by maintainers, as well as
 **{{= c(data.PRs.totalNotParticipatingPRs )}}
-({{= p(data.PRs.totalNotParticipatingPRs / data.PRs.totalPRs) }})** PRs/MRs submitted by
+({{= p(data.PRs.totalNotParticipatingPRs / data.PRs.totalPRs) }})** PR/MRs submitted by
 Hacktoberfest participants to repositories that were not participating in Hacktoberfest. As a
 reminder to folks, repositories opt-in to participating in Hacktoberfest by adding the
-`hacktoberfest` topic to their repository (or individual PRs/MRs can be opted-in with the
+`hacktoberfest` topic to their repository (or individual PR/MRs can be opted-in with the
 `hacktoberfest-accepted` label)!
 
 Spam is also a big issue that we focus on reducing during Hacktoberfest, and we tracked the number
-of PRs/MRs that were identified by maintainers as spam, as well as those that were caught by
+of PR/MRs that were identified by maintainers as spam, as well as those that were caught by
 automation we'd written to stop spammy users. We'll talk more about all-things-spam later on.
 
 This year, Hacktoberfest supported multiple providers that contributors could use to submit
-contributions to open-source projects. Let's take a look at the breakdown of PRs/MRs per provider:
+contributions to open-source projects. Let's take a look at the breakdown of PR/MRs per provider:
 
 {{~ data.PRs.totalPRsByProvider :item:i }}
 {{= i + 1 }}. {{= item[0] }}: {{= c(item[1]) }}
-  ({{= p(item[1] / data.PRs.totalPRs) }} of total PRs/MRs)
+  ({{= p(item[1] / data.PRs.totalPRs) }} of total PR/MRs)
 {{~ }}
 
 PRs and MRs that are accepted by maintainers for Hacktoberfest aren't necessarily merged --
 Hacktoberfest supports multiple different ways for a maintainer to indicate that a PR/MR is
-legitimate and should be counted. PRs/MRs can be merged, or they can be given the
+legitimate and should be counted. PR/MRs can be merged, or they can be given the
 `hacktoberfest-accepted` label, or maintainers can leave an overall approving review.
 
-Of the accepted PRs/MRs, **{{= c(data.PRs.totalAcceptedPRsMerged) }}
+Of the accepted PR/MRs, **{{= c(data.PRs.totalAcceptedPRsMerged) }}
 ({{= p(data.PRs.totalAcceptedPRsMerged / data.PRs.totalAcceptedPRs) }})** were merged into the
 repository, and **{{= c(data.PRs.totalAcceptedPRsApproved) }}
 ({{= p(data.PRs.totalAcceptedPRsApproved / data.PRs.totalAcceptedPRs) }})** were approved by a
@@ -225,7 +227,7 @@ maintainer. Note that there may be overlap here, as a PR/MR may have been approv
 Unfortunately, we don't have direct aggregated data for the `hacktoberfest-accepted` label.
 
 With this many accepted PRs, we can also take a look at some interesting averages determined from
-the accepted PRs/MRs. The average accepted PR/MR...
+the accepted PR/MRs. The average accepted PR/MR...
 
 - ...contained **{{= c(data.PRs.averageAcceptedPRCommits) }} commits**
 - ...added/edited/removed **{{= c(data.PRs.averageAcceptedPRFiles) }} files**
@@ -244,11 +246,11 @@ language information via their API, so this only considers GitHub PRs.
   ({{= p(item[1] / data.PRs.totalAcceptedPRs) }} of all accepted PRs)
 {{~ }}
 
-<img src="generated/prs_by_day_bar.png" width="40%" alt="Bar chart of accepted PRs/Mrs by most popular days" align="right" style="margin: 1em;" />
+<img src="generated/prs_by_day_bar.png" width="40%" alt="Bar chart of accepted PR/MRs by most popular days" align="right" style="margin: 1em;" />
 
 Hacktoberfest happens throughout the month of October, with participants allowed to submit
 pull/merge requests at any point from October 1 - 31 in any timezone. However, there tends to be
-large spikes in submitted PRs/MRs towards the start and end of the month as folks are reminded to
+large spikes in submitted PR/MRs towards the start and end of the month as folks are reminded to
 get them in to count! Let's take a look at the most popular days during Hacktoberfest by accepted
 PR/MR creation this year:
 
@@ -288,7 +290,7 @@ at the start and end of Hacktoberfest as folks trying to cheat the system tend t
 Hacktoberfest launches and its on their mind, or when they get our reminder email that Hacktoberfest
 is ending soon:
 
-![Stacked area plot of PRs/MRs by created at day and state](generated/prs_by_state_stacked.png)
+![Stacked area plot of PR/MRs by created at day and state](generated/prs_by_state_stacked.png)
 
 For transparency, we can also take a look at the excluded repositories we processed for
 Hacktoberfest {{= data.year }}. A large part of this list was prior excluded repositories from

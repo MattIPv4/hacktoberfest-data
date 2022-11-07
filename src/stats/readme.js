@@ -8,11 +8,12 @@ module.exports = async (data, log) => {
     const results = {};
 
     results.registeredUsers = data.users.states.all.count;
+    results.engagedUsers = data.users.states.all.states['first-accepted'] - data.users.states.all.states.contributor;
     results.completedUsers = data.users.states.all.states.contributor;
     results.acceptedPRs = data.pull_requests.states.all.states.accepted;
     results.activeRepos = data.repositories.pull_requests.accepted.count;
-    results.countriesRegistered = data.users.metadata.country.all.unique;
-    results.countriesCompleted = data.users.metadata.country.states.contributor.unique;
+    results.countriesRegistered = Object.keys(data.users.metadata.country.values).filter(country => country !== '').length;
+    results.countriesCompleted = Object.values(data.users.metadata.country.values).filter(({ states }) => states.contributor > 0).length;
 
     const dailyPRStates = data.pull_requests.states.daily;
     results.mostPRsDay = Object.keys(dailyPRStates).sort((a, b) => (dailyPRStates[b].states.accepted || 0) - (dailyPRStates[a].states.accepted || 0))[0];
@@ -32,10 +33,10 @@ module.exports = async (data, log) => {
     log(`Day with most accepted PR/MRs submitted: ${results.mostPRsDay} (${number.percentage(results.mostPRsDayPercentage)})`);
     log(`Most common repository language in accepted PR/MRs: ${results.mostCommonLanguageInPRs} (${number.percentage(results.mostCommonLanguageInPRsPercentage)})`);
 
-    results.americaRegisteredUsers = data.users.metadata.country.all.values['us'];
-    results.americaCompletedUsers = data.users.metadata.country.states.contributor.values['us'];
-    results.indiaRegisteredUsers = data.users.metadata.country.all.values['in'];
-    results.indiaCompletedUsers = data.users.metadata.country.states.contributor.values['in'];
+    results.americaRegisteredUsers = data.users.metadata.country.values['us']?.count || 0;
+    results.americaCompletedUsers = data.users.metadata.country.values['us']?.states?.contributor || 0;
+    results.indiaRegisteredUsers = data.users.metadata.country.values['in']?.count || 0;
+    results.indiaCompletedUsers = data.users.metadata.country.values['in']?.states?.contributor || 0;
 
     log('');
     log('Region-specific:');
