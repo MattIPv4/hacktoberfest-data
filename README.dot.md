@@ -62,12 +62,12 @@ For pull/merge requests, there are five states used to process them that you'll 
 ## Diving in: Users
 
 This year, Hacktoberfest had **{{= c(data.Users.totalUsers) }}** folks who went through our
-registration flow for the event. Spam has been a huge focus for us throughout the event, and so
-during this flow folks were reminded about our rules and values for the event with clear and simple
-language, as well as agreeing to a new rule for this year that folks with two or more PRs identified
-as invalid or spam by maintainers would be disqualified. More on this later.
+registration flow for the event. Spam has been a huge focus for us throughout the event, as with
+last year, and so during this flow folks were reminded about our rules and values for the event with
+clear and simple language, as well as agreeing to a rule that folks with two or more PRs identified
+as spam by maintainers would be disqualified. More on this later.
 
-During the registration flow folks can also choose to tell us which country they are from--this
+During the registration flow, folks can also choose to tell us which country they are from--this
 helps us better understand, and cater to, the global audience for the event--and
 **{{= p((data.Users.totalUsers - data.Users.totalUsersNoCountry) / data.Users.totalUsers) }}** of
 them did so.
@@ -119,13 +119,16 @@ completed)** submitted more than 4 accepted PR/MRs, going above and beyond to co
 open-source outside the goal set for completing Hacktoberfest.
 
 Sadly, {{= c(data.Users.totalUsersDisqualified) }} users were disqualified this year
-({{= p(data.Users.totalUsersDisqualified / data.Users.totalUsers) }} of total registrations).
+({{= p(data.Users.totalUsersDisqualified / data.Users.totalUsers) }} of total registrations), with
+an additional {{= c(data.Users.totalUsersWarned) }}
+({{= p(data.Users.totalUsersWarned / data.Users.totalUsers) }} of total registrations) warned.
 Disqualification of users happen automatically if two or more of their PR/MRs are actively
-identified as spam or invalid by project maintainers. We were very happy to see how low this number
-was though, indicating to us that our efforts to educate and remind contributors of the quality
-standards expected of them during Hacktoberfest are working. _(Of course, we can only report on
-what we see in our data here, and do acknowledge that folks may have received spam that wasn't
-flagged so won't be represented in our reporting)._
+identified as spam by project maintainers, with users being sent a warning email (and shown a notice
+on their profile) when they have one PR/MR that is identified as spam. We were very happy to see how
+low this number was though, indicating to us that our efforts to educate and remind contributors of
+the quality standards expected of them during Hacktoberfest are working. _(Of course, we can only
+report on what we see in our data here, and do acknowledge that folks may have received spam that
+wasn't flagged so won't be represented in our reporting)._
 
 Hacktoberfest supported multiple providers this year, GitHub & GitLab. Registrants could choose to
 link just one provider to their account, or multiple if they desired, with contributions from each

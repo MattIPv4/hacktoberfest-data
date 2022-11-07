@@ -2,7 +2,23 @@ const path = require('path');
 const number = require('../helpers/number');
 const chart = require('../helpers/chart');
 const { getDateArray } = require("../helpers/date");
-const color = require("../helpers/color");
+const color = require('../helpers/color');
+const { getName, overwrite } = require('country-list');
+
+overwrite([
+    {
+        code: 'US',
+        name: 'United States', // United States of America
+    },
+    {
+        code: 'GB',
+        name: 'United Kingdom', // United Kingdom of Great Britain and Northern Ireland
+    },
+    {
+        code: 'TW',
+        name: 'Taiwan', // Taiwan, Province of China
+    },
+]);
 
 const usersTopChart = async (userData, totalUsers, title, file, interval, mainSubtitle = null, smallSubtitle = null) => {
     const max = Math.max(...userData.map(([, count]) => count));
@@ -11,22 +27,27 @@ const usersTopChart = async (userData, totalUsers, title, file, interval, mainSu
         indexLabelFontSize: 24,
         dataPoints: userData.slice(0, 10).map(([ title, count ], i) => {
             const colors = [
-                chart.colors.highlightPositive, chart.colors.highlightNeutral, chart.colors.highlightNegative,
+                chart.colors.highlightPositive,
+                chart.colors.highlightNeutral,
+                chart.colors.highlightNeutralAlt,
+                chart.colors.highlightNegative,
             ];
             const dataColor = colors[i % colors.length];
             const percentWidth = count / max;
             return {
                 y: count,
                 color: dataColor,
-                indexLabelPlacement: percentWidth > 0.4 ? 'inside' : 'outside',
+                indexLabelPlacement: percentWidth > 0.5 ? 'inside' : 'outside',
                 indexLabel: `${title || 'Not Given'} (${number.percentage(count / totalUsers)})`,
-                indexLabelFontColor: chart.colors.text,
+                indexLabelFontColor: (percentWidth > 0.5 && color.isBright(chart.colors.highlightPositive))
+                    ? chart.colors.background : chart.colors.text,
             };
         }).reverse(),
     }]);
     config.axisY = {
         ...config.axisY,
         labelFontSize: 24,
+        labelFormatter: e => number.human(e.value),
         interval,
     };
     config.axisX = {
@@ -37,7 +58,7 @@ const usersTopChart = async (userData, totalUsers, title, file, interval, mainSu
     config.title = {
         ...config.title,
         text: title,
-        fontSize: 48,
+        fontSize: 42,
         padding: 10,
         margin: 10,
     };
@@ -98,17 +119,19 @@ module.exports = async (data, log) => {
 
     // Total users
     results.totalUsers = data.users.states.all.count;
-    results.totalUsersNotEngaged = data.users.states.all.states.registered;
-    results.totalUsersEngaged = data.users.states.all.states.welcome;
+    results.totalUsersNotEngaged = data.users.states.all.states.registered - data.users.states.all.states['first-accepted'];
+    results.totalUsersEngaged = data.users.states.all.states['first-accepted'] - data.users.states.all.states.contributor;
     results.totalUsersCompleted = data.users.states.all.states.contributor;
+    results.totalUsersWarned = data.users.states.all.states.warning - data.users.states.all.states.disqualified;
     results.totalUsersDisqualified = data.users.states.all.states.disqualified;
 
     log('');
     log(`Total Users: ${number.commas(results.totalUsers)}`);
-    log(`  Users that submitted no accepted PRs/MRs: ${number.commas(results.totalUsersNotEngaged)} (${number.percentage(results.totalUsersNotEngaged / results.totalUsers)})`);
-    log(`  Users that submitted 1-3 accepted PRs/MRs: ${number.commas(results.totalUsersEngaged)} (${number.percentage(results.totalUsersEngaged / results.totalUsers)})`);
-    log(`  Users that submitted 4+ accepted PRs/MRs: ${number.commas(results.totalUsersCompleted)} (${number.percentage(results.totalUsersCompleted / results.totalUsers)})`);
-    log(`  Users that were disqualified: ${number.commas(results.totalUsersDisqualified)} (${number.percentage(results.totalUsersDisqualified / results.totalUsers)})`);
+    log(`  Users that submitted no accepted PR/MRs: ${number.commas(results.totalUsersNotEngaged)} (${number.percentage(results.totalUsersNotEngaged / results.totalUsers)})`);
+    log(`  Users that submitted 1-3 accepted PR/MRs: ${number.commas(results.totalUsersEngaged)} (${number.percentage(results.totalUsersEngaged / results.totalUsers)})`);
+    log(`  Users that submitted 4+ accepted PR/MRs: ${number.commas(results.totalUsersCompleted)} (${number.percentage(results.totalUsersCompleted / results.totalUsers)})`);
+    log(`  Users that were warned (1 spammy PR/MR): ${number.commas(results.totalUsersWarned)} (${number.percentage(results.totalUsersWarned / results.totalUsers)})`);
+    log(`  Users that were disqualified (2+ spammy PR/MRs): ${number.commas(results.totalUsersDisqualified)} (${number.percentage(results.totalUsersDisqualified / results.totalUsers)})`);
 
     const totalUsersByStateConfig = chart.config(1000, 1000, [{
         type: 'doughnut',
@@ -120,28 +143,30 @@ module.exports = async (data, log) => {
             {
                 y: results.totalUsersCompleted,
                 indexLabel: 'Completed',
-                legendText: `Completed: 4+ accepted PRs/MRs: ${number.commas(results.totalUsersCompleted)} (${number.percentage(results.totalUsersCompleted / results.totalUsers)})`,
+                legendText: `Completed: 4+ accepted PR/MRs: ${number.commas(results.totalUsersCompleted)} (${number.percentage(results.totalUsersCompleted / results.totalUsers)})`,
                 color: chart.colors.highlightPositive,
                 indexLabelFontSize: 32,
             },
             {
                 y: results.totalUsersEngaged,
                 indexLabel: 'Engaged',
-                legendText: `Engaged: 1-3 accepted PRs/MRs: ${number.commas(results.totalUsersEngaged)} (${number.percentage(results.totalUsersEngaged / results.totalUsers)})`,
+                legendText: `Engaged: 1-3 accepted PR/MRs: ${number.commas(results.totalUsersEngaged)} (${number.percentage(results.totalUsersEngaged / results.totalUsers)})`,
                 color: chart.colors.highlightNeutral,
                 indexLabelFontSize: 26,
             },
             {
                 y: results.totalUsersNotEngaged,
                 indexLabel: 'Registered',
-                legendText: `Registered: No accepted PRs/MRs: ${number.commas(results.totalUsersNotEngaged)} (${number.percentage(results.totalUsersNotEngaged / results.totalUsers)})`,
-                color: color.darken(chart.colors.highlightNeutral, 20),
+                legendText: `Registered: No accepted PR/MRs: ${number.commas(results.totalUsersNotEngaged)} (${number.percentage(results.totalUsersNotEngaged / results.totalUsers)})`,
+                color: chart.colors.highlightNeutralAlt,
+                indexLabelFontSize: 26,
             },
             {
                 y: results.totalUsersDisqualified,
                 indexLabel: 'Disqualified',
                 legendText: `Disqualified: Spammy behaviour: ${number.commas(results.totalUsersDisqualified)} (${number.percentage(results.totalUsersDisqualified / results.totalUsers)})`,
                 color: chart.colors.highlightNegative,
+                indexLabelFontSize: 26,
             },
         ].map(x => [x, {
             y: results.totalUsers * 0.007,
@@ -158,7 +183,7 @@ module.exports = async (data, log) => {
     };
     totalUsersByStateConfig.legend = {
         ...totalUsersByStateConfig.legend,
-        fontSize: 32,
+        fontSize: 28,
         markerMargin: 32,
     };
     totalUsersByStateConfig.subtitles = [
@@ -173,7 +198,7 @@ module.exports = async (data, log) => {
     await chart.save(
         path.join(__dirname, '../../generated/users_by_state_doughnut.png'),
         await chart.render(totalUsersByStateConfig),
-        { width: 190, x: 500, y: 450 },
+        { width: 250, x: 500, y: 470 },
     );
 
     // Users by accepted PRs
@@ -189,8 +214,12 @@ module.exports = async (data, log) => {
         type: 'column',
         dataPoints: results.totalUsersByAcceptedPRs.map(([ prs, users ]) => ({
             y: users,
-            color: Number.parseInt(prs) > 4 ? chart.colors.highlightNeutral : Number.parseInt(prs) === 4 ? chart.colors.highlightPositive : chart.colors.highlightNegative,
-            label: `${prs}${prs === 10 ? '+' : ''} PR${prs === 1 ? '' : 's'}/MR${prs === 1 ? '' : 's'}`,
+            color: Number.parseInt(prs) > 4
+                ? chart.colors.highlightNeutral
+                : Number.parseInt(prs) === 4
+                    ? chart.colors.highlightPositive
+                    : chart.colors.highlightNegative,
+            label: `${prs}${prs === 10 ? '+' : ''} PR/MR${prs === 1 ? '' : 's'}`,
         })),
     }]);
     totalUsersByPRsExtConfig.axisX = {
@@ -210,7 +239,7 @@ module.exports = async (data, log) => {
     };
     totalUsersByPRsExtConfig.subtitles = [{
         ...totalUsersByPRsExtConfig.title,
-        text: `Over the month, ${number.commas(results.totalUsersCompleted)} participants (${number.percentage(results.totalUsersCompleted / results.totalUsers)}) submitted 4 or more accepted PRs/MRs, completing Hacktoberfest.`,
+        text: `Over the month, ${number.commas(results.totalUsersCompleted)} participants (${number.percentage(results.totalUsersCompleted / results.totalUsers)}) submitted 4 or more accepted PR/MRs, completing Hacktoberfest.`,
         fontColor: chart.colors.textBox,
         fontSize: 32,
         padding: 15,
@@ -223,7 +252,7 @@ module.exports = async (data, log) => {
         backgroundColor: chart.colors.backgroundBox,
     }, {
         ...totalUsersByPRsExtConfig.title,
-        text: `Graphic does not include participants that submitted no accepted PRs/MRs (${number.commas(results.totalUsersNotEngaged)} (${number.percentage(results.totalUsersNotEngaged / results.totalUsers)})).`,
+        text: `Graphic does not include participants that submitted no accepted PR/MRs (${number.commas(results.totalUsersNotEngaged)} (${number.percentage(results.totalUsersNotEngaged / results.totalUsers)})).`,
         fontColor: chart.colors.textBox,
         fontSize: 16,
         padding: 15,
@@ -245,8 +274,12 @@ module.exports = async (data, log) => {
         type: 'column',
         dataPoints: results.totalUsersByAcceptedPRsCapped.map(([ prs, users ]) => ({
             y: users,
-            color: Number.parseInt(prs) > 4 ? chart.colors.highlightNeutral : Number.parseInt(prs) === 4 ? chart.colors.highlightPositive : chart.colors.highlightNegative,
-            label: `${prs}${prs === 5 ? '+' : ''} PR${prs === 1 ? '' : 's'}/MR${prs === 1 ? '' : 's'}`,
+            color: Number.parseInt(prs) > 4
+                ? chart.colors.highlightNeutral
+                : Number.parseInt(prs) === 4
+                    ? chart.colors.highlightPositive
+                    : chart.colors.highlightNegative,
+            label: `${prs}${prs === 5 ? '+' : ''} PR/MR${prs === 1 ? '' : 's'}`,
         })),
     }]);
     totalUsersByPRsConfig.axisX = {
@@ -260,13 +293,13 @@ module.exports = async (data, log) => {
     totalUsersByPRsConfig.title = {
         ...totalUsersByPRsConfig.title,
         text: 'Users: Accepted Pull/Merge Requests',
-        fontSize: 48,
+        fontSize: 42,
         padding: 5,
         margin: 40,
     };
     totalUsersByPRsConfig.subtitles = [{
         ...totalUsersByPRsConfig.title,
-        text: `Graphic does not include participants that submitted no accepted PRs/MRs (${number.commas(results.totalUsersNotEngaged)} (${number.percentage(results.totalUsersNotEngaged / results.totalUsers)})).`,
+        text: `Graphic does not include participants that submitted no accepted PR/MRs (${number.commas(results.totalUsersNotEngaged)} (${number.percentage(results.totalUsersNotEngaged / results.totalUsers)})).`,
         fontColor: chart.colors.textBox,
         fontSize: 16,
         padding: 15,
@@ -283,10 +316,11 @@ module.exports = async (data, log) => {
     );
 
     // Registrations by country
-    results.totalUsersByCountry = Object.entries(data.users.metadata.country.all.values)
+    results.totalUsersByCountry = Object.entries(data.users.metadata.country.values)
         .filter(([ country ]) => country !== '')
+        .map(([ country, { count } ]) => [ getName(country), count ])
         .sort((a, b) => a[1] < b[1] ? 1 : -1);
-    results.totalUsersNoCountry = data.users.metadata.country.all.values[''] || 0;
+    results.totalUsersNoCountry = data.users.metadata.country.values['']?.count || 0;
 
     log('');
     log(`Top countries by registrations: ${number.commas(results.totalUsersByCountry.length)} countries`);
@@ -318,10 +352,11 @@ module.exports = async (data, log) => {
     );
 
     // Completions by country
-    results.totalUsersCompletedByCountry = Object.entries(data.users.metadata.country.states.contributor.values)
+    results.totalUsersCompletedByCountry = Object.entries(data.users.metadata.country.values)
         .filter(([ country ]) => country !== '')
+        .map(([ country, { states } ]) => [ getName(country), states.contributor || 0 ])
         .sort((a, b) => a[1] < b[1] ? 1 : -1);
-    results.totalUsersCompletedNoCountry = data.users.metadata.country.states.contributor.values[''] || 0;
+    results.totalUsersCompletedNoCountry = data.users.metadata.country.values['']?.states?.contributor || 0;
 
     log('');
     log(`Top countries by completions: ${number.commas(results.totalUsersCompletedByCountry.length)} countries`);
@@ -339,7 +374,7 @@ module.exports = async (data, log) => {
         results.totalUsersCompleted,
         'Completed Users: Top Countries',
         'users_completions_top_countries_bar',
-        2500,
+        5000,
         completionsCaption,
         `Graphic does not include users that did not specify their country, ${number.commas(results.totalUsersCompletedNoCountry)} (${number.percentage(results.totalUsersCompletedNoCountry / results.totalUsersCompleted)}).`,
     );
@@ -348,40 +383,50 @@ module.exports = async (data, log) => {
         results.totalUsersCompleted,
         'Completed Users: Top Countries',
         'users_completions_top_countries_bar_excl',
-        250,
+        500,
         completionsCaption,
         `Graphic does not include India (${number.percentage(results.totalUsersCompletedByCountry.find(([ country ]) => country === 'India')[1] / results.totalUsersCompleted)}), the United States (${number.percentage(results.totalUsersCompletedByCountry.find(([ country ]) => country === 'United States')[1] / results.totalUsersCompleted)}), and users that did not specify their country (${number.percentage(results.totalUsersCompletedNoCountry / results.totalUsersCompleted)}).`,
     );
 
     // Breaking down users by day and by state
     results.totalUsersByStateByDay = Object.keys(data.users.states.all.states)
-        .map(state => ({
-            state,
-            daily: getDateArray(new Date('2021-09-27'), new Date('2021-11-03'))
-                .map(date => ({
-                    date,
-                    count: data.users.states.daily?.[date.toISOString().split('T')[0]]?.states?.[state] || 0,
-                })),
-        }));
+        .reduce((states, state) => ({
+            ...states,
+            [state]: getDateArray(new Date('2022-09-26'), new Date('2022-11-01'))
+                .reduce((obj, date) => {
+                    const day = date.toISOString().split('T')[0];
+                    return {
+                        ...obj,
+                        [day]: {
+                            date,
+                            count: data.users.states.daily?.[day]?.states?.[state] || 0,
+                        },
+                    };
+                }, {}),
+        }), {});
 
-    const totalUsersByStateByDayOrder = ['contributor', 'welcome', 'registered', 'disqualified'];
+    const totalUsersByStateByDayOrder = ['contributor', 'first-accepted', 'registered', 'disqualified'];
     const totalUsersByStateByDayColors = {
         disqualified: chart.colors.highlightNegative,
-        'registered': color.darken(chart.colors.highlightNeutral, 20),
-        'welcome': chart.colors.highlightNeutral,
+        registered: chart.colors.highlightNeutralAlt,
+        'first-accepted': chart.colors.highlightNeutral,
         contributor: chart.colors.highlightPositive,
     };
 
-    const totalUsersByStateByDayConfig = chart.config(2500, 1000, results.totalUsersByStateByDay
-        .filter(({ state }) => totalUsersByStateByDayOrder.includes(state))
-        .sort((a, b) => totalUsersByStateByDayOrder.indexOf(b.state) - totalUsersByStateByDayOrder.indexOf(a.state))
-        .map(({ state, daily }) => ({
+    const totalUsersByStateByDayConfig = chart.config(2500, 1000, Object.entries(results.totalUsersByStateByDay)
+        .filter(([ state ]) => totalUsersByStateByDayOrder.includes(state))
+        .sort(([ a ], [ b ]) => totalUsersByStateByDayOrder.indexOf(b) - totalUsersByStateByDayOrder.indexOf(a))
+        .map(([ state, daily ]) => ({
             type: 'stackedArea',
             name: state,
             showInLegend: true,
-            dataPoints: daily.map(({ date, count }) => ({
+            dataPoints: Object.entries(daily).map(([ day, { date, count } ]) => ({
                 x: date,
-                y: count,
+                y: state === 'registered'
+                    ? count - (results.totalUsersByStateByDay['first-accepted']?.[day]?.count || 0)
+                    : (state === 'first-accepted'
+                        ? count - (results.totalUsersByStateByDay.contributor?.[day]?.count || 0)
+                        : count),
             })),
             lineThickness: 3,
             color: totalUsersByStateByDayColors[state] || chart.colors.highlightNeutral,
@@ -455,11 +500,11 @@ module.exports = async (data, log) => {
     results.totalUsersEngagedByProvider = Object.entries(data.users.providers)
         .map(([ provider, { states } ]) => ([
             providerMap[provider] || provider,
-            states.welcome || 0,
+            (states['first-accepted'] || 0) - (states.contributor || 0),
         ]))
         .sort((a, b) => a[1] < b[1] ? 1 : -1);
     log('');
-    log(`Engaged (1-3 PRs/MRs) users by provider:`);
+    log(`Engaged (1-3 PR/MRs) users by provider:`);
     log('(Users were able to link one, or both, of the supported providers to their Hacktoberfest account)');
     for (const [ provider, count ] of results.totalUsersEngagedByProvider) {
         log(`  ${provider}: ${number.commas(count)} (${number.percentage(count / results.totalUsersEngaged)})`);
@@ -482,7 +527,7 @@ module.exports = async (data, log) => {
         ]))
         .sort((a, b) => a[1] < b[1] ? 1 : -1);
     log('');
-    log(`Completed (4+ PRs/MRs) users by provider:`);
+    log(`Completed (4+ PR/MRs) users by provider:`);
     log('(Users were able to link one, or both, of the supported providers to their Hacktoberfest account)');
     for (const [ provider, count ] of results.totalUsersCompletedByProvider) {
         log(`  ${provider}: ${number.commas(count)} (${number.percentage(count / results.totalUsersCompleted)})`);
