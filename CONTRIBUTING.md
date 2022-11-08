@@ -1,4 +1,4 @@
-# Hacktoberfest 2021 Stats
+# Hacktoberfest Stats
 
 ## Getting some data
 
@@ -63,26 +63,17 @@ schema:
               additionalProperties:
                 type: object
                 properties:
-                  states:
+                  values:
                     type: object
                     additionalProperties:
                       type: object
                       properties:
-                        values:
+                        states:
                           type: object
                           additionalProperties:
                             type: integer
-                        unique:
+                        count:
                           type: integer
-                  all:
-                    type: object
-                    properties:
-                      values:
-                        type: object
-                        additionalProperties:
-                          type: integer
-                      unique:
-                        type: integer
             pull_requests:
               type: object
               additionalProperties:
@@ -324,7 +315,8 @@ Hacktoberfest. When generating data, keep in mind that many parts of this schema
 you have all the state names that the script expects from Hacktoberfest in your data (you may need
 to do a bit of trial and error to get everything).
 
-Once you have data in a JSON file that conforms to this schema, update the [`src/index.js`](src/index.js) file to load it in.
+Once you have data in a JSON file that conforms to this schema, update the
+[`src/index.js`](src/index.js) file to load it in.
 
 ## Generating the stats
 
