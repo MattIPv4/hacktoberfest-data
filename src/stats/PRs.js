@@ -18,11 +18,14 @@ module.exports = async (data, log) => {
     results.totalAcceptedPRs = data.pull_requests.states.all.states['accepted'];
     results.totalNotAcceptedPRs = data.pull_requests.states.all.states['not-accepted'];
     results.totalNotParticipatingPRs = data.pull_requests.states.all.states['not-participating'];
+    results.totalInvalidPRs = data.pull_requests.states.all.states['invalid'];
     results.totalSpamPRs = data.pull_requests.states.all.states['spam'];
     results.totalExcludedPRs = data.pull_requests.states.all.states['excluded'];
 
-    const totalInvalidPRs = results.totalSpamPRs + results.totalExcludedPRs;
+    const totalInvalidPRs = results.totalInvalidPRs + results.totalSpamPRs + results.totalExcludedPRs;
     const totalUnacceptedPRs = results.totalNotAcceptedPRs + results.totalNotParticipatingPRs;
+    const totalPRs = results.totalAcceptedPRs + totalInvalidPRs + totalUnacceptedPRs;
+    const totalBuggedPRs = results.totalPRs - totalPRs;
     log('');
     log(`Total PR/MRs: ${number.commas(results.totalPRs)}`);
     log(`  Accepted PR/MRs: ${number.commas(results.totalAcceptedPRs)} (${number.percentage(results.totalAcceptedPRs / results.totalPRs)})`);
@@ -31,7 +34,10 @@ module.exports = async (data, log) => {
     log(`    of which were not in a participating repo: ${number.commas(results.totalNotParticipatingPRs)} (${number.percentage(results.totalNotParticipatingPRs / totalUnacceptedPRs)})`);
     log(`  Invalid PR/MRs: ${number.commas(totalInvalidPRs)} (${number.percentage(totalInvalidPRs / results.totalPRs)})`);
     log(`    of which were in an excluded repo: ${number.commas(results.totalExcludedPRs)} (${number.percentage(results.totalExcludedPRs / totalInvalidPRs)})`);
+    log(`    of which were labeled as invalid: ${number.commas(results.totalInvalidPRs)} (${number.percentage(results.totalInvalidPRs / totalInvalidPRs)})`);
     log(`    of which were identified as spam: ${number.commas(results.totalSpamPRs)} (${number.percentage(results.totalSpamPRs / totalInvalidPRs)})`);
+    log(`  PR/MRs that could not be processed: ${number.commas(totalBuggedPRs)} (${number.percentage(totalBuggedPRs / results.totalPRs)})`);
+    log('    (PR/MR data failed to load from the provider, such as if the user were suspended from the provider\'s platform)');
 
     const totalPRsByStateConfig = chart.config(1000, 1000, [{
         type: 'doughnut',
@@ -58,6 +64,12 @@ module.exports = async (data, log) => {
                 indexLabel: 'Not participating',
                 legendText: `Repo not participating: ${number.commas(results.totalNotParticipatingPRs)} (${number.percentage(results.totalNotParticipatingPRs / results.totalPRs)})`,
                 color: chart.colors.highlightNeutral,
+            },
+            {
+                y: results.totalInvalidPRs,
+                indexLabel: 'Invalid',
+                legendText: `Labeled as invalid: ${number.commas(results.totalInvalidPRs)} (${number.percentage(results.totalInvalidPRs / results.totalPRs)})`,
+                color: chart.colors.highlightNeutralAlt,
             },
             {
                 y: results.totalExcludedPRs,
@@ -101,7 +113,7 @@ module.exports = async (data, log) => {
     await chart.save(
         path.join(__dirname, '../../generated/prs_by_state_doughnut.png'),
         await chart.render(totalPRsByStateConfig),
-        { width: 250, x: 500, y: 445 },
+        { width: 250, x: 500, y: 430 },
     );
 
     // PRs by provider
@@ -444,11 +456,12 @@ module.exports = async (data, log) => {
                 })),
         }));
 
-    const totalPRsByStateByDayOrder = ['accepted', 'not-accepted', 'not-participating', 'excluded', 'spam'];
+    const totalPRsByStateByDayOrder = ['accepted', 'not-accepted', 'not-participating', 'invalid', 'excluded', 'spam'];
     const totalPRsByStateByDayColors = {
         spam: color.mix(chart.colors.highlightNegative, chart.colors.highlightNeutralAlt, 75),
         excluded: chart.colors.highlightNegative,
-        'not-participating': color.mix(chart.colors.highlightNeutral, chart.colors.highlightNeutralAlt, 75),
+        invalid: chart.colors.highlightNeutralAlt,
+        'not-participating': color.mix(chart.colors.highlightNeutral, chart.colors.highlightNeutralAlt, 50),
         'not-accepted': chart.colors.highlightNeutral,
         accepted: chart.colors.highlightPositive,
     };
