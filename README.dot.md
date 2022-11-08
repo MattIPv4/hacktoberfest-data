@@ -43,7 +43,7 @@ For users, there are four key states that you'll see:
 - **Disqualified**: A user that was disqualified for submitting 2 or more spammy PR/MRs,
   irrespective of how many accepted PR/MRs they may have also had.
 
-For pull/merge requests, there are five states used to process them that you'll see:
+For pull/merge requests, there are six states used to process them that you'll see:
 
 - **Accepted**: A PR/MR that was accepted by a project maintainer, either by being merged or
   approved in a participating repository, or by being given the `hacktoberfest-accepted` label.
@@ -52,9 +52,11 @@ For pull/merge requests, there are five states used to process them that you'll 
 - **Not participating**: Any PR/MR that was submitted by a participant to a repository that was not
   participating in Hacktoberfest (i.e. having the `hacktoberfest` topic, or adding the
   `hacktoberfest-accepted` label to specific PRs).
+- **Invalid**: Any PR/MR that was given a label containing the word `invalid` by a maintainer. Any
+  PR/MR with a matching label was not counted towards a participant's total.
 - **Spam**: Any PR/MR that was given a label by a maintainer containing the 'spam', or PR/MRs that 
-  our abuse logic detected as spam. These are not counted toward winning, but do count toward a user
-  being disqualified.
+  our abuse logic detected as spam. These are not counted toward winning, and also count toward a
+  user being disqualified.
 - **Excluded**: Any PR/MR that was submitted to a repository that has been excluded from
   Hacktoberfest for not following our values. These do not count toward winning, nor do they count
   toward a user being disqualified.
@@ -154,21 +156,58 @@ completed Hacktoberfest (4+ PR/MRs) by provider.
 Engaged users by provider:
 
 {{~ data.Users.totalUsersEngagedByProvider :item:i }}
-{{= i + 1 }}. {{= item[0] }}: {{= c(item[1]) }}
+- {{= item[0] }}: {{= c(item[1]) }}
   ({{= p(item[1] / data.Users.totalUsersEngaged) }} of engaged users)
 {{~ }}
 
 Completed users by provider:
 
 {{~ data.Users.totalUsersCompletedByProvider :item:i }}
-{{= i + 1 }}. {{= item[0] }}: {{= c(item[1]) }}
+- {{= item[0] }}: {{= c(item[1]) }}
   ({{= p(item[1] / data.Users.totalUsersCompleted) }} of completed users)
 {{~ }}
+
+<img src="generated/users_registrations_experience_level_bar.png" width="40%" alt="Bar chart of users by experience level" align="right" style="margin: 1em;" />
+
+When registering for Hacktoberfest, we also asked users for some optional self-identification around
+their experience with contributing to open-source, and how they intended to contribute. First, we
+can take a look at the experience level users self-identified as having when registering:
+
+{{~ data.Users.totalUsersByExperience :item:i }}
+- {{= item[0] }}: {{= c(item[1]) }}
+  ({{= p(item[1] / data.Users.totalUsers) }} of registered users)
+{{~ }}
+
+_{{= c(data.Users.totalUsersNoExperience) }} users did not self-identify their experience level._
+
+We can compare this to the breakdown of users that completed Hacktoberfest by experience level:
+
+{{~ data.Users.totalUsersCompletedByExperience :item:i }}
+- {{= item[0] }}: {{= c(item[1]) }}
+  ({{= p(item[1] / data.Users.totalUsersCompleted) }} of completed users)
+{{~ }}
+
+_{{= c(data.Users.totalUsersCompletedNoExperience) }} users who completed Hacktoberfest did not
+self-identify their experience when registering._
+
+Not everyone is comfortable writing code, and so Hacktoberfest focused on encouraging more
+contributors to get involved with open-source this year through non-code contributors. We can look
+at what contribution types users indicated they intended to make during Hacktoberfest when
+registering (they could pick multiple, or none):
+
+{{~ data.Users.totalUsersByContribution :item:i }}
+- {{= item[0] }}: {{= c(item[1]) }}
+  ({{= p(item[1] / data.Users.totalUsers) }} of registered users)
+{{~ }}
+
+_Of course, this is only what users indicated they intended to do, and doesn't necessarily reflect
+their actual contributions they ended up making to open-source (determining what is and what isn't
+a "non-code" PR/MR would be a difficult task)._
 
 This year for Hacktoberfest, users had to submit PR/MRs to participating projects during
 October that then had to be accepted by maintainers during October. If a user submitted four or
 more PR/MRs, then they completed Hacktoberfest. However, not everyone hits the 4 PR/MR target, with
-some falling short, but many also going beyond the target and contributing further.
+some falling short, and many going beyond the target to contribute further.
 
 We can see how many accepted PR/MRs each user had and bucket them:
 
@@ -267,20 +306,20 @@ PR/MR creation this year:
 After the issues Hacktoberfest faced at the start of the 2020 event, spam was top of mind for our
 whole team this year as we planned and launched Hacktoberfest {{= data.year }}. We kept the rules
 the same as we'd landed on last year, with Hacktoberfest being an opt-in event for repositories, and
-we revised our standards on quality contributions to make it easier for participants to understand
+our revised standards on quality contributions to make it easier for participants to understand
 what is expected of them when contributing to open source as part of Hacktoberfest.
 
 **Our efforts to reduce spam can be seen in our data, with only {{= c(data.PRs.totalSpamPRs) }}
-({{= p(data.PRs.totalSpamPRs / data.PRs.totalPRs) }}) of pull/merge requests being
-flagged as spam or invalid by maintainers.** _(Of course, we can only report on what we see in our
-data here, and do acknowledge that folks may have received spam that wasn't flagged so won't be
-represented in our reporting)._
+({{= p(data.PRs.totalSpamPRs / data.PRs.totalPRs) }}) pull/merge requests being flagged as spam by
+maintainers (or identified as spam by our automated logic).** _(Of course, we can only report on
+what we see in our data here, and do acknowledge that folks may have received spam that wasn't
+flagged so won't be represented in our reporting)._
 
 We also took a stronger stance on excluding repositories reported by the community that did not
 align with our values, mostly repositories encouraging low effort contributions to allow folks to
-quickly win Hacktoberfest. Pull/merge requests to a repository that was reviewed and excluded by our
-team, based on community reports, would not be counted for winning Hacktoberfest but also would not
-count against individual users.
+quickly win Hacktoberfest. Pull/merge requests to a repository that had been excluded from
+Hacktoberfest, based on community reports, would not be counted for winning Hacktoberfest (but also
+would not count against individual users in terms of disqualification).
 
 **Excluded repositories accounted for a much larger swathe of pull/merge requests during
 Hacktoberfest, with {{= c(data.PRs.totalExcludedPRs) }}
@@ -299,7 +338,8 @@ For transparency, we can also take a look at the excluded repositories we proces
 Hacktoberfest {{= data.year }}. A large part of this list was prior excluded repositories from
 previous Hacktoberfest years which were persisted across to this year. However, a form was available
 on the site for members of our community to report repositories that they felt did not follow our
-values, and our team would then process the top reported ones and decide if they should be excluded.
+values, with automation in place to process these reports and exclude repositories that were
+repeatedly reported, as well as reports being reviewed by our team.
 
 In total, Hacktoberfest {{= data.year }} had {{= c(data.Repos.totalReposExcluded) }} repositories
 that were actively excluded, {{= p(data.Repos.totalReposExcluded / data.Repos.totalReposReported) }}
@@ -307,9 +347,8 @@ of the total repositories reported. Only {{= c(data.Repos.totalReposPermitted) }
 permitted after having been reported and subsequently reviewed by our team. Unfortunately,
 {{= c(data.Repos.totalReposUnreviewed) }}
 ({{= p(data.Repos.totalReposUnreviewed / data.Repos.totalReposReported) }}) of the repositories that
-were reported by the community were never reviewed by our team, but we are aiming to improve this
-for Hacktoberfest 2022 with automation and a larger number of folks dedicated to reviewing these,
-ensuring a more consistent high quality standard for Hacktoberfest participation.
+were reported by the community were never reviewed by our team, and did not meet a threshold that
+triggered any automation for exclusion.
 
 ![Doughnut diagram of reported repositories by review state](generated/repos_reported_doughnut.png)
 
