@@ -62,8 +62,9 @@ const usersTopChart = async (userData, totalUsers, title, file, interval, mainSu
         padding: 10,
         margin: 10,
     };
+    config.subtitles = [];
     if (mainSubtitle) {
-        config.subtitles = [{
+        config.subtitles.unshift({
             ...config.title,
             text: mainSubtitle,
             fontColor: chart.colors.textBox,
@@ -74,24 +75,23 @@ const usersTopChart = async (userData, totalUsers, title, file, interval, mainSu
             verticalAlign: 'bottom',
             horizontalAlign: 'center',
             backgroundColor: chart.colors.backgroundBox,
-        }];
-
-        if (smallSubtitle) {
-            config.subtitles.unshift({
-                ...config.title,
-                text: smallSubtitle,
-                fontColor: chart.colors.textBox,
-                fontSize: 22,
-                padding: 15,
-                margin: 10,
-                cornerRadius: 5,
-                verticalAlign: 'bottom',
-                horizontalAlign: 'right',
-                dockInsidePlotArea: true,
-                maxWidth: 400,
-                backgroundColor: chart.colors.backgroundBox,
-            });
-        }
+        });
+    }
+    if (smallSubtitle) {
+        config.subtitles.unshift({
+            ...config.title,
+            text: smallSubtitle,
+            fontColor: chart.colors.textBox,
+            fontSize: 22,
+            padding: 15,
+            margin: 10,
+            cornerRadius: 5,
+            verticalAlign: 'bottom',
+            horizontalAlign: 'right',
+            dockInsidePlotArea: true,
+            maxWidth: 400,
+            backgroundColor: chart.colors.backgroundBox,
+        });
     }
     await chart.save(
         path.join(__dirname, `../../generated/${file}.png`),
@@ -100,7 +100,9 @@ const usersTopChart = async (userData, totalUsers, title, file, interval, mainSu
             ? smallSubtitle
                 ? { width: 200, x: 880, y: 620 }
                 : { width: 200, x: 880, y: 740 }
-            : { width: 200, x: 880, y: 820 },
+            : smallSubtitle
+                ? { width: 200, x: 880, y: 720 }
+                : { width: 200, x: 880, y: 820 },
     );
 };
 
@@ -119,10 +121,10 @@ module.exports = async (data, log) => {
 
     // Total users
     results.totalUsers = data.users.states.all.count;
-    results.totalUsersNotEngaged = data.users.states.all.states.registered - data.users.states.all.states['first-accepted'];
+    results.totalUsersNotEngaged = data.users.states.all.count - data.users.states.all.states['first-accepted'];
     results.totalUsersEngaged = data.users.states.all.states['first-accepted'] - data.users.states.all.states.contributor;
     results.totalUsersCompleted = data.users.states.all.states.contributor;
-    results.totalUsersWarned = data.users.states.all.states.warning - data.users.states.all.states.disqualified;
+    results.totalUsersWarned = data.users.states.all.states.warning;
     results.totalUsersDisqualified = data.users.states.all.states.disqualified;
 
     log('');
@@ -318,7 +320,7 @@ module.exports = async (data, log) => {
     // Registrations by country
     results.totalUsersByCountry = Object.entries(data.users.metadata.country.values)
         .filter(([ country ]) => country !== '')
-        .map(([ country, { count } ]) => [ getName(country), count ])
+        .map(([ country, { count } ]) => [ getName(country) || country, count ])
         .sort((a, b) => a[1] < b[1] ? 1 : -1);
     results.totalUsersNoCountry = data.users.metadata.country.values['']?.count || 0;
 
@@ -354,7 +356,7 @@ module.exports = async (data, log) => {
     // Completions by country
     results.totalUsersCompletedByCountry = Object.entries(data.users.metadata.country.values)
         .filter(([ country ]) => country !== '')
-        .map(([ country, { states } ]) => [ getName(country), states.contributor || 0 ])
+        .map(([ country, { states } ]) => [ getName(country) || country, states.contributor || 0 ])
         .sort((a, b) => a[1] < b[1] ? 1 : -1);
     results.totalUsersCompletedNoCountry = data.users.metadata.country.values['']?.states?.contributor || 0;
 
@@ -540,6 +542,125 @@ module.exports = async (data, log) => {
         'users_completions_linked_providers_bar',
         10000,
         'Users were able to link one, or both, of the supported providers to their Hacktoberfest account.',
+    );
+
+    const experienceMap = {
+        'stage-newbie': 'Newbie',
+        'stage-familiar': 'Familiar',
+        'stage-experienced': 'Experienced',
+    };
+
+    // Experience level
+    results.totalUsersByExperience = Object.entries(data.users.metadata)
+        .filter(([ level ]) => level.startsWith('stage-'))
+        .map(([ level, { values } ]) => ([
+            experienceMap[level] || level,
+            values.true?.count || 0,
+        ]))
+        .sort((a, b) => a[1] < b[1] ? 1 : -1);
+    results.totalUsersNoExperience = results.totalUsers - results.totalUsersByExperience.reduce((sum, [ , count ]) => sum + count, 0);
+
+    log('');
+    log(`Registered users by experience:`);
+    log('(Users were able to optionally self-identify their experience level when registering)');
+    for (const [ level, count ] of results.totalUsersByExperience) {
+        log(`  ${level}: ${number.commas(count)} (${number.percentage(count / results.totalUsers)})`);
+    }
+    log(`${number.commas(results.totalUsersNoExperience)} (${number.percentage(results.totalUsersNoExperience / results.totalUsers)}) users did not specify their experience level`);
+
+    await usersTopChart(
+        results.totalUsersByExperience,
+        results.totalUsers,
+        'Registered Users: Experience Level',
+        'users_registrations_experience_level_bar',
+        25000,
+        null,
+        `Graphic does not include users that did not specify their experience level, ${number.commas(results.totalUsersNoExperience)} (${number.percentage(results.totalUsersNoExperience / results.totalUsers)}).`,
+    );
+
+    // Experience level completed
+    results.totalUsersCompletedByExperience = Object.entries(data.users.metadata)
+        .filter(([ level ]) => level.startsWith('stage-'))
+        .map(([ level, { values } ]) => ([
+            experienceMap[level] || level,
+            values.true?.states?.contributor || 0,
+        ]))
+        .sort((a, b) => a[1] < b[1] ? 1 : -1);
+    results.totalUsersCompletedNoExperience = results.totalUsersCompleted - results.totalUsersCompletedByExperience.reduce((sum, [ , count ]) => sum + count, 0);
+
+    log('');
+    log(`Completed (4+ PR/MRs) users by experience:`);
+    log('(Users were able to optionally self-identify their experience level when registering)');
+    for (const [ level, count ] of results.totalUsersCompletedByExperience) {
+        log(`  ${level}: ${number.commas(count)} (${number.percentage(count / results.totalUsersCompleted)})`);
+    }
+    log(`${number.commas(results.totalUsersCompletedNoExperience)} (${number.percentage(results.totalUsersCompletedNoExperience / results.totalUsersCompleted)}) users did not specify their experience level`);
+
+    await usersTopChart(
+        results.totalUsersCompletedByExperience,
+        results.totalUsersCompleted,
+        'Completed Users: Experience Level',
+        'users_completions_experience_level_bar',
+        10000,
+        null,
+        `Graphic does not include users that did not specify their experience level, ${number.commas(results.totalUsersCompletedNoExperience)} (${number.percentage(results.totalUsersCompletedNoExperience / results.totalUsersCompleted)}).`,
+    );
+
+    const typeMap = {
+        'type-code': 'Code',
+        'type-non-code': 'Non-code',
+    };
+
+    // Contribution type
+    results.totalUsersByContribution = Object.entries(data.users.metadata)
+        .filter(([ type ]) => type.startsWith('type-'))
+        .map(([ type, { values } ]) => ([
+            typeMap[type] || type,
+            values.true?.count || 0,
+        ]))
+        .sort((a, b) => a[1] < b[1] ? 1 : -1);
+
+    log('');
+    log(`Registered users by intended contribution type:`);
+    log('(Users were able to optionally self-identify what type of contribution(s) they intended to make when registering)');
+    log('(Users were able to select multiple options)');
+    for (const [ type, count ] of results.totalUsersByContribution) {
+        log(`  ${type}: ${number.commas(count)} (${number.percentage(count / results.totalUsers)})`);
+    }
+
+    await usersTopChart(
+        results.totalUsersByContribution,
+        results.totalUsers,
+        'Registered Users: Contribution Type',
+        'users_registrations_contribution_type_bar',
+        25000,
+        'Users were able to optionally select one, or more, intended contribution types when registering.',
+    );
+
+    // Contribution type completed
+    results.totalUsersCompletedByContribution = Object.entries(data.users.metadata)
+        .filter(([ type ]) => type.startsWith('type-'))
+        .map(([ type, { values } ]) => ([
+            typeMap[type] || type,
+            values.true?.states?.contributor || 0,
+        ]))
+        .sort((a, b) => a[1] < b[1] ? 1 : -1);
+
+    log('');
+    log(`Completed (4+ PR/MRs) users by intended contribution type:`);
+    log('(Users were able to optionally self-identify what type of contribution(s) they intended to make when registering)');
+    log('(Users were able to select multiple options)');
+    for (const [ type, count ] of results.totalUsersCompletedByContribution) {
+        log(`  ${type}: ${number.commas(count)} (${number.percentage(count / results.totalUsersCompleted)})`);
+    }
+
+    await usersTopChart(
+        results.totalUsersCompletedByContribution,
+        results.totalUsersCompleted,
+        'Completed Users: Contribution Type',
+        'users_completions_contribution_type_bar',
+        10000,
+        'Users were able to optionally select one, or more, intended contribution types when registering.',
     );
 
     return results;
