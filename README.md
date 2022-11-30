@@ -10,7 +10,7 @@ and community management. And, part of what I get to work on is helping out with
 including being the lead engineer for the backed that powers the event.
 
 Welcome to my deeper dive on the data and stats for Hacktoberfest 2022, expanding on
-what we already shared in our [recap blog post](https://www.digitalocean.com/blog/hacktoberfest-2021-recap).
+what we already shared in our [recap blog post](https://www.digitalocean.com/blog/hacktoberfest-2022-recap).
 
 ## At a glance
 
@@ -26,7 +26,7 @@ These are the highlights from Hacktoberfest #9:
 - Countries represented by completed users: **152**
 
 > Take a read of our overall recap blog post for Hacktoberfest 2022 here:
-> [www.digitalocean.com/blog/hacktoberfest-2021-recap](https://www.digitalocean.com/blog/hacktoberfest-2021-recap)
+> [www.digitalocean.com/blog/hacktoberfest-2022-recap](https://www.digitalocean.com/blog/hacktoberfest-2022-recap)
 
 ## Application states
 
