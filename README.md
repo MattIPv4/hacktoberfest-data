@@ -7,7 +7,7 @@ I'm [Matt Cowley](https://mattcowley.co.uk/), Senior Software Engineer I at
 
 I work on a bunch of things at DigitalOcean, with a great mix of engineering, developer relations
 and community management. And, part of what I get to work on is helping out with Hacktoberfest,
-including being the lead engineer for the backed that powers the event.
+including being the lead engineer for the backend that powers the event.
 
 Welcome to my deeper dive on the data and stats for Hacktoberfest 2022, expanding on
 what we already shared in our [recap blog post](https://www.digitalocean.com/blog/hacktoberfest-2022-recap).
@@ -74,9 +74,9 @@ helps us better understand, and cater to, the global audience for the event--and
 **83.92%** of
 them did so.
 
-<p style="display: flex; justify-content: space-evenly;">
-  <img src="generated/users_completions_top_countries_bar.png" width="40%" alt="Bar chart of the top countries for completed users" style="margin: 1em;" />
-  <img src="generated/users_registrations_top_countries_bar.png" width="40%" alt="Bar chart of the top countries for all registered users" style="margin: 1em;" />
+<p align="center">
+  <img src="generated/users_completions_top_countries_bar.png" width="45%" alt="Bar chart of the top countries for completed users" />
+  <img src="generated/users_registrations_top_countries_bar.png" width="45%" alt="Bar chart of the top countries for all registered users" />
 </p>
 
 The top country, by far, was once again India with
@@ -138,7 +138,7 @@ distributed for those users:
 10. Canada: 541 (0.98%)
 
 
-<img src="generated/users_by_state_doughnut.png" width="40%" alt="Doughnut diagram of users by application state" align="right" style="margin: 1em;" />
+<img src="generated/users_by_state_doughnut.png" width="40%" align="right" alt="Doughnut diagram of users by application state" />
 
 Of course, there's more to Hacktoberfest than just registering for the event, folks actually submit
 PR/MRs to open-source projects! This year, we had
@@ -212,7 +212,7 @@ Completed users by provider:
   (1.45% of completed users)
 
 
-<img src="generated/users_registrations_experience_level_bar.png" width="40%" alt="Bar chart of users by experience level" align="right" style="margin: 1em;" />
+<img src="generated/users_registrations_experience_level_bar.png" width="40%" align="right" alt="Bar chart of users by experience level" />
 
 When registering for Hacktoberfest, we also asked users for some optional self-identification around
 their experience with contributing to open-source, and how they intended to contribute. First, we
@@ -322,7 +322,7 @@ first one completed.
 
 ## Diving in: Pull/Merge Requests
 
-<img src="generated/prs_by_state_doughnut.png" width="40%" alt="Doughnut diagram of PR/MRs by application state" align="right" style="margin: 1em;" />
+<img src="generated/prs_by_state_doughnut.png" width="40%" align="right" alt="Doughnut diagram of PR/MRs by application state" />
 
 Now on to what you've been waiting for, and the core of Hacktoberfest itself, the pull/merge
 requests. This year Hacktoberfest tracked **573,169** PR/MRs that were within
@@ -414,7 +414,7 @@ language information via their API, so this only considers GitHub PRs.
   (2.24% of all accepted PRs)
 
 
-<img src="generated/prs_by_day_bar.png" width="40%" alt="Bar chart of accepted PR/MRs by most popular days" align="right" style="margin: 1em;" />
+<img src="generated/prs_by_day_bar.png" width="40%" align="right" alt="Bar chart of accepted PR/MRs by most popular days" />
 
 Hacktoberfest happens throughout the month of October, with participants allowed to submit
 pull/merge requests at any point from October 1 - 31 in any timezone. However, there tends to be
@@ -502,6 +502,8 @@ is ending soon:
 
 ![Stacked area plot of PR/MRs by created at day and state](generated/prs_by_state_stacked.png)
 
+<img src="generated/repos_reported_doughnut.png" width="40%" align="right" alt="Doughnut diagram of reported repositories by review state" />
+
 For transparency, we can also take a look at the excluded repositories we processed for
 Hacktoberfest 2022. A large part of this list was prior excluded repositories from
 previous Hacktoberfest years which were persisted across to this year. However, a form was available
@@ -517,8 +519,6 @@ permitted after having been reported and subsequently reviewed by our team. Unfo
 (55.59%) of the repositories that
 were reported by the community were never reviewed by our team, and did not meet a threshold that
 triggered any automation for exclusion.
-
-![Doughnut diagram of reported repositories by review state](generated/repos_reported_doughnut.png)
 
 ## Wrapping up
 
