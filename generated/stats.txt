@@ -1,4 +1,4 @@
-Started 11/8/2022, 8:52:27 PM
+Started 12/6/2022, 4:52:28 PM
 
 
 ----
@@ -169,7 +169,7 @@ Top countries by registrations: 194 countries
 18. Thailand: 673 (0.46%)
 19. Bangladesh: 592 (0.40%)
 20. Mexico: 581 (0.40%)
-21. Turkey: 445 (0.30%)
+21. Türkiye: 445 (0.30%)
 22. Colombia: 435 (0.30%)
 23. Sweden: 409 (0.28%)
 24. Portugal: 386 (0.26%)
@@ -360,4 +360,4 @@ Tracked repos by license: 40 licenses
   Vim: 1 (0.00%)
 Tracked repos without a detectable license: 255,841 (52.84%)
 
-Finished 11/8/2022, 8:52:38 PM
+Finished 12/6/2022, 4:52:40 PM
