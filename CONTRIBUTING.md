@@ -322,12 +322,14 @@ Once you have data in a JSON file that conforms to this schema, update the
 
 ### Install the project's dependencies
 
-If you have NVM, run `nvm use`.
-Otherwise, ensure that you are running Node 16.x (preferably 16.13.0 as per .nvmrc).
+Ensure that you are running the correct version of Node.js as specified in [`.nvmrc`](.nvmrc).
 
 ```
-npm install
+npm ci
 ```
+
+(Note that `canvas` may require some OS dependencies if a binary is not available for your OS:
+<https://www.npmjs.com/package/canvas#compiling>)
 
 ### Run the script
 

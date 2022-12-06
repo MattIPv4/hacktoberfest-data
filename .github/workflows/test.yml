@@ -16,6 +16,10 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
 
+      # https://www.npmjs.com/package/canvas#compiling
+      - name: Install OS dependencies
+        run: sudo apt-get install build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
+
       - name: Install dependencies
         run: npm ci
 
