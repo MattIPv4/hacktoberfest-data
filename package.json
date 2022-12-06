@@ -24,10 +24,10 @@
   },
   "dependencies": {
     "@fontsource/jetbrains-mono": "^4.5.11",
-    "canvas": "^2.6.1",
+    "canvas": "^2.10.2",
     "country-list": "^2.2.0",
     "dot": "^2.0.0-beta.1",
-    "jimp": "^0.16.1",
+    "jimp": "^0.16.2",
     "js-yaml": "^3.14.0",
     "jsdom": "^15.2.1",
     "node-fetch": "^3.3.0"
