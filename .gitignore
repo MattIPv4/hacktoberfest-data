@@ -1,6 +1,5 @@
 .idea/
 node_modules/
-src/extras/sandbox.js
 
 # Data not ready for public yet
 data/
