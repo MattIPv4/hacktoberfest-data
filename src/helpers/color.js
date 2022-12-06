@@ -5,8 +5,8 @@ const hexToRgb = hex => hex
 
 // Thanks https://stackoverflow.com/a/39077686/5577674
 const rgbToHex = ([r, g, b]) => '#' + [r, g, b].map(x => {
-    const hex = x.toString(16)
-    return hex.length === 1 ? '0' + hex : hex
+    const hex = x.toString(16);
+    return hex.length === 1 ? '0' + hex : hex;
 }).join('');
 
 // Thanks https://stackoverflow.com/a/11868159

@@ -1,7 +1,7 @@
 const path = require('path');
 const number = require('../helpers/number');
 const chart = require('../helpers/chart');
-const { getDateArray } = require("../helpers/date");
+const { getDateArray } = require('../helpers/date');
 const color = require('../helpers/color');
 const { getName, overwrite } = require('country-list');
 
@@ -483,7 +483,7 @@ module.exports = async (data, log) => {
         ]))
         .sort((a, b) => a[1] < b[1] ? 1 : -1);
     log('');
-    log(`Registered users by provider:`);
+    log('Registered users by provider:');
     log('(Users were able to link one, or both, of the supported providers to their Hacktoberfest account)');
     for (const [ provider, count ] of results.totalUsersByProvider) {
         log(`  ${provider}: ${number.commas(count)} (${number.percentage(count / results.totalUsers)})`);
@@ -506,7 +506,7 @@ module.exports = async (data, log) => {
         ]))
         .sort((a, b) => a[1] < b[1] ? 1 : -1);
     log('');
-    log(`Engaged (1-3 PR/MRs) users by provider:`);
+    log('Engaged (1-3 PR/MRs) users by provider:');
     log('(Users were able to link one, or both, of the supported providers to their Hacktoberfest account)');
     for (const [ provider, count ] of results.totalUsersEngagedByProvider) {
         log(`  ${provider}: ${number.commas(count)} (${number.percentage(count / results.totalUsersEngaged)})`);
@@ -529,7 +529,7 @@ module.exports = async (data, log) => {
         ]))
         .sort((a, b) => a[1] < b[1] ? 1 : -1);
     log('');
-    log(`Completed (4+ PR/MRs) users by provider:`);
+    log('Completed (4+ PR/MRs) users by provider:');
     log('(Users were able to link one, or both, of the supported providers to their Hacktoberfest account)');
     for (const [ provider, count ] of results.totalUsersCompletedByProvider) {
         log(`  ${provider}: ${number.commas(count)} (${number.percentage(count / results.totalUsersCompleted)})`);
@@ -561,7 +561,7 @@ module.exports = async (data, log) => {
     results.totalUsersNoExperience = results.totalUsers - results.totalUsersByExperience.reduce((sum, [ , count ]) => sum + count, 0);
 
     log('');
-    log(`Registered users by experience:`);
+    log('Registered users by experience:');
     log('(Users were able to optionally self-identify their experience level when registering)');
     for (const [ level, count ] of results.totalUsersByExperience) {
         log(`  ${level}: ${number.commas(count)} (${number.percentage(count / results.totalUsers)})`);
@@ -589,7 +589,7 @@ module.exports = async (data, log) => {
     results.totalUsersCompletedNoExperience = results.totalUsersCompleted - results.totalUsersCompletedByExperience.reduce((sum, [ , count ]) => sum + count, 0);
 
     log('');
-    log(`Completed (4+ PR/MRs) users by experience:`);
+    log('Completed (4+ PR/MRs) users by experience:');
     log('(Users were able to optionally self-identify their experience level when registering)');
     for (const [ level, count ] of results.totalUsersCompletedByExperience) {
         log(`  ${level}: ${number.commas(count)} (${number.percentage(count / results.totalUsersCompleted)})`);
@@ -621,7 +621,7 @@ module.exports = async (data, log) => {
         .sort((a, b) => a[1] < b[1] ? 1 : -1);
 
     log('');
-    log(`Registered users by intended contribution type:`);
+    log('Registered users by intended contribution type:');
     log('(Users were able to optionally self-identify what type of contribution(s) they intended to make when registering)');
     log('(Users were able to select multiple options)');
     for (const [ type, count ] of results.totalUsersByContribution) {
@@ -647,7 +647,7 @@ module.exports = async (data, log) => {
         .sort((a, b) => a[1] < b[1] ? 1 : -1);
 
     log('');
-    log(`Completed (4+ PR/MRs) users by intended contribution type:`);
+    log('Completed (4+ PR/MRs) users by intended contribution type:');
     log('(Users were able to optionally self-identify what type of contribution(s) they intended to make when registering)');
     log('(Users were able to select multiple options)');
     for (const [ type, count ] of results.totalUsersCompletedByContribution) {

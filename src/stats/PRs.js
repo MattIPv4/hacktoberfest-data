@@ -130,7 +130,7 @@ module.exports = async (data, log) => {
         ]))
         .sort((a, b) => a[1] < b[1] ? 1 : -1);
     log('');
-    log(`Total PR/MRs by provider:`);
+    log('Total PR/MRs by provider:');
     for (const [ provider, count ] of results.totalPRsByProvider) {
         log(`  ${provider}: ${number.commas(count)} (${number.percentage(count / results.totalPRs)})`);
     }

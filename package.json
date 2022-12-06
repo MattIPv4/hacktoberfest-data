@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/MattIPv4/hacktoberfest-data#readme",
   "devDependencies": {
-    "eslint": "^6.8.0"
+    "eslint": "^8.29.0"
   },
   "dependencies": {
     "@fontsource/jetbrains-mono": "^4.5.11",
