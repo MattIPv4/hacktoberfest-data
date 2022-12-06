@@ -1,8 +1,9 @@
 {
   "name": "hacktoberfest-data",
   "version": "1.0.0",
-  "description": "Generating stats from the Hacktoberfest 2020 raw data.",
+  "description": "Generating stats from the raw Hacktoberfest application data.",
   "main": "src/index.js",
+  "private": true,
   "scripts": {
     "start": "node src/index.js",
     "test": "eslint src/{**/*,*}.js",
