@@ -1,8 +1,9 @@
-const fetch = require('node-fetch');
 const yaml = require('js-yaml');
 const colors = {};
 
 const clean = lang => lang.toString().toLowerCase().trim();
+
+const fetch = url => import('node-fetch').then(({ default: run }) => run(url));
 
 const load = async () => {
     const res = await fetch('https://raw.githubusercontent.com/github/linguist/master/lib/linguist/languages.yml');
