@@ -8,7 +8,7 @@ const fetch = url => import('node-fetch').then(({ default: run }) => run(url));
 const load = async () => {
     const res = await fetch('https://raw.githubusercontent.com/github/linguist/master/lib/linguist/languages.yml');
     const text = await res.text();
-    const data = yaml.safeLoad(text);
+    const data = yaml.load(text);
     Object.entries(data).forEach(lang => {
         if (lang[1].color) colors[clean(lang[0])] = lang[1].color;
     });
