@@ -1,8 +1,8 @@
 const path = require('path');
 
 const { registerFont } = require('canvas');
-registerFont(path.join(path.dirname(require.resolve('@fontsource/jetbrains-mono')), 'files/jetbrains-mono-all-400-normal.woff'), { family: 'JetBrains Mono', weight: 400 });
-registerFont(path.join(path.dirname(require.resolve('@fontsource/jetbrains-mono')), 'files/jetbrains-mono-all-700-normal.woff'), { family: 'JetBrains Mono', weight: 700 });
+registerFont(path.join(path.dirname(require.resolve('@fontsource/jetbrains-mono')), 'files/jetbrains-mono-latin-400-normal.woff'), { family: 'JetBrains Mono', weight: 400 });
+registerFont(path.join(path.dirname(require.resolve('@fontsource/jetbrains-mono')), 'files/jetbrains-mono-latin-700-normal.woff'), { family: 'JetBrains Mono', weight: 700 });
 
 const jsdom = require('jsdom');
 const { JSDOM } = jsdom;
