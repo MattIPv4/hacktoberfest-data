@@ -318,11 +318,11 @@ module.exports = async (data, log) => {
     );
 
     // Registrations by country
-    results.totalUsersByCountry = Object.entries(data.users.metadata.country.values)
+    results.totalUsersByCountry = Object.entries(data.users.metadata['demographic-country'].values)
         .filter(([ country ]) => country !== '')
         .map(([ country, { count } ]) => [ getName(country) || country, count ])
         .sort((a, b) => a[1] < b[1] ? 1 : -1);
-    results.totalUsersNoCountry = data.users.metadata.country.values['']?.count || 0;
+    results.totalUsersNoCountry = data.users.metadata['demographic-country'].values['']?.count || 0;
 
     log('');
     log(`Top countries by registrations: ${number.commas(results.totalUsersByCountry.length)} countries`);
@@ -339,7 +339,7 @@ module.exports = async (data, log) => {
         results.totalUsers,
         'Registered Users: Top Countries',
         'users_registrations_top_countries_bar',
-        10000,
+        5000,
         registrationsCaption,
         `Graphic does not include users that did not specify their country, ${number.commas(results.totalUsersNoCountry)} (${number.percentage(results.totalUsersNoCountry / results.totalUsers)}).`,
     );
@@ -348,17 +348,17 @@ module.exports = async (data, log) => {
         results.totalUsers,
         'Registered Users: Top Countries',
         'users_registrations_top_countries_bar_excl',
-        1000,
+        200,
         registrationsCaption,
         `Graphic does not include India (${number.percentage(results.totalUsersByCountry.find(([ country ]) => country === 'India')[1] / results.totalUsers)}), the United States (${number.percentage(results.totalUsersByCountry.find(([ country ]) => country === 'United States')[1] / results.totalUsers)}), and users that did not specify their country (${number.percentage(results.totalUsersNoCountry / results.totalUsers)}).`,
     );
 
     // Completions by country
-    results.totalUsersCompletedByCountry = Object.entries(data.users.metadata.country.values)
-        .filter(([ country ]) => country !== '')
-        .map(([ country, { states } ]) => [ getName(country) || country, states.contributor || 0 ])
+    results.totalUsersCompletedByCountry = Object.entries(data.users.metadata['demographic-country'].values)
+        .filter(([ country, { states } ]) => country !== '' && states.contributor)
+        .map(([ country, { states } ]) => [ getName(country) || country, states.contributor ])
         .sort((a, b) => a[1] < b[1] ? 1 : -1);
-    results.totalUsersCompletedNoCountry = data.users.metadata.country.values['']?.states?.contributor || 0;
+    results.totalUsersCompletedNoCountry = data.users.metadata['demographic-country'].values['']?.states?.contributor || 0;
 
     log('');
     log(`Top countries by completions: ${number.commas(results.totalUsersCompletedByCountry.length)} countries`);
@@ -376,7 +376,7 @@ module.exports = async (data, log) => {
         results.totalUsersCompleted,
         'Completed Users: Top Countries',
         'users_completions_top_countries_bar',
-        5000,
+        1000,
         completionsCaption,
         `Graphic does not include users that did not specify their country, ${number.commas(results.totalUsersCompletedNoCountry)} (${number.percentage(results.totalUsersCompletedNoCountry / results.totalUsersCompleted)}).`,
     );
@@ -385,7 +385,7 @@ module.exports = async (data, log) => {
         results.totalUsersCompleted,
         'Completed Users: Top Countries',
         'users_completions_top_countries_bar_excl',
-        500,
+        50,
         completionsCaption,
         `Graphic does not include India (${number.percentage(results.totalUsersCompletedByCountry.find(([ country ]) => country === 'India')[1] / results.totalUsersCompleted)}), the United States (${number.percentage(results.totalUsersCompletedByCountry.find(([ country ]) => country === 'United States')[1] / results.totalUsersCompleted)}), and users that did not specify their country (${number.percentage(results.totalUsersCompletedNoCountry / results.totalUsersCompleted)}).`,
     );
@@ -394,7 +394,7 @@ module.exports = async (data, log) => {
     results.totalUsersByStateByDay = Object.keys(data.users.states.all.states)
         .reduce((states, state) => ({
             ...states,
-            [state]: getDateArray(new Date('2022-09-26'), new Date('2022-11-01'))
+            [state]: getDateArray(new Date(`${data.year}-09-26`), new Date(`${data.year}-11-01`))
                 .reduce((obj, date) => {
                     const day = date.toISOString().split('T')[0];
                     return {
@@ -445,7 +445,7 @@ module.exports = async (data, log) => {
     totalUsersByStateByDayConfig.axisY = {
         ...totalUsersByStateByDayConfig.axisY,
         labelFontSize: 34,
-        interval: 2000,
+        interval: 1000,
     };
     totalUsersByStateByDayConfig.title = {
         ...totalUsersByStateByDayConfig.title,
@@ -494,7 +494,7 @@ module.exports = async (data, log) => {
         results.totalUsers,
         'Registered Users: Linked Providers',
         'users_registrations_linked_providers_bar',
-        25000,
+        10000,
         'Users were able to link one, or both, of the supported providers to their Hacktoberfest account.',
     );
 
@@ -517,7 +517,7 @@ module.exports = async (data, log) => {
         results.totalUsersEngaged,
         'Engaged Users: Linked Providers',
         'users_engaged_linked_providers_bar',
-        5000,
+        1000,
         'Users were able to link one, or both, of the supported providers to their Hacktoberfest account.',
     );
 
@@ -540,7 +540,7 @@ module.exports = async (data, log) => {
         results.totalUsersCompleted,
         'Completed Users: Linked Providers',
         'users_completions_linked_providers_bar',
-        10000,
+        2500,
         'Users were able to link one, or both, of the supported providers to their Hacktoberfest account.',
     );
 
@@ -573,7 +573,7 @@ module.exports = async (data, log) => {
         results.totalUsers,
         'Registered Users: Experience Level',
         'users_registrations_experience_level_bar',
-        25000,
+        10000,
         null,
         `Graphic does not include users that did not specify their experience level, ${number.commas(results.totalUsersNoExperience)} (${number.percentage(results.totalUsersNoExperience / results.totalUsers)}).`,
     );
@@ -601,7 +601,7 @@ module.exports = async (data, log) => {
         results.totalUsersCompleted,
         'Completed Users: Experience Level',
         'users_completions_experience_level_bar',
-        10000,
+        1000,
         null,
         `Graphic does not include users that did not specify their experience level, ${number.commas(results.totalUsersCompletedNoExperience)} (${number.percentage(results.totalUsersCompletedNoExperience / results.totalUsersCompleted)}).`,
     );
@@ -633,7 +633,7 @@ module.exports = async (data, log) => {
         results.totalUsers,
         'Registered Users: Contribution Type',
         'users_registrations_contribution_type_bar',
-        25000,
+        10000,
         'Users were able to optionally select one, or more, intended contribution types when registering.',
     );
 
@@ -659,8 +659,58 @@ module.exports = async (data, log) => {
         results.totalUsersCompleted,
         'Completed Users: Contribution Type',
         'users_completions_contribution_type_bar',
-        10000,
+        1000,
         'Users were able to optionally select one, or more, intended contribution types when registering.',
+    );
+
+    // Students
+    results.totalUsersStudents = data.users.metadata['demographic-student'].values.true?.count || 0;
+    results.totalUsersNotStudents = data.users.metadata['demographic-student'].values.false?.count || 0;
+    results.totalUsersMissingStudents = results.totalUsers - results.totalUsersStudents - results.totalUsersNotStudents;
+
+    log('');
+    log('Registered users by student status:');
+    log('(Users were able to optionally self-identify if they\'re a student when registering)');
+    log(`  Yes (enrolled student): ${number.commas(results.totalUsersStudents)} (${number.percentage(results.totalUsersStudents / results.totalUsers)})`);
+    log(`  No (not a student): ${number.commas(results.totalUsersNotStudents)} (${number.percentage(results.totalUsersNotStudents / results.totalUsers)})`);
+    log(`${number.commas(results.totalUsersMissingStudents)} (${number.percentage(results.totalUsersMissingStudents / results.totalUsers)}) users did not specify their enrolment status`);
+
+    await usersTopChart(
+        [
+            ['Enrolled Student', results.totalUsersStudents],
+            ['Not a Student', results.totalUsersNotStudents],
+            ['Not Given', results.totalUsersMissingStudents],
+        ],
+        results.totalUsers,
+        'Registered Users: Student Status',
+        'users_registrations_student_status_bar',
+        10000,
+        'Users were able to optionally indicate if they were an enrolled student, or not, when registering.',
+    );
+
+    // AI/ML
+    results.totalUsersAIML = data.users.metadata['demographic-ai-ml'].values.true?.count || 0;
+    results.totalUsersNotAIML = data.users.metadata['demographic-ai-ml'].values.false?.count || 0;
+    results.totalUsersMissingAIML = results.totalUsers - results.totalUsersAIML - results.totalUsersNotAIML;
+
+    log('');
+    log('Registered users by AI/ML interest:');
+    log('(Users were able to optionally self-identify if they\'re interested in AI/ML when registering)');
+    log(`  Interested: ${number.commas(results.totalUsersAIML)} (${number.percentage(results.totalUsersAIML / results.totalUsers)})`);
+    log(`  Not Interested: ${number.commas(results.totalUsersNotAIML)} (${number.percentage(results.totalUsersNotAIML / results.totalUsers)})`);
+    log(`${number.commas(results.totalUsersMissingAIML)} (${number.percentage(results.totalUsersMissingAIML / results.totalUsers)}) users did not specify their interest in AI/ML`);
+
+    await usersTopChart(
+        [
+            ['Interested', results.totalUsersAIML],
+            ['Not Interested', results.totalUsersNotAIML],
+            ['Not Given', results.totalUsersMissingAIML],
+        ],
+        results.totalUsers,
+        'Registered Users: AI/ML Interest',
+        'users_registrations_ai_ml_interest_bar',
+        10000,
+        'Users were able to optionally indicate if they were interested in AI/ML projects, or not, when registering.',
     );
 
     return results;

@@ -34,7 +34,7 @@ module.exports = async (data, log) => {
 
     const totalReposReportedConfig = chart.config(1000, 1000, [{
         type: 'doughnut',
-        startAngle: 180,
+        startAngle: 90,
         indexLabelPlacement: 'outside',
         indexLabelFontSize: 32,
         showInLegend: true,

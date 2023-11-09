@@ -176,7 +176,7 @@ module.exports = async (data, log) => {
         ...totalAcceptedPRsMergedConfig.axisY,
         labelFontSize: 24,
         labelFormatter: e => number.human(e.value),
-        interval: 40000,
+        interval: 25000,
     };
     totalAcceptedPRsMergedConfig.title = {
         ...totalAcceptedPRsMergedConfig.title,
@@ -232,7 +232,7 @@ module.exports = async (data, log) => {
         ...totalAcceptedPRsApprovedConfig.axisY,
         labelFontSize: 24,
         labelFormatter: e => number.human(e.value),
-        interval: 40000,
+        interval: 25000,
     };
     totalAcceptedPRsApprovedConfig.title = {
         ...totalAcceptedPRsApprovedConfig.title,
@@ -312,7 +312,7 @@ module.exports = async (data, log) => {
     await chart.save(
         path.join(__dirname, '../../generated/prs_by_language_doughnut.png'),
         await chart.render(totalPRsByLanguageConfig),
-        { width: 250, x: 500, y: 430 },
+        { width: 200, x: 500, y: 430 },
     );
 
     // Breaking down PRs by day
@@ -356,7 +356,7 @@ module.exports = async (data, log) => {
         ...totalPRsByDayConfig.axisY,
         labelFontSize: 24,
         labelFormatter: (e) => number.human(e.value),
-        interval: 2000,
+        interval: 1000,
     };
     totalPRsByDayConfig.title = {
         ...totalPRsByDayConfig.title,
@@ -375,7 +375,7 @@ module.exports = async (data, log) => {
     results.totalAcceptedPRsByLanguageByDay = results.totalAcceptedPRsByLanguage.slice(0, 10).map(([ language ]) => ({
         language,
         // One day before Hacktoberfest, two days after
-        daily: getDateArray(new Date('2022-09-29'), new Date('2022-11-03'))
+        daily: getDateArray(new Date(`${data.year}-09-29`), new Date(`${data.year}-11-03`))
             .map(date => ({
                 date,
                 count: data.pull_requests.languages.daily?.[date.toISOString().split('T')[0]]?.languages?.[language]?.states?.accepted || 0,
@@ -405,7 +405,7 @@ module.exports = async (data, log) => {
     totalPRsByLanguageByDayConfig.axisY = {
         ...totalPRsByLanguageByDayConfig.axisY,
         labelFontSize: 34,
-        interval: 500,
+        interval: 100,
     };
     totalPRsByLanguageByDayConfig.title = {
         ...totalPRsByLanguageByDayConfig.title,
@@ -424,20 +424,6 @@ module.exports = async (data, log) => {
         },
     ];
 
-    // totalPRsByLanguageByDayConfig.backgroundColor = chart.colors.text;
-    // totalPRsByLanguageByDayConfig.title.fontColor = chart.colors.background;
-    // totalPRsByLanguageByDayConfig.legend.fontColor = chart.colors.background;
-    // totalPRsByLanguageByDayConfig.axisX.labelFontColor = chart.colors.background;
-    // totalPRsByLanguageByDayConfig.axisX.titleFontColor = chart.colors.background;
-    // totalPRsByLanguageByDayConfig.axisX.lineColor = color.lighten(chart.colors.text, 10);
-    // totalPRsByLanguageByDayConfig.axisX.gridColor = color.lighten(chart.colors.text, 10);
-    // totalPRsByLanguageByDayConfig.axisX.tickColor = color.lighten(chart.colors.text, 10);
-    // totalPRsByLanguageByDayConfig.axisY.labelFontColor = chart.colors.background;
-    // totalPRsByLanguageByDayConfig.axisY.titleFontColor = chart.colors.background;
-    // totalPRsByLanguageByDayConfig.axisY.lineColor = color.lighten(chart.colors.text, 10);
-    // totalPRsByLanguageByDayConfig.axisY.gridColor = color.lighten(chart.colors.text, 10);
-    // totalPRsByLanguageByDayConfig.axisY.tickColor = color.lighten(chart.colors.text, 10);
-
     await chart.save(
         path.join(__dirname, '../../generated/prs_by_language_spline.png'),
         await chart.render(totalPRsByLanguageByDayConfig),
@@ -449,7 +435,7 @@ module.exports = async (data, log) => {
         .map(state => ({
             state,
             // One day before Hacktoberfest, two days after
-            daily: getDateArray(new Date('2022-09-29'), new Date('2022-11-03'))
+            daily: getDateArray(new Date(`${data.year}-09-29`), new Date(`${data.year}-11-03`))
                 .map(date => ({
                     date,
                     count: data.pull_requests.states.daily?.[date.toISOString().split('T')[0]]?.states?.[state] || 0,
@@ -492,7 +478,7 @@ module.exports = async (data, log) => {
     totalPRsByStateByDayConfig.axisY = {
         ...totalPRsByStateByDayConfig.axisY,
         labelFontSize: 34,
-        interval: 2500,
+        interval: 1000,
     };
     totalPRsByStateByDayConfig.title = {
         ...totalPRsByStateByDayConfig.title,

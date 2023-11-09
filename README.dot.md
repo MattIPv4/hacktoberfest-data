@@ -1,21 +1,21 @@
-# Hacktoberfest {{= data.year }} Stats
+# Hacktoberfest {{= data.readme.year }} Stats
 
 Hi there, 👋
 
-I'm [Matt Cowley](https://mattcowley.co.uk/), Senior Software Engineer I at
+I'm [Matt Cowley](https://mattcowley.co.uk/), Senior Software Engineer II at
 [DigitalOcean](https://digitalocean.com/).
 
 I work on a bunch of things at DigitalOcean, with a great mix of engineering, developer relations
 and community management. And, part of what I get to work on is helping out with Hacktoberfest,
 including being the lead engineer for the backend that powers the event.
 
-Welcome to my deeper dive on the data and stats for Hacktoberfest {{= data.year }}, expanding on
-what we already shared in our [recap blog post](https://{{= data.blog }}).
+Welcome to my deeper dive on the data and stats for Hacktoberfest {{= data.readme.year }}, expanding
+on what we already shared in our [recap blog post](https://{{= data.readme.blog }}).
 
 ## At a glance
 
-What did we accomplish together in October {{= data.year }}?
-These are the highlights from Hacktoberfest #{{= data.year - 2013 }}:
+What did we accomplish together in October {{= data.readme.year }}?
+These are the highlights from Hacktoberfest #{{= data.readme.year - 2013 }}:
 
 - Registered users: **{{= c(data.readme.registeredUsers) }}**
 - Engaged users (1-3 accepted PR/MRs): **{{= c(data.readme.engagedUsers) }}**
@@ -25,8 +25,8 @@ These are the highlights from Hacktoberfest #{{= data.year - 2013 }}:
 - Countries represented by registered users: **{{= c(data.readme.countriesRegistered) }}**
 - Countries represented by completed users: **{{= c(data.readme.countriesCompleted) }}**
 
-> Take a read of our overall recap blog post for Hacktoberfest {{= data.year }} here:
-> [{{= data.blog }}](https://{{= data.blog }})
+> Take a read of our overall recap blog post for Hacktoberfest {{= data.readme.year }} here:
+> [{{= data.readme.blog }}](https://{{= data.readme.blog }})
 
 ## Application states
 
@@ -65,9 +65,9 @@ For pull/merge requests, there are six states used to process them that you'll s
 
 This year, Hacktoberfest had **{{= c(data.Users.totalUsers) }}** folks who went through our
 registration flow for the event. Spam has been a huge focus for us throughout the event, as with
-last year, and so during this flow folks were reminded about our rules and values for the event with
-clear and simple language, as well as agreeing to a rule that folks with two or more PRs identified
-as spam by maintainers would be disqualified. More on this later.
+previous years, and so during this flow folks were reminded about our rules and values for the event
+with clear and simple language, as well as agreeing to a rule that folks with two or more PR/MRs
+identified as spam by maintainers would be disqualified. More on this later.
 
 During the registration flow, folks can also choose to tell us which country they are from--this
 helps us better understand, and cater to, the global audience for the event--and
@@ -93,7 +93,7 @@ countries based on registrations:
 {{~ }}
 
 In total, **{{= c(data.Users.totalUsersByCountry.length) }} countries** were represented by folks
-that registered for the {{= data.year }} event.
+that registered for the {{= data.readme.year }} event.
 
 We can also look at just the users that completed Hacktoberfest, and see how the countries are
 distributed for those users:
@@ -120,6 +120,13 @@ Impressively, we saw that **{{= c(data.Users.totalUsersByAcceptedPRsCapped[4][1]
 completed)** submitted more than 4 accepted PR/MRs, going above and beyond to contribute to
 open-source outside the goal set for completing Hacktoberfest.
 
+This year, Hacktoberfest removed the free t-shirt as a reward for completing Hacktoberfest, instead
+replacing it with a digital reward kit unlocked once you had for accepted PR/MRs, and a digital
+badge from Holopin that levelled up with each PR/MR accepted on your journey from registration to
+completion. While we still saw many folks register and engage with Hacktoberfest, the numbers are
+much lower than previous years, likely due to this change in reward, and while disappointing this
+was expected.
+
 Sadly, {{= c(data.Users.totalUsersDisqualified) }} users were disqualified this year
 ({{= p(data.Users.totalUsersDisqualified / data.Users.totalUsers) }} of total registrations), with
 an additional {{= c(data.Users.totalUsersWarned) }}
@@ -131,6 +138,9 @@ low this number was though, indicating to us that our efforts to educate and rem
 the quality standards expected of them during Hacktoberfest are working. _(Of course, we can only
 report on what we see in our data here, and do acknowledge that folks may have received spam that
 wasn't flagged so won't be represented in our reporting)._
+
+<!-- Clear for generated/users_by_state_doughnut.png -->
+<p style="clear: both;"></p>
 
 Hacktoberfest supported multiple providers this year, GitHub & GitLab. Registrants could choose to
 link just one provider to their account, or multiple if they desired, with contributions from each
@@ -190,6 +200,9 @@ We can compare this to the breakdown of users that completed Hacktoberfest by ex
 _{{= c(data.Users.totalUsersCompletedNoExperience) }} users who completed Hacktoberfest did not
 self-identify their experience when registering._
 
+<!-- Clear for generated/users_registrations_experience_level_bar.png -->
+<p style="clear: both;"></p>
+
 Not everyone is comfortable writing code, and so Hacktoberfest focused on encouraging more
 contributors to get involved with open-source this year through non-code contributors. We can look
 at what contribution types users indicated they intended to make during Hacktoberfest when
@@ -204,7 +217,36 @@ _Of course, this is only what users indicated they intended to do, and doesn't n
 their actual contributions they ended up making to open-source (determining what is and what isn't
 a "non-code" PR/MR would be a difficult task)._
 
-This year for Hacktoberfest, users had to submit PR/MRs to participating projects during
+This year, we also asked users during registration whether they were students or not, to give us a
+better sense of the audience that is participating in Hacktoberfest. We can see that
+**{{= c(data.Users.totalUsersStudents) }} users
+({{= p(data.Users.totalUsersStudents / data.Users.totalUsers) }} of registered users)** indicated
+that they were students when registering.
+
+<img src="generated/users_registrations_ai_ml_interest_bar.png" width="40%" align="right" alt="Bar chart of users by AI/ML interest" />
+
+Folks were also asked if they'd be interested in contributing to AI/ML projects specifically during
+Hacktoberfest, as this area of open-source is growing rapidly and we wanted to see if there was
+interest in it.
+
+We can see that **{{= c(data.Users.totalUsersAIML) }} users
+({{= p(data.Users.totalUsersAIML / data.Users.totalUsers) }} of registered users)** indicated they
+were actively interested in AI/ML projects, while **{{= c(data.Users.totalUsersNotAIML) }} users
+({{= p(data.Users.totalUsersNotAIML / data.Users.totalUsers) }} of registered users)** indicated
+they were not interested in AI/ML projects (this was an optional question, with
+{{= c(data.Users.totalUsersMissingAIML) }} users not providing a preference).
+
+While we obviously can't know for sure the preference of those that did not interact with this
+question, there was a much larger portion of folks registering that did not engage with this
+question than other questions ({{= p(data.Users.totalUsersMissingAIML / data.Users.totalUsers) }},
+compared to just {{= p(data.Users.totalUsersNoExperience / data.Users.totalUsers) }} that did not
+indicate their experience level), which is likely an indicator that many felt a negative sentiment
+towards AI/ML projects.
+
+<!-- Clear for generated/users_registrations_ai_ml_interest_bar.png -->
+<p style="clear: both;"></p>
+
+As with previous years of Hacktoberfest, users had to submit PR/MRs to participating projects during
 October that then had to be accepted by maintainers during October. If a user submitted four or
 more PR/MRs, then they completed Hacktoberfest. However, not everyone hits the 4 PR/MR target, with
 some falling short, and many going beyond the target to contribute further.
@@ -247,6 +289,9 @@ reminder to folks, repositories opt-in to participating in Hacktoberfest by addi
 Spam is also a big issue that we focus on reducing during Hacktoberfest, and we tracked the number
 of PR/MRs that were identified by maintainers as spam, as well as those that were caught by
 automation we'd written to stop spammy users. We'll talk more about all-things-spam later on.
+
+<!-- Clear for generated/prs_by_state_doughnut.png -->
+<p style="clear: both;"></p>
 
 This year, Hacktoberfest supported multiple providers that contributors could use to submit
 contributions to open-source projects. Let's take a look at the breakdown of PR/MRs per provider:
@@ -301,13 +346,16 @@ PR/MR creation this year:
   ({{= p(item[1] / data.PRs.totalAcceptedPRs) }} of all accepted PRs)
 {{~ }}
 
+<!-- Clear for generated/prs_by_day_bar.png -->
+<p style="clear: both;"></p>
+
 ## Diving in: Spam
 
 After the issues Hacktoberfest faced at the start of the 2020 event, spam was top of mind for our
-whole team this year as we planned and launched Hacktoberfest {{= data.year }}. We kept the rules
-the same as we'd landed on last year, with Hacktoberfest being an opt-in event for repositories, and
-our revised standards on quality contributions to make it easier for participants to understand
-what is expected of them when contributing to open source as part of Hacktoberfest.
+whole team this year as we planned and launched Hacktoberfest {{= data.readme.year }}. We kept the
+rules the same as we'd landed on last year, with Hacktoberfest being an opt-in event for
+repositories, and  our revised standards on quality contributions to make it easier for participants
+to understand what is expected of them when contributing to open source as part of Hacktoberfest.
 
 **Our efforts to reduce spam can be seen in our data, with only {{= c(data.PRs.totalSpamPRs) }}
 ({{= p(data.PRs.totalSpamPRs / data.PRs.totalPRs) }}) pull/merge requests being flagged as spam by
@@ -337,25 +385,29 @@ is ending soon:
 <img src="generated/repos_reported_doughnut.png" width="40%" align="right" alt="Doughnut diagram of reported repositories by review state" />
 
 For transparency, we can also take a look at the excluded repositories we processed for
-Hacktoberfest {{= data.year }}. A large part of this list was prior excluded repositories from
-previous Hacktoberfest years which were persisted across to this year. However, a form was available
-on the site for members of our community to report repositories that they felt did not follow our
-values, with automation in place to process these reports and exclude repositories that were
-repeatedly reported, as well as reports being reviewed by our team.
+Hacktoberfest {{= data.readme.year }}. A large part of this list was prior excluded repositories
+from previous Hacktoberfest years which were persisted across to this year. However, a form was
+available on the site for members of our community to report repositories that they felt did not
+follow our values, with automation in place to process these reports and exclude repositories that
+were repeatedly reported, as well as reports being reviewed by our team.
 
-In total, Hacktoberfest {{= data.year }} had {{= c(data.Repos.totalReposExcluded) }} repositories
-that were actively excluded, {{= p(data.Repos.totalReposExcluded / data.Repos.totalReposReported) }}
-of the total repositories reported. Only {{= c(data.Repos.totalReposPermitted) }} repositories were
-permitted after having been reported and subsequently reviewed by our team. Unfortunately,
+In total, Hacktoberfest {{= data.readme.year }} had {{= c(data.Repos.totalReposExcluded) }}
+repositories that were actively excluded,
+{{= p(data.Repos.totalReposExcluded / data.Repos.totalReposReported) }} of the total repositories
+reported. Only {{= c(data.Repos.totalReposPermitted) }} repositories were permitted after having
+been reported and subsequently reviewed by our team. Unfortunately,
 {{= c(data.Repos.totalReposUnreviewed) }}
 ({{= p(data.Repos.totalReposUnreviewed / data.Repos.totalReposReported) }}) of the repositories that
 were reported by the community were never reviewed by our team, and did not meet a threshold that
 triggered any automation for exclusion.
 
+<!-- Clear for generated/repos_reported_doughnut.png -->
+<p style="clear: both;"></p>
+
 ## Wrapping up
 
-Well, that's all the stats I've generated from the Hacktoberfest {{= data.year }} raw data -- you
-can find the raw output of the stats generation script in the
+Well, that's all the stats I've generated from the Hacktoberfest {{= data.readme.year }} raw data --
+you can find the raw output of the stats generation script in the
 [`generated/stats.txt`](generated/stats.txt) file, as well as all the graphics which are housed in
 [`generated`](generated) directory.
 
@@ -365,7 +417,7 @@ more than happy to generate it if possible.
 All the scripts used to generate these stats & graphics are contained in this repository, in the
 [`src`](src) directory. I have some more information about this in the
 [CONTRIBUTING.md](CONTRIBUTING.md) file, including a schema for the input data, however, the
-Hacktoberfest {{= data.year }} raw data, much like previous years' data, isn't public.
+Hacktoberfest {{= data.readme.year }} raw data, much like previous years' data, isn't public.
 
 Author: [Matt Cowley](https://mattcowley.co.uk/) - If you notice any errors within this document
 please let me know, and I will endeavour to correct them. 💙
