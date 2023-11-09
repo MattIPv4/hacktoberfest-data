@@ -8,18 +8,16 @@ const jsdom = require('jsdom');
 const { JSDOM } = jsdom;
 const Jimp = require('jimp');
 
-const { mix } = require('./color');
-
 const colors = {
-    background: '#170F1E',
-    backgroundBox: mix('#170F1E', '#E5E1E6', 85),
-    line: mix('#170F1E', '#E5E1E6', 85),
-    text: '#E5E1E6',
-    textBox: '#E5E1E6',
-    highlightPositive: '#B4FF39',
-    highlightNeutral: '#40DDFF',
-    highlightNeutralAlt: '#7C7FFF',
-    highlightNegative: '#FFD74D',
+    background: '#0F0913', // void
+    backgroundBox: '#655F67', // manga 400
+    line: '#655F67', // manga 400
+    text: '#EFEDEF', // manga 200
+    textBox: '#EFEDEF', // manga 200
+    highlightPositive: '#33B6D8', // blue 200
+    highlightNeutral: '#FFFBA4', // gold 100
+    highlightNeutralAlt: '#D2B863', // gold 200
+    highlightNegative: '#EC4237', // red 200
 };
 
 const config = (width, height, data, opts) => {
