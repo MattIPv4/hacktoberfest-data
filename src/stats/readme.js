@@ -8,7 +8,7 @@ module.exports = async (data, log) => {
     const results = {};
 
     results.year = data.year;
-    results.blog = `www.digitalocean.com/blog/hacktoberfest-${data.year}-recap`;
+    results.blog = 'www.digitalocean.com/blog/10th-anniversary-hacktoberfest-recap';
 
     results.registeredUsers = data.users.states.all.count;
     results.engagedUsers = data.users.states.all.states['first-accepted'] - data.users.states.all.states.contributor;

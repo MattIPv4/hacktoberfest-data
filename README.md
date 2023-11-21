@@ -6,7 +6,7 @@ I'm [Matt Cowley](https://mattcowley.co.uk/), Senior Software Engineer II at [Di
 
 I work on a bunch of things at DigitalOcean, with a great mix of engineering, developer relations and community management. And, part of what I get to work on is helping out with Hacktoberfest, including being the lead engineer for the backend that powers the event.
 
-Welcome to my deeper dive on the data and stats for Hacktoberfest 2023, expanding on what we already shared in our [recap blog post](https://www.digitalocean.com/blog/hacktoberfest-2023-recap).
+Welcome to my deeper dive on the data and stats for Hacktoberfest 2023, expanding on what we already shared in our [recap blog post](https://www.digitalocean.com/blog/10th-anniversary-hacktoberfest-recap).
 
 ## At a glance
 
@@ -21,7 +21,7 @@ What did we accomplish together in October 2023? These are the highlights from H
 - Countries represented by completed users: **121**
 
 > Take a read of our overall recap blog post for Hacktoberfest 2023 here:
-> [www.digitalocean.com/blog/hacktoberfest-2023-recap](https://www.digitalocean.com/blog/hacktoberfest-2023-recap)
+> [www.digitalocean.com/blog/10th-anniversary-hacktoberfest-recap](https://www.digitalocean.com/blog/10th-anniversary-hacktoberfest-recap)
 
 ## Application states
 
