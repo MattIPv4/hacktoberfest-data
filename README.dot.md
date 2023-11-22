@@ -121,7 +121,7 @@ completed)** submitted more than 4 accepted PR/MRs, going above and beyond to co
 open-source outside the goal set for completing Hacktoberfest.
 
 This year, Hacktoberfest removed the free t-shirt as a reward for completing Hacktoberfest, instead
-replacing it with a digital reward kit unlocked once you had for accepted PR/MRs, and a digital
+replacing it with a digital reward kit unlocked once you had four accepted PR/MRs, and a digital
 badge from Holopin that levelled up with each PR/MR accepted on your journey from registration to
 completion. While we still saw many folks register and engage with Hacktoberfest, the numbers are
 much lower than previous years, likely due to this change in reward, and while disappointing this
@@ -240,15 +240,15 @@ While we obviously can't know for sure the preference of those that did not inte
 question, there was a much larger portion of folks registering that did not engage with this
 question than other questions ({{= p(data.Users.totalUsersMissingAIML / data.Users.totalUsers) }},
 compared to just {{= p(data.Users.totalUsersNoExperience / data.Users.totalUsers) }} that did not
-indicate their experience level), which is likely an indicator that many felt a negative sentiment
-towards AI/ML projects.
+indicate their experience level), which is potentially an indicator that folks were unfamiliar with
+or disinterested in AI/ML.
 
 <!-- Clear for generated/users_registrations_ai_ml_interest_bar.png -->
 <p style="clear: both;"></p>
 
 As with previous years of Hacktoberfest, users had to submit PR/MRs to participating projects during
 October that then had to be accepted by maintainers during October. If a user submitted four or
-more PR/MRs, then they completed Hacktoberfest. However, not everyone hits the 4 PR/MR target, with
+more PR/MRs, then they completed Hacktoberfest. However, not everyone hit the 4 PR/MR target, with
 some falling short, and many going beyond the target to contribute further.
 
 We can see how many accepted PR/MRs each user had and bucket them:
@@ -284,7 +284,7 @@ participating repositories but that were not accepted by maintainers, as well as
 Hacktoberfest participants to repositories that were not participating in Hacktoberfest. As a
 reminder to folks, repositories opt-in to participating in Hacktoberfest by adding the
 `hacktoberfest` topic to their repository (or individual PR/MRs can be opted-in with the
-`hacktoberfest-accepted` label)!
+`hacktoberfest-accepted` label).
 
 Spam is also a big issue that we focus on reducing during Hacktoberfest, and we tracked the number
 of PR/MRs that were identified by maintainers as spam, as well as those that were caught by

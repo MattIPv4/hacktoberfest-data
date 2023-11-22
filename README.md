@@ -101,7 +101,7 @@ Of course, there's more to Hacktoberfest than just registering for the event, fo
 
 Impressively, we saw that **8,424 users (54.27% of total completed)** submitted more than 4 accepted PR/MRs, going above and beyond to contribute to open-source outside the goal set for completing Hacktoberfest.
 
-This year, Hacktoberfest removed the free t-shirt as a reward for completing Hacktoberfest, instead replacing it with a digital reward kit unlocked once you had for accepted PR/MRs, and a digital badge from Holopin that levelled up with each PR/MR accepted on your journey from registration to completion. While we still saw many folks register and engage with Hacktoberfest, the numbers are much lower than previous years, likely due to this change in reward, and while disappointing this was expected.
+This year, Hacktoberfest removed the free t-shirt as a reward for completing Hacktoberfest, instead replacing it with a digital reward kit unlocked once you had four accepted PR/MRs, and a digital badge from Holopin that levelled up with each PR/MR accepted on your journey from registration to completion. While we still saw many folks register and engage with Hacktoberfest, the numbers are much lower than previous years, likely due to this change in reward, and while disappointing this was expected.
 
 Sadly, 82 users were disqualified this year (0.08% of total registrations), with an additional 219 (0.22% of total registrations) warned. Disqualification of users happen automatically if two or more of their PR/MRs are actively identified as spam by project maintainers, with users being sent a warning email (and shown a notice on their profile) when they have one PR/MR that is identified as spam. We were very happy to see how low this number was though, indicating to us that our efforts to educate and remind contributors of the quality standards expected of them during Hacktoberfest are working. _(Of course, we can only report on what we see in our data here, and do acknowledge that folks may have received spam that wasn't flagged so won't be represented in our reporting)._
 
@@ -179,12 +179,12 @@ Folks were also asked if they'd be interested in contributing to AI/ML projects 
 
 We can see that **50,550 users (51.14% of registered users)** indicated they were actively interested in AI/ML projects, while **30,953 users (31.31% of registered users)** indicated they were not interested in AI/ML projects (this was an optional question, with 17,352 users not providing a preference).
 
-While we obviously can't know for sure the preference of those that did not interact with this question, there was a much larger portion of folks registering that did not engage with this question than other questions (17.55%, compared to just 4.40% that did not indicate their experience level), which is likely an indicator that many felt a negative sentiment towards AI/ML projects.
+While we obviously can't know for sure the preference of those that did not interact with this question, there was a much larger portion of folks registering that did not engage with this question than other questions (17.55%, compared to just 4.40% that did not indicate their experience level), which is potentially an indicator that folks were unfamiliar with or disinterested in AI/ML.
 
 <!-- Clear for generated/users_registrations_ai_ml_interest_bar.png -->
 <p style="clear: both;"></p>
 
-As with previous years of Hacktoberfest, users had to submit PR/MRs to participating projects during October that then had to be accepted by maintainers during October. If a user submitted four or more PR/MRs, then they completed Hacktoberfest. However, not everyone hits the 4 PR/MR target, with some falling short, and many going beyond the target to contribute further.
+As with previous years of Hacktoberfest, users had to submit PR/MRs to participating projects during October that then had to be accepted by maintainers during October. If a user submitted four or more PR/MRs, then they completed Hacktoberfest. However, not everyone hit the 4 PR/MR target, with some falling short, and many going beyond the target to contribute further.
 
 We can see how many accepted PR/MRs each user had and bucket them:
 
@@ -229,7 +229,7 @@ Looking at this, we can see that quite a few users only managed to get 1 accepte
 
 Now on to what you've been waiting for, and the core of Hacktoberfest itself, the pull/merge requests. This year Hacktoberfest tracked **267,408** PR/MRs that were within the bounds of the Hacktoberfest event, and **118,469 (44.30%)** of those went on to be accepted!
 
-Unfortunately, not every pull/merge request can be accepted though, for one reason or another, and this year we saw that there were **25,112 (9.39%)** PR/MRs that were submitted to participating repositories but that were not accepted by maintainers, as well as **82,319 (30.78%)** PR/MRs submitted by Hacktoberfest participants to repositories that were not participating in Hacktoberfest. As a reminder to folks, repositories opt-in to participating in Hacktoberfest by adding the `hacktoberfest` topic to their repository (or individual PR/MRs can be opted-in with the `hacktoberfest-accepted` label)!
+Unfortunately, not every pull/merge request can be accepted though, for one reason or another, and this year we saw that there were **25,112 (9.39%)** PR/MRs that were submitted to participating repositories but that were not accepted by maintainers, as well as **82,319 (30.78%)** PR/MRs submitted by Hacktoberfest participants to repositories that were not participating in Hacktoberfest. As a reminder to folks, repositories opt-in to participating in Hacktoberfest by adding the `hacktoberfest` topic to their repository (or individual PR/MRs can be opted-in with the `hacktoberfest-accepted` label).
 
 Spam is also a big issue that we focus on reducing during Hacktoberfest, and we tracked the number of PR/MRs that were identified by maintainers as spam, as well as those that were caught by automation we'd written to stop spammy users. We'll talk more about all-things-spam later on.
 
